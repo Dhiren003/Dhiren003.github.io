@@ -8758,8 +8758,8 @@ textarea.form-control {
   opacity: 1; }
 
 #ftco-loader .circular {
-  -webkit-animation: loader-rotate 2s linear infinite;
-  animation: loader-rotate 2s linear infinite;
+  -webkit-animation: loader-rotate 1s linear infinite;
+  animation: loader-rotate 1s linear infinite;
   position: absolute;
   left: calc(50% - 24px);
   top: calc(50% - 24px);
