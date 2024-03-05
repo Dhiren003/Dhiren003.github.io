@@ -1,9 +1,0 @@
-{
-    "name": "Dhiren Jummani Portfolio",
-    "short_name": "DhirenJummaniPortfolio",
-    "start_url": "/Portfolio/index.html",
-    "display": "standalone",
-    "background_color": "#FFE9D2",
-    "theme_color": "#FFE9D2",
-    "orientation": "portrait-primary"
-}
