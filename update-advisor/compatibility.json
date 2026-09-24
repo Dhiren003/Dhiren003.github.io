@@ -1,0 +1,61 @@
+{
+  "latestMajorVersion": 27,
+  "generatedAt": "2026-09-24",
+
+  "channels": {
+    "stable": {
+      "version": "27.0.1",
+      "label": "iOS 27.0.1",
+      "releaseDate": "2026-09-18",
+      "status": "released",
+      "type": "bugfix",
+      "notes": "Bug-fix-only release addressing Wi-Fi disconnects, Bluetooth pairing failures (AirPods/CarPlay), and Face ID false rejections reported after the iOS 27.0 launch on Sept 14–18, 2026. No new features."
+    },
+    "upcomingFeature": {
+      "version": "27.1",
+      "label": "iOS 27.1",
+      "expectedDate": "2026-10-15",
+      "status": "expected",
+      "type": "feature",
+      "notes": "Estimated feature update — expected to add Apple Intelligence Custom Voice (general availability), additional Apple Cash features, RCS business messaging, and the Siri EU language rollout. Date is a community estimate, not confirmed by Apple — check Settings for the actual release."
+    },
+    "beta": {
+      "version": "27.2 beta 1",
+      "label": "iOS 27.2 (beta)",
+      "releaseDate": "2026-09-16",
+      "status": "beta",
+      "type": "beta",
+      "notes": "Early developer beta, already in testing for the release after 27.1. Contains App Tracking Transparency changes for EU users and minor StoreKit fixes. Not recommended on a primary device."
+    }
+  },
+
+  "communitySentiment": {
+    "label": "Mostly stable after 27.0.1",
+    "score": "good",
+    "summary": "iOS 27.0 launch-day reports included Wi-Fi drops, Bluetooth pairing failures, and Face ID false rejections on newer Pro models. Apple's 27.0.1 bug-fix patch, released within days, addressed those three issues, and no major new problems have been reported against it since. A temporary battery dip for 24–48 hours after any update is normal while the system reindexes Spotlight and Photos — it is not itself a sign of a bad update.",
+    "sourceNote": "Compiled by hand from public beta-tester and release-note reporting (MacRumors forums, Apple's own release notes, tech press). Not a live feed — refresh this file's data manually after checking current reports, or wire in a real backend if you want continuous monitoring."
+  },
+
+  "pointReleaseAdvice": "Point releases (x.0.1, x.1) bring bug and security fixes with low risk — install those as they appear. The first .0 release of a major version carries the most risk; if you're not in a hurry, waiting for the first bug-fix patch (as happened here with 27.0.1) is a reasonable way to skip the roughest week.",
+
+  "devices": [
+    { "name": "iPhone 11", "chip": "A13 Bionic", "aiCapable": false, "tier": "entry" },
+    { "name": "iPhone 11 Pro / Pro Max", "chip": "A13 Bionic", "aiCapable": false, "tier": "entry" },
+    { "name": "iPhone SE (2nd gen)", "chip": "A13 Bionic", "aiCapable": false, "tier": "entry" },
+    { "name": "iPhone 12 / mini", "chip": "A14 Bionic", "aiCapable": false, "tier": "entry" },
+    { "name": "iPhone 12 Pro / Pro Max", "chip": "A14 Bionic", "aiCapable": false, "tier": "entry" },
+    { "name": "iPhone 13 / mini", "chip": "A15 Bionic", "aiCapable": false, "tier": "entry" },
+    { "name": "iPhone 13 Pro / Pro Max", "chip": "A15 Bionic", "aiCapable": false, "tier": "entry" },
+    { "name": "iPhone SE (3rd gen)", "chip": "A15 Bionic", "aiCapable": false, "tier": "entry" },
+    { "name": "iPhone 14 / Plus", "chip": "A15 Bionic", "aiCapable": false, "tier": "entry" },
+    { "name": "iPhone 14 Pro / Pro Max", "chip": "A16 Bionic", "aiCapable": false, "tier": "mid" },
+    { "name": "iPhone 15 / Plus", "chip": "A16 Bionic", "aiCapable": false, "tier": "mid" },
+    { "name": "iPhone 15 Pro / Pro Max", "chip": "A17 Pro", "aiCapable": true, "tier": "ai" },
+    { "name": "iPhone 16e", "chip": "A18", "aiCapable": true, "tier": "ai" },
+    { "name": "iPhone 16 / Plus", "chip": "A18", "aiCapable": true, "tier": "ai" },
+    { "name": "iPhone 16 Pro / Pro Max", "chip": "A18 Pro", "aiCapable": true, "tier": "ai" },
+    { "name": "iPhone 17", "chip": "A19", "aiCapable": true, "tier": "ai" },
+    { "name": "iPhone 17 Pro / Pro Max", "chip": "A19 Pro", "aiCapable": true, "tier": "ai" },
+    { "name": "iPhone Air", "chip": "A19 Pro", "aiCapable": true, "tier": "ai" }
+  ]
+}
