@@ -1,4 +1,4 @@
-const CACHE_NAME = "update-advisor-v2";
+const CACHE_NAME = "update-advisor-v3";
 const APP_SHELL = [
   "./",
   "./index.html",

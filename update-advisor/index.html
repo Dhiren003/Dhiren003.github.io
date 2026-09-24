@@ -173,6 +173,16 @@ button.primary:active{opacity:.85;}
       <p style="font-size:13.5px;line-height:1.6;margin:0;" id="sentimentSummary"></p>
       <p class="footnote" id="sentimentSource" style="margin-top:10px;"></p>
     </div>
+
+    <div class="card" id="probabilityCard" style="display:none;">
+      <p class="field-label">UPDATE PROBABILITY (MULTI-SOURCE)</p>
+      <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:10px;">
+        <span id="probScore" style="font-size:28px;font-weight:700;font-family:ui-monospace,SF Mono,Menlo,monospace;"></span>
+        <span id="probLabel" style="font-size:14px;color:var(--sub);"></span>
+      </div>
+      <div id="probBreakdown"></div>
+      <p class="footnote" style="margin-top:12px;">Score aggregates Apple official statements, MacRumors/forums, Reddit, recent YouTube reviewer consensus, and historical major-release patterns. Weights are fixed; for production you would refresh this data from live sources or a backend.</p>
+    </div>
   </div>
 
   <p class="footnote" id="dataFreshness"></p>
@@ -194,36 +204,54 @@ const offlinePill = document.getElementById('offlinePill');
 const dataFreshness = document.getElementById('dataFreshness');
 const installHint = document.getElementById('installHint');
 
-// ---------- Version detection (fixed) ----------
-// Primary pattern: "CPU iPhone OS 27_0 like Mac OS X" (also matches iPad's "CPU OS 27_0 like Mac OS X").
-// This is the string Safari controls specifically for the OS version, distinct from
-// the generic "Mac OS X" substring that appears later in the same UA and previously
-// could cause mismatches if matched first.
+// ---------- Version detection (handles Apple UA freeze from iOS 26+) ----------
+// Apple freezes the "CPU iPhone OS X_Y like Mac OS X" token at 18_6 starting with iOS 26.
+// The real version is still present in the Version/x.y tag (and sometimes in other places).
+// Strategy: parse both, then prefer the higher major version when on an iPhone/iPad.
 function detectIOS(){
-  const ua = navigator.userAgent;
-  const m = ua.match(/CPU (?:iPhone )?OS (\d+)_(\d+)(?:_(\d+))?\s+like Mac OS X/);
-  if(m){
-    const major = parseInt(m[1],10), minor = parseInt(m[2],10), patch = m[3]?parseInt(m[3],10):null;
-    return {
-      major, minor, patch,
-      label: (minor === 0 && patch === null) ? `iOS ${major}` : `iOS ${major}.${minor}${patch!==null?"."+patch:""}`,
-      confidence: patch!==null ? "high" : (minor === 0 ? "high — major version only (browser often omits .0)" : "high — patch number not reported by browser"),
-      raw: ua
-    };
+  const ua = navigator.userAgent || "";
+  const isAppleMobile = /iPhone|iPad|iPod/i.test(ua);
+
+  let osMajor=null, osMinor=null, osPatch=null;
+  const osMatch = ua.match(/CPU (?:iPhone )?OS (\d+)_(\d+)(?:_(\d+))?\s+like Mac OS X/);
+  if(osMatch){
+    osMajor = parseInt(osMatch[1],10);
+    osMinor = parseInt(osMatch[2],10);
+    osPatch = osMatch[3] ? parseInt(osMatch[3],10) : null;
   }
-  // Fallback: Safari's own Version/xx.x tag (less reliable — used in desktop-site mode,
-  // some third-party browsers, or if Apple changes the primary string format).
-  const v = ua.match(/Version\/(\d+)\.(\d+)(?:\.(\d+))?/);
-  if(v){
-    const major = parseInt(v[1],10), minor = parseInt(v[2],10), patch = v[3]?parseInt(v[3],10):null;
-    return {
-      major, minor, patch,
-      label: (minor === 0 && patch === null) ? `iOS ${major} (estimated)` : `iOS ${major}.${minor}${patch!==null?"."+patch:""} (estimated)`,
-      confidence: "low — inferred from Safari/Version tag, not OS string directly",
-      raw: ua
-    };
+
+  let verMajor=null, verMinor=null, verPatch=null;
+  const verMatch = ua.match(/Version\/(\d+)\.(\d+)(?:\.(\d+))?/);
+  if(verMatch){
+    verMajor = parseInt(verMatch[1],10);
+    verMinor = parseInt(verMatch[2],10);
+    verPatch = verMatch[3] ? parseInt(verMatch[3],10) : null;
   }
-  return { major:null, minor:null, patch:null, label:null, confidence:"none", raw: ua };
+
+  // Decide which is more trustworthy
+  let major, minor, patch, source, confidence;
+  if(isAppleMobile && verMajor !== null && (osMajor === null || verMajor > osMajor || (verMajor === 18 && osMajor === 18 && verMinor > osMinor))){
+    // Prefer Version/ when it reports a newer major (the freeze case) or a higher minor on the frozen 18.x line
+    major = verMajor; minor = verMinor; patch = verPatch;
+    source = "Version tag (Apple froze the OS token at 18.6 from iOS 26 onward)";
+    confidence = "high — corrected for Apple UA freeze";
+  } else if(osMajor !== null){
+    major = osMajor; minor = osMinor; patch = osPatch;
+    source = "CPU OS token";
+    confidence = patch !== null ? "high" : (minor === 0 ? "high — major only" : "high — patch omitted by browser");
+  } else if(verMajor !== null){
+    major = verMajor; minor = verMinor; patch = verPatch;
+    source = "Version tag (fallback)";
+    confidence = "medium — no OS token found";
+  } else {
+    return { major:null, minor:null, patch:null, label:null, confidence:"none", raw: ua, source: null };
+  }
+
+  const label = (minor === 0 && patch === null)
+    ? `iOS ${major}`
+    : `iOS ${major}.${minor}${patch !== null ? "." + patch : ""}`;
+
+  return { major, minor, patch, label, confidence, raw: ua, source };
 }
 
 const detected = detectIOS();
@@ -239,12 +267,64 @@ let effectiveVersion = detected;
 
 if(detected.label){
   detectedVersionEl.textContent = detected.label;
-  confidenceNote.textContent = "Confidence: " + detected.confidence;
+  confidenceNote.textContent = "Confidence: " + detected.confidence + (detected.source ? " (" + detected.source + ")" : "");
 } else {
   detectedVersionEl.textContent = "Couldn't detect";
   confidenceNote.textContent = "Please set your version manually below.";
   manualBlock.style.display = "block";
 }
+
+// ---------- Approximate iPhone model detection (client-side heuristics) ----------
+// UA never contains the model. We combine screen metrics + DPR + known size table.
+// Accuracy is good for recent generations but not 100% (especially Pro vs non-Pro of same year).
+function detectIPhoneModel(){
+  if(!/iPhone/i.test(navigator.userAgent)) return null;
+  const w = Math.min(screen.width, screen.height);
+  const h = Math.max(screen.width, screen.height);
+  const dpr = window.devicePixelRatio || 1;
+  // Physical pixel dimensions (approx)
+  const pw = Math.round(w * dpr);
+  const ph = Math.round(h * dpr);
+
+  // Known logical / physical signatures (portrait). Order matters — more specific first.
+  // Values are approximate and may need occasional refresh when new models ship.
+  const signatures = [
+    // 2025/2026 models (iPhone 17 series, Air) — placeholders based on expected sizes
+    {name: "iPhone 17 Pro / Pro Max", minW: 430, maxW: 440, minH: 930, maxH: 960, minDpr: 3},
+    {name: "iPhone 17", minW: 390, maxW: 400, minH: 840, maxH: 870, minDpr: 3},
+    {name: "iPhone Air", minW: 390, maxW: 400, minH: 840, maxH: 870, minDpr: 3},
+    // iPhone 16 series
+    {name: "iPhone 16 Pro / Pro Max", minW: 430, maxW: 440, minH: 930, maxH: 960, minDpr: 3},
+    {name: "iPhone 16 / Plus", minW: 390, maxW: 430, minH: 840, maxH: 940, minDpr: 3},
+    {name: "iPhone 16e", minW: 375, maxW: 390, minH: 810, maxH: 850, minDpr: 2.5},
+    // iPhone 15 series
+    {name: "iPhone 15 Pro / Pro Max", minW: 393, maxW: 430, minH: 852, maxH: 932, minDpr: 3},
+    {name: "iPhone 15 / Plus", minW: 393, maxW: 430, minH: 852, maxH: 932, minDpr: 3},
+    // iPhone 14 series
+    {name: "iPhone 14 Pro / Pro Max", minW: 393, maxW: 430, minH: 852, maxH: 932, minDpr: 3},
+    {name: "iPhone 14 / Plus", minW: 390, maxW: 430, minH: 844, maxH: 926, minDpr: 3},
+    // iPhone 13 series
+    {name: "iPhone 13 Pro / Pro Max", minW: 390, maxW: 430, minH: 844, maxH: 926, minDpr: 3},
+    {name: "iPhone 13 / mini", minW: 375, maxW: 390, minH: 812, maxH: 844, minDpr: 3},
+    // iPhone 12 series
+    {name: "iPhone 12 Pro / Pro Max", minW: 390, maxW: 430, minH: 844, maxH: 926, minDpr: 3},
+    {name: "iPhone 12 / mini", minW: 360, maxW: 390, minH: 780, maxH: 844, minDpr: 3},
+    // iPhone 11 / SE
+    {name: "iPhone 11 Pro / Pro Max", minW: 375, maxW: 415, minH: 812, maxH: 896, minDpr: 3},
+    {name: "iPhone 11", minW: 375, maxW: 415, minH: 812, maxH: 896, minDpr: 2},
+    {name: "iPhone SE (3rd gen)", minW: 375, maxW: 380, minH: 667, maxH: 670, minDpr: 2},
+    {name: "iPhone SE (2nd gen)", minW: 375, maxW: 380, minH: 667, maxH: 670, minDpr: 2}
+  ];
+
+  for(const s of signatures){
+    if(w >= s.minW && w <= s.maxW && h >= s.minH && h <= s.maxH && dpr >= (s.minDpr || 2)){
+      return { name: s.name, confidence: "medium — based on screen size & pixel ratio (not 100% unique)" };
+    }
+  }
+  return { name: null, confidence: "low — could not match screen signature" };
+}
+
+const detectedModel = detectIPhoneModel();
 
 correctBtn.addEventListener('click', ()=>{
   manualBlock.style.display = manualBlock.style.display === "block" ? "none" : "block";
@@ -290,7 +370,7 @@ async function loadFeed(){
   }catch(e){
     // service worker cache, or nothing — try cache API directly as last resort
     try{
-      const cache = await caches.open('update-advisor-v2');
+      const cache = await caches.open('update-advisor-v3');
       const cached = await cache.match(DATA_URL);
       if(cached){ FEED = await cached.json(); offlinePill.style.display = "inline-block"; }
     }catch(_e){}
@@ -311,16 +391,39 @@ function populateDevices(){
   placeholder.disabled = true;
   placeholder.selected = true;
   deviceSelect.appendChild(placeholder);
+
+  let matchedIndex = -1;
   FEED.devices.forEach((d,i)=>{
     const o = document.createElement('option'); o.value=i; o.textContent=d.name;
+    // Fuzzy match against detected model name
+    if(detectedModel && detectedModel.name){
+      const det = detectedModel.name.toLowerCase();
+      const cand = d.name.toLowerCase();
+      // Exact or partial (handles "iPhone 15 Pro / Pro Max" vs "iPhone 15 Pro / Pro Max")
+      if(cand === det || cand.includes(det.split(" / ")[0]) || det.includes(cand.split(" / ")[0])){
+        if(matchedIndex === -1) matchedIndex = i; // first good match
+      }
+    }
     deviceSelect.appendChild(o);
   });
+
+  if(matchedIndex >= 0){
+    deviceSelect.value = String(matchedIndex);
+    placeholder.selected = false;
+    // Visual hint
+    const note = document.createElement('div');
+    note.style.cssText = "font-size:12px;color:var(--sub);margin-top:6px;";
+    note.textContent = "Pre-selected from screen size heuristics (" + detectedModel.confidence + "). Change if incorrect.";
+    deviceSelect.parentNode.insertBefore(note, deviceSelect.nextSibling);
+  }
 }
 
 // ---------- Compatibility engine ----------
 function evaluate(device, current){
   const latest = FEED.latestMajorVersion;
   const stable = FEED.channels.stable;
+  const prob = FEED.updateProbability || {};
+  const tierAdvice = (prob.adviceByTier && prob.adviceByTier[device.tier]) || "";
 
   if(current.major !== null && current.major >= latest){
     return {
@@ -330,45 +433,42 @@ function evaluate(device, current){
       reasons:[
         `Your current version (${current.label}) already meets or exceeds ${stable.label}.`,
         FEED.pointReleaseAdvice
-      ]
+      ],
+      probability: null
     };
   }
 
-  if(device.tier === 'entry'){
-    return {
-      cls:"wait", tag:"UPDATE AVAILABLE — WAIT A FEW WEEKS",
-      headline:`${stable.label} is available, but give it a moment on this hardware.`,
-      body:`Your ${device.name} will run ${stable.label} fine, but older chips tend to feel early-release slowdowns more. Combined with current community reports, waiting slightly longer is the lower-risk move.`,
-      reasons:[
-        `${device.name} uses the ${device.chip} — on the older end of Apple's supported range, but still officially compatible.`,
-        "No Apple Intelligence or new Siri features will be available on this chip regardless of when you update.",
-        FEED.communitySentiment.summary,
-        FEED.pointReleaseAdvice
-      ]
-    };
+  // Base score from multi-source data, then slight adjustment by tier
+  let score = prob.overallScore || 70;
+  if(device.tier === "entry") score = Math.max(40, score - 15);
+  else if(device.tier === "mid") score = Math.max(50, score - 5);
+  // ai tier keeps the base score
+
+  let cls, tag, headline, body;
+  if(score >= 75){
+    cls = "go"; tag = "UPDATE NOW";
+    headline = `${stable.label} is recommended for your ${device.name}.`;
+    body = tierAdvice || `Current multi-source signals look favourable.`;
+  } else if(score >= 55){
+    cls = "wait"; tag = "UPDATE AVAILABLE — CONSIDER WAITING";
+    headline = `${stable.label} is out, but a short wait may be lower risk on this device.`;
+    body = tierAdvice || `Community reports are still settling. Waiting a few more days (or the first point release) is reasonable.`;
+  } else {
+    cls = "skip"; tag = "WAIT FOR A POINT RELEASE";
+    headline = `Better to hold off on ${stable.label} for now.`;
+    body = tierAdvice || `Early signals suggest higher friction on this hardware class.`;
   }
-  if(device.tier === 'mid'){
-    return {
-      cls:"go", tag:"UPDATE NOW",
-      headline:`${stable.label} is a safe, worthwhile update.`,
-      body:`Your ${device.name} has enough headroom to run ${stable.label} smoothly, and current reports show the launch-week issues are already patched.`,
-      reasons:[
-        `${device.name}'s ${device.chip} comfortably handles ${stable.label}'s requirements.`,
-        "Apple Intelligence and the newest Siri features are chip-gated to iPhone 15 Pro and later, so you won't see those — but nothing else is held back.",
-        FEED.communitySentiment.summary
-      ]
-    };
-  }
-  return {
-    cls:"go", tag:"UPDATE NOW",
-    headline:`${stable.label} is a full, recommended update.`,
-    body:`Your ${device.name} qualifies for every ${stable.label} feature, including the new Siri and Apple Intelligence tools, and known launch-week bugs are already patched.`,
-    reasons:[
-      `${device.name}'s ${device.chip} meets Apple's requirement for Apple Intelligence and the new Siri AI features.`,
-      "You'll get the full feature set Apple designed this release around.",
-      FEED.communitySentiment.summary
-    ]
-  };
+
+  const reasons = [
+    `${device.name} (${device.chip}) — tier: ${device.tier}.`,
+    device.aiCapable
+      ? "This chip fully supports Siri AI / Apple Intelligence features."
+      : "Apple Intelligence / Siri AI features are not available on this chip.",
+    FEED.communitySentiment.summary,
+    FEED.pointReleaseAdvice
+  ];
+
+  return { cls, tag, headline, body, reasons, probability: { score, label: prob.label, breakdown: prob.breakdown || [] } };
 }
 
 function renderChannels(){
@@ -432,6 +532,27 @@ document.getElementById('checkBtn').addEventListener('click', ()=>{
   document.getElementById('sentimentScore').textContent = FEED.communitySentiment.label;
   document.getElementById('sentimentSummary').textContent = FEED.communitySentiment.summary;
   document.getElementById('sentimentSource').textContent = FEED.communitySentiment.sourceNote;
+
+  // Probability / multi-source panel
+  const probCard = document.getElementById('probabilityCard');
+  if(r.probability && r.probability.score != null){
+    probCard.style.display = 'block';
+    const sc = r.probability.score;
+    const scoreEl = document.getElementById('probScore');
+    scoreEl.textContent = sc + "/100";
+    scoreEl.style.color = sc >= 75 ? "var(--go)" : (sc >= 55 ? "var(--wait)" : "var(--skip)");
+    document.getElementById('probLabel').textContent = r.probability.label || "";
+    const bd = document.getElementById('probBreakdown');
+    bd.innerHTML = "";
+    (r.probability.breakdown || []).forEach(item => {
+      const row = document.createElement('div');
+      row.style.cssText = "padding:8px 0;border-bottom:1px solid var(--line);font-size:13px;";
+      row.innerHTML = `<div style="display:flex;justify-content:space-between;gap:8px;"><strong>${item.source}</strong><span style="font-family:ui-monospace,monospace;">${item.score}/100 · wt ${item.weight}</span></div><div style="color:var(--sub);margin-top:2px;">${item.note}</div>`;
+      bd.appendChild(row);
+    });
+  } else {
+    probCard.style.display = 'none';
+  }
 
   document.getElementById('result').style.display = 'block';
   document.getElementById('result').scrollIntoView({behavior:'smooth', block:'start'});
