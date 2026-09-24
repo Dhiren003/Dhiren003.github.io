@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Update Advisor</title>
+<style>
+:root{
+  --bg:#FAFAF7; --surface:#FFFFFF; --ink:#1C1C1E; --sub:#6E6E73;
+  --line:#E4E3DF; --go:#1C7C4C; --go-bg:#EAF6EE;
+  --wait:#9A6B00; --wait-bg:#FBF2DD;
+  --skip:#B3261E; --skip-bg:#FBEAE9;
+  --accent:#2557D6;
+  font-size:16px;
+}
+:root:not([data-theme="light"]){}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F0F10; --surface:#19191B; --ink:#F2F2F0; --sub:#9A9A9E;
+    --line:#2C2C2E; --go:#4ADE80; --go-bg:#12271C;
+    --wait:#F5C451; --wait-bg:#2A2210;
+    --skip:#F27C74; --skip-bg:#2A1615;
+    --accent:#7DA1FF;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F0F10; --surface:#19191B; --ink:#F2F2F0; --sub:#9A9A9E;
+  --line:#2C2C2E; --go:#4ADE80; --go-bg:#12271C;
+  --wait:#F5C451; --wait-bg:#2A2210;
+  --skip:#F27C74; --skip-bg:#2A1615;
+  --accent:#7DA1FF;
+}
+*{box-sizing:border-box;}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  -webkit-text-size-adjust:100%;
+}
+.wrap{max-width:520px;margin:0 auto;padding:28px 20px 60px;}
+.eyebrow{
+  font-family:ui-monospace,"SF Mono",Menlo,monospace;
+  font-size:12.5px; letter-spacing:.02em; color:var(--sub); margin:0 0 6px;
+}
+h1{
+  font-size:26px; line-height:1.15; margin:0 0 4px; font-weight:650;
+  letter-spacing:-0.01em;
+}
+.lede{color:var(--sub); font-size:14.5px; margin:0 0 22px; line-height:1.5; max-width:38ch;}
+
+.card{
+  background:var(--surface); border:1px solid var(--line); border-radius:14px;
+  padding:18px; margin-bottom:14px;
+}
+.field-label{font-size:12.5px; color:var(--sub); margin:0 0 8px; font-family:ui-monospace,"SF Mono",Menlo,monospace;}
+select{
+  width:100%; appearance:none; -webkit-appearance:none;
+  background:var(--bg); color:var(--ink); border:1px solid var(--line);
+  border-radius:10px; padding:12px 14px; font-size:16px; font-family:inherit;
+  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="%236E6E73" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+  background-repeat:no-repeat; background-position:right 12px center;
+}
+.detect-row{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:12px;}
+.detect-text{font-size:13px; color:var(--sub);}
+.detect-val{font-family:ui-monospace,"SF Mono",Menlo,monospace; color:var(--ink); font-weight:600;}
+button.primary{
+  width:100%; background:var(--accent); color:#fff; border:none; border-radius:10px;
+  padding:14px; font-size:16px; font-weight:600; margin-top:16px; cursor:pointer;
+}
+button.primary:active{opacity:.85;}
+
+#result{display:none;}
+.verdict{
+  border-radius:14px; padding:20px; margin-bottom:14px; border:1px solid var(--line);
+}
+.verdict.go{background:var(--go-bg); border-color:transparent;}
+.verdict.wait{background:var(--wait-bg); border-color:transparent;}
+.verdict.skip{background:var(--skip-bg); border-color:transparent;}
+.verdict .tag{
+  font-family:ui-monospace,"SF Mono",Menlo,monospace; font-size:12px; font-weight:700;
+  letter-spacing:.02em; margin-bottom:8px; display:block;
+}
+.verdict.go .tag{color:var(--go);}
+.verdict.wait .tag{color:var(--wait);}
+.verdict.skip .tag{color:var(--skip);}
+.verdict h2{margin:0 0 8px; font-size:20px; line-height:1.25;}
+.verdict p{margin:0; font-size:14.5px; line-height:1.55; color:var(--ink);}
+
+.detail-row{
+  display:flex; justify-content:space-between; gap:12px; padding:11px 0;
+  border-bottom:1px solid var(--line); font-size:14px;
+}
+.detail-row:last-child{border-bottom:none;}
+.detail-row .k{color:var(--sub);}
+.detail-row .v{text-align:right; font-weight:560;}
+
+.reasons{margin:0; padding-left:18px;}
+.reasons li{font-size:14px; line-height:1.6; margin-bottom:6px; color:var(--ink);}
+
+.footnote{font-size:12px; color:var(--sub); margin-top:20px; line-height:1.5;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">UPDATE ADVISOR</p>
+  <h1>Should you update?</h1>
+  <p class="lede">Pick your iPhone. We'll check the latest iOS release against your device and tell you whether to update now, wait, or skip — with the reasoning.</p>
+
+  <div class="card">
+    <p class="field-label">YOUR IPHONE</p>
+    <select id="deviceSelect"></select>
+
+    <div class="detect-row">
+      <span class="detect-text">Detected iOS on this device</span>
+      <span class="detect-val" id="detectedVersion">—</span>
+    </div>
+    <div class="detect-row" id="manualRow" style="display:none;">
+      <span class="detect-text">Or enter your current iOS version</span>
+    </div>
+    <select id="currentSelect" style="display:none; margin-top:8px;"></select>
+
+    <button class="primary" id="checkBtn">Check compatibility</button>
+  </div>
+
+  <div id="result">
+    <div class="verdict" id="verdictCard">
+      <span class="tag" id="verdictTag"></span>
+      <h2 id="verdictHeadline"></h2>
+      <p id="verdictBody"></p>
+    </div>
+
+    <div class="card">
+      <div class="detail-row"><span class="k">Your device</span><span class="v" id="dDevice"></span></div>
+      <div class="detail-row"><span class="k">Current version</span><span class="v" id="dCurrent"></span></div>
+      <div class="detail-row"><span class="k">Latest available</span><span class="v" id="dLatest"></span></div>
+      <div class="detail-row"><span class="k">Chip</span><span class="v" id="dChip"></span></div>
+      <div class="detail-row"><span class="k">Apple Intelligence</span><span class="v" id="dAI"></span></div>
+    </div>
+
+    <div class="card">
+      <p class="field-label">WHY</p>
+      <ul class="reasons" id="reasonList"></ul>
+    </div>
+  </div>
+
+  <p class="footnote">Compatibility data reflects Apple's official iOS 27 device list as of September 2026. Point-release stability notes are general guidance, not live crowd data — always check Settings → General → Software Update for what's actually available on your device.</p>
+</div>
+
+<script>
+const LATEST_MAJOR = 27;
+const LATEST_LABEL = "iOS 27";
+const LATEST_POINT_ADVICE = "iOS 27.0 shipped September 14, 2026. As with most .0 releases, early battery-drain and minor bug reports are common in the first few weeks — Apple typically ships a 27.1 stability patch within a month.";
+
+// device: [label, minSupported(bool - all these ARE iOS27 compatible), chip, aiCapable, tier]
+// tier: 'entry' (A13/A14/A15 non-Pro), 'mid' (A16/A17 non-AI-qualifying), 'ai' (AI-capable)
+const DEVICES = [
+  ["iPhone 11", "A13 Bionic", false, "entry"],
+  ["iPhone 11 Pro / Pro Max", "A13 Bionic", false, "entry"],
+  ["iPhone SE (2nd gen)", "A13 Bionic", false, "entry"],
+  ["iPhone 12 / mini", "A14 Bionic", false, "entry"],
+  ["iPhone 12 Pro / Pro Max", "A14 Bionic", false, "entry"],
+  ["iPhone 13 / mini", "A15 Bionic", false, "entry"],
+  ["iPhone 13 Pro / Pro Max", "A15 Bionic", false, "entry"],
+  ["iPhone SE (3rd gen)", "A15 Bionic", false, "entry"],
+  ["iPhone 14 / Plus", "A15 Bionic", false, "entry"],
+  ["iPhone 14 Pro / Pro Max", "A16 Bionic", false, "mid"],
+  ["iPhone 15 / Plus", "A16 Bionic", false, "mid"],
+  ["iPhone 15 Pro / Pro Max", "A17 Pro", true, "ai"],
+  ["iPhone 16e", "A18", true, "ai"],
+  ["iPhone 16 / Plus", "A18", true, "ai"],
+  ["iPhone 16 Pro / Pro Max", "A18 Pro", true, "ai"],
+  ["iPhone 17", "A19", true, "ai"],
+  ["iPhone 17 Pro / Pro Max", "A19 Pro", true, "ai"],
+  ["iPhone Air", "A19 Pro", true, "ai"],
+];
+
+const deviceSelect = document.getElementById('deviceSelect');
+DEVICES.forEach((d,i)=>{
+  const o = document.createElement('option');
+  o.value = i; o.textContent = d[0];
+  deviceSelect.appendChild(o);
+});
+
+// Try to auto-detect current iOS version from UA (works in Safari on iPhone)
+function detectIOSVersion(){
+  const ua = navigator.userAgent;
+  const m = ua.match(/OS (\d+)_(\d+)(?:_(\d+))?/);
+  if(m){ return {major:parseInt(m[1],10), minor:parseInt(m[2],10), patch:m[3]?parseInt(m[3],10):0, label:`iOS ${m[1]}.${m[2]}${m[3]?"."+m[3]:""}`}; }
+  return null;
+}
+const detected = detectIOSVersion();
+const detectedVersionEl = document.getElementById('detectedVersion');
+const manualRow = document.getElementById('manualRow');
+const currentSelect = document.getElementById('currentSelect');
+
+if(detected){
+  detectedVersionEl.textContent = detected.label;
+} else {
+  detectedVersionEl.textContent = "not detected";
+  manualRow.style.display = "flex";
+  currentSelect.style.display = "block";
+  const versions = ["iOS 27","iOS 26","iOS 18","iOS 17","iOS 16 or earlier"];
+  versions.forEach(v=>{
+    const o = document.createElement('option'); o.value=v; o.textContent=v;
+    currentSelect.appendChild(o);
+  });
+}
+
+document.getElementById('checkBtn').addEventListener('click', ()=>{
+  const idx = parseInt(deviceSelect.value || 0, 10);
+  const [name, chip, aiCapable, tier] = DEVICES[idx];
+
+  let currentMajor;
+  if(detected){ currentMajor = detected.major; }
+  else{
+    const map = {"iOS 27":27,"iOS 26":26,"iOS 18":18,"iOS 17":17,"iOS 16 or earlier":16};
+    currentMajor = map[currentSelect.value] || 16;
+  }
+  const currentLabel = detected ? detected.label : currentSelect.value;
+
+  const card = document.getElementById('verdictCard');
+  const tag = document.getElementById('verdictTag');
+  const headline = document.getElementById('verdictHeadline');
+  const body = document.getElementById('verdictBody');
+  const reasons = document.getElementById('reasonList');
+  reasons.innerHTML = "";
+
+  document.getElementById('dDevice').textContent = name;
+  document.getElementById('dCurrent').textContent = currentLabel;
+  document.getElementById('dLatest').textContent = LATEST_LABEL + " (all listed devices supported)";
+  document.getElementById('dChip').textContent = chip;
+  document.getElementById('dAI').textContent = aiCapable ? "Fully supported" : "Not available on this chip";
+
+  card.classList.remove('go','wait','skip');
+  let reasonItems = [];
+
+  if(currentMajor >= LATEST_MAJOR){
+    card.classList.add('go');
+    tag.textContent = "UP TO DATE";
+    headline.textContent = "You're already on the latest version.";
+    body.textContent = "There's nothing to update right now. Keep an eye on Settings for future point releases (like 27.1) that fix early bugs.";
+    reasonItems = [
+      `Your detected version (${currentLabel}) already meets or exceeds ${LATEST_LABEL}.`,
+      "Point releases (x.1, x.2) bring bug and security fixes with minimal risk — install those as they appear."
+    ];
+  } else {
+    // an update is available
+    if(tier === 'entry'){
+      card.classList.add('wait');
+      tag.textContent = "UPDATE AVAILABLE — WAIT A FEW WEEKS";
+      headline.textContent = `${LATEST_LABEL} is available, but give it a moment on this hardware.`;
+      body.textContent = `Your ${name} will run ${LATEST_LABEL} fine, but older chips tend to feel .0-release slowdowns more than newer ones. Waiting for the first stability patch is the lower-risk move.`;
+      reasonItems = [
+        `${name} uses the ${chip} — it's on the older end of Apple's currently supported range, but still officially compatible.`,
+        "No Apple Intelligence / new Siri features will be available on this chip regardless of when you update.",
+        LATEST_POINT_ADVICE,
+        "You'll still get security patches and the new visual design once you do update — just not urgent."
+      ];
+    } else if(tier === 'mid'){
+      card.classList.add('go');
+      tag.textContent = "UPDATE NOW";
+      headline.textContent = `${LATEST_LABEL} is a safe, worthwhile update.`;
+      body.textContent = `Your ${name} has enough performance headroom to run ${LATEST_LABEL} smoothly. You won't get the newest AI features, but everything else — design, security, stability — is a clean gain.`;
+      reasonItems = [
+        `${name}'s ${chip} comfortably handles ${LATEST_LABEL}'s system requirements.`,
+        "Apple Intelligence and the newest Siri features are chip-gated to iPhone 15 Pro and later, so you won't see those — but nothing else is held back.",
+        "Security and performance patches alone make this worth installing within the first couple of weeks."
+      ];
+    } else {
+      card.classList.add('go');
+      tag.textContent = "UPDATE NOW";
+      headline.textContent = `${LATEST_LABEL} is a full, recommended update.`;
+      body.textContent = `Your ${name} qualifies for every ${LATEST_LABEL} feature, including the new Siri and Apple Intelligence tools. There's no reason to hold back.`;
+      reasonItems = [
+        `${name}'s ${chip} meets Apple's requirement for Apple Intelligence and the new Siri AI features.`,
+        "You'll get the full feature set Apple designed this release around.",
+        "If you're risk-averse, waiting 1–2 weeks for early bug reports to surface is reasonable — but there's no compatibility reason to delay."
+      ];
+    }
+  }
+
+  reasonItems.forEach(r=>{
+    const li = document.createElement('li'); li.textContent = r; reasons.appendChild(li);
+  });
+
+  document.getElementById('result').style.display = 'block';
+  document.getElementById('result').scrollIntoView({behavior:'smooth', block:'start'});
+});
+</script>
+</body>
+</html>
