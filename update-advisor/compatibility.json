@@ -4,12 +4,12 @@
 
   "channels": {
     "stable": {
-      "version": "27.0.1",
-      "label": "iOS 27.0.1",
-      "releaseDate": "2026-09-18",
+      "version": "27",
+      "label": "iOS 27",
+      "releaseDate": "2026-09-14",
       "status": "released",
-      "type": "bugfix",
-      "notes": "Bug-fix-only release addressing Wi-Fi disconnects, Bluetooth pairing failures (AirPods/CarPlay), and Face ID false rejections reported after the iOS 27.0 launch on Sept 14–18, 2026. No new features."
+      "type": "feature",
+      "notes": "Major release introducing Siri AI (the next generation of Apple Intelligence), improved performance (faster app launches, Photos loading, and AirDrop), powerful parental controls, and an expansive set of software improvements. Available on iPhone 11 and later. Some features (including full Siri AI) are chip-gated to newer models."
     },
     "upcomingFeature": {
       "version": "27.1",
@@ -17,26 +17,26 @@
       "expectedDate": "2026-10-15",
       "status": "expected",
       "type": "feature",
-      "notes": "Estimated feature update — expected to add Apple Intelligence Custom Voice (general availability), additional Apple Cash features, RCS business messaging, and the Siri EU language rollout. Date is a community estimate, not confirmed by Apple — check Settings for the actual release."
+      "notes": "Estimated feature update — expected to expand Siri AI language support (French, Japanese, Korean, Portuguese, Spanish), additional Apple Cash features, RCS business messaging, and further refinements. Date is a community estimate, not confirmed by Apple — check Settings > General > Software Update for the actual release."
     },
     "beta": {
-      "version": "27.2 beta 1",
+      "version": "27.2 beta 2",
       "label": "iOS 27.2 (beta)",
-      "releaseDate": "2026-09-16",
+      "releaseDate": "2026-09-21",
       "status": "beta",
       "type": "beta",
-      "notes": "Early developer beta, already in testing for the release after 27.1. Contains App Tracking Transparency changes for EU users and minor StoreKit fixes. Not recommended on a primary device."
+      "notes": "Developer beta already in testing. Contains early work on the release after 27.1. Not recommended on a primary device."
     }
   },
 
   "communitySentiment": {
-    "label": "Mostly stable after 27.0.1",
+    "label": "Generally positive after launch week",
     "score": "good",
-    "summary": "iOS 27.0 launch-day reports included Wi-Fi drops, Bluetooth pairing failures, and Face ID false rejections on newer Pro models. Apple's 27.0.1 bug-fix patch, released within days, addressed those three issues, and no major new problems have been reported against it since. A temporary battery dip for 24–48 hours after any update is normal while the system reindexes Spotlight and Photos — it is not itself a sign of a bad update.",
-    "sourceNote": "Compiled by hand from public beta-tester and release-note reporting (MacRumors forums, Apple's own release notes, tech press). Not a live feed — refresh this file's data manually after checking current reports, or wire in a real backend if you want continuous monitoring."
+    "summary": "iOS 27 launched on September 14 with the expected major-version teething issues reported in the first few days (intermittent Wi-Fi drops, Bluetooth pairing hiccups with AirPods/CarPlay, and occasional Face ID false rejections on the newest Pro models). Most of those reports subsided quickly. A temporary battery dip for 24–48 hours after any major update is normal while the system reindexes Spotlight and Photos — it is not itself a sign of a bad update. Overall reception of Siri AI and the performance improvements has been positive on supported hardware.",
+    "sourceNote": "Compiled by hand from public reporting (Apple Newsroom, developer release notes, MacRumors forums, tech press). Not a live feed — refresh this file's data manually after checking current reports, or wire in a real backend if you want continuous monitoring."
   },
 
-  "pointReleaseAdvice": "Point releases (x.0.1, x.1) bring bug and security fixes with low risk — install those as they appear. The first .0 release of a major version carries the most risk; if you're not in a hurry, waiting for the first bug-fix patch (as happened here with 27.0.1) is a reasonable way to skip the roughest week.",
+  "pointReleaseAdvice": "Major .0 releases carry the highest early risk. Point releases (x.0.1, x.1) bring bug and security fixes with lower risk — install those as they appear. If you're not in a hurry and your device is older, waiting a week or two after a major launch is a reasonable way to skip the roughest days.",
 
   "devices": [
     { "name": "iPhone 11", "chip": "A13 Bionic", "aiCapable": false, "tier": "entry" },

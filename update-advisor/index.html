@@ -195,7 +195,7 @@ const dataFreshness = document.getElementById('dataFreshness');
 const installHint = document.getElementById('installHint');
 
 // ---------- Version detection (fixed) ----------
-// Primary pattern: "CPU iPhone OS 27_0_1 like Mac OS X" (also matches iPad's "CPU OS 27_0 like Mac OS X").
+// Primary pattern: "CPU iPhone OS 27_0 like Mac OS X" (also matches iPad's "CPU OS 27_0 like Mac OS X").
 // This is the string Safari controls specifically for the OS version, distinct from
 // the generic "Mac OS X" substring that appears later in the same UA and previously
 // could cause mismatches if matched first.
@@ -206,8 +206,8 @@ function detectIOS(){
     const major = parseInt(m[1],10), minor = parseInt(m[2],10), patch = m[3]?parseInt(m[3],10):null;
     return {
       major, minor, patch,
-      label: `iOS ${major}.${minor}${patch!==null?"."+patch:""}`,
-      confidence: patch!==null ? "high" : "high — patch number not reported by browser",
+      label: (minor === 0 && patch === null) ? `iOS ${major}` : `iOS ${major}.${minor}${patch!==null?"."+patch:""}`,
+      confidence: patch!==null ? "high" : (minor === 0 ? "high — major version only (browser often omits .0)" : "high — patch number not reported by browser"),
       raw: ua
     };
   }
@@ -218,8 +218,8 @@ function detectIOS(){
     const major = parseInt(v[1],10), minor = parseInt(v[2],10), patch = v[3]?parseInt(v[3],10):null;
     return {
       major, minor, patch,
-      label: `iOS ${major}.${minor}${patch!==null?"."+patch:""} (estimated)`,
-      confidence: "low — inferred from Safari version, not OS string directly",
+      label: (minor === 0 && patch === null) ? `iOS ${major} (estimated)` : `iOS ${major}.${minor}${patch!==null?"."+patch:""} (estimated)`,
+      confidence: "low — inferred from Safari/Version tag, not OS string directly",
       raw: ua
     };
   }
@@ -229,7 +229,7 @@ function detectIOS(){
 const detected = detectIOS();
 rawUAEl.textContent = detected.raw;
 
-const MANUAL_VERSIONS = ["27.2","27.1","27.0.1","27.0","26","18","17 or earlier"];
+const MANUAL_VERSIONS = ["27.2","27.1","27.0","27","26","18","17 or earlier"];
 MANUAL_VERSIONS.forEach(v=>{
   const o = document.createElement('option'); o.value=v; o.textContent = "iOS "+v;
   manualSelect.appendChild(o);
@@ -265,9 +265,12 @@ manualSelect.addEventListener('change', ()=>{
 
 // ---------- Install hint ----------
 const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-const isIOSSafari = /iphone|ipad|ipod/i.test(navigator.userAgent) && /safari/i.test(navigator.userAgent) && !/crios|fxios/i.test(navigator.userAgent);
-if(!isStandalone && isIOSSafari){
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+if(!isStandalone && isIOS){
   installHint.style.display = "block";
+  if(/crios|fxios|edgios|opios/i.test(navigator.userAgent)){
+    installHint.innerHTML = "On this browser you can still use the app offline after the first visit (via the service worker). For a full home-screen icon experience, open this page in Safari and use <strong>Share → Add to Home Screen</strong>.";
+  }
 }
 
 // ---------- Service worker (offline support) ----------
@@ -287,7 +290,7 @@ async function loadFeed(){
   }catch(e){
     // service worker cache, or nothing — try cache API directly as last resort
     try{
-      const cache = await caches.open('update-advisor-v1');
+      const cache = await caches.open('update-advisor-v2');
       const cached = await cache.match(DATA_URL);
       if(cached){ FEED = await cached.json(); offlinePill.style.display = "inline-block"; }
     }catch(_e){}
@@ -302,6 +305,12 @@ async function loadFeed(){
 
 function populateDevices(){
   deviceSelect.innerHTML = "";
+  const placeholder = document.createElement('option');
+  placeholder.value = "";
+  placeholder.textContent = "Choose your iPhone…";
+  placeholder.disabled = true;
+  placeholder.selected = true;
+  deviceSelect.appendChild(placeholder);
   FEED.devices.forEach((d,i)=>{
     const o = document.createElement('option'); o.value=i; o.textContent=d.name;
     deviceSelect.appendChild(o);
@@ -390,7 +399,12 @@ function renderChannels(){
 
 document.getElementById('checkBtn').addEventListener('click', ()=>{
   if(!FEED){ return; }
-  const idx = parseInt(deviceSelect.value || 0, 10);
+  if(deviceSelect.value === "" || deviceSelect.selectedIndex === 0){
+    deviceSelect.focus();
+    alert("Please select your iPhone model first.");
+    return;
+  }
+  const idx = parseInt(deviceSelect.value, 10);
   const device = FEED.devices[idx];
   const r = evaluate(device, effectiveVersion);
 
