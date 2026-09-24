@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Update Advisor">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Update Advisor</title>
+<style>
+:root{
+  --bg:#FAFAF7; --surface:#FFFFFF; --ink:#1C1C1E; --sub:#6E6E73;
+  --line:#E4E3DF; --go:#1C7C4C; --go-bg:#EAF6EE;
+  --wait:#9A6B00; --wait-bg:#FBF2DD;
+  --skip:#B3261E; --skip-bg:#FBEAE9;
+  --accent:#2557D6; --accent-bg:#EAF0FE;
+  font-size:16px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F0F10; --surface:#19191B; --ink:#F2F2F0; --sub:#9A9A9E;
+    --line:#2C2C2E; --go:#4ADE80; --go-bg:#12271C;
+    --wait:#F5C451; --wait-bg:#2A2210;
+    --skip:#F27C74; --skip-bg:#2A1615;
+    --accent:#7DA1FF; --accent-bg:#182338;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F0F10; --surface:#19191B; --ink:#F2F2F0; --sub:#9A9A9E;
+  --line:#2C2C2E; --go:#4ADE80; --go-bg:#12271C;
+  --wait:#F5C451; --wait-bg:#2A2210;
+  --skip:#F27C74; --skip-bg:#2A1615;
+  --accent:#7DA1FF; --accent-bg:#182338;
+}
+*{box-sizing:border-box;}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  -webkit-text-size-adjust:100%;
+}
+.wrap{max-width:520px;margin:0 auto;padding:24px 20px 60px;}
+.eyebrow{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:12.5px;letter-spacing:.02em;color:var(--sub);margin:0 0 6px;display:flex;align-items:center;gap:8px;}
+.offline-pill{background:var(--wait-bg);color:var(--wait);border-radius:999px;padding:2px 8px;font-size:11px;font-weight:700;}
+h1{font-size:25px;line-height:1.15;margin:0 0 4px;font-weight:650;letter-spacing:-0.01em;}
+.lede{color:var(--sub);font-size:14.5px;margin:0 0 20px;line-height:1.5;max-width:38ch;}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px;}
+.field-label{font-size:12.5px;color:var(--sub);margin:0 0 8px;font-family:ui-monospace,"SF Mono",Menlo,monospace;}
+select{
+  width:100%;appearance:none;-webkit-appearance:none;background:var(--bg);color:var(--ink);
+  border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:16px;font-family:inherit;
+  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="%236E6E73" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+  background-repeat:no-repeat;background-position:right 12px center;
+}
+.detect-block{margin-top:14px;padding:12px;background:var(--accent-bg);border-radius:10px;}
+.detect-top{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.detect-text{font-size:12.5px;color:var(--sub);}
+.detect-val{font-family:ui-monospace,"SF Mono",Menlo,monospace;color:var(--accent);font-weight:700;font-size:14px;}
+.confidence{font-size:11px;color:var(--sub);margin-top:2px;}
+.correct-link{background:none;border:none;color:var(--accent);font-size:12.5px;font-weight:600;padding:0;margin-top:8px;cursor:pointer;text-decoration:underline;}
+#manualBlock{display:none;margin-top:10px;}
+
+button.primary{width:100%;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:14px;font-size:16px;font-weight:600;margin-top:16px;cursor:pointer;}
+button.primary:active{opacity:.85;}
+.install-hint{display:none;margin-top:12px;padding:12px 14px;background:var(--go-bg);border-radius:10px;font-size:13px;color:var(--ink);line-height:1.5;}
+
+#result{display:none;}
+.verdict{border-radius:14px;padding:20px;margin-bottom:14px;border:1px solid var(--line);}
+.verdict.go{background:var(--go-bg);border-color:transparent;}
+.verdict.wait{background:var(--wait-bg);border-color:transparent;}
+.verdict.skip{background:var(--skip-bg);border-color:transparent;}
+.verdict .tag{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:12px;font-weight:700;letter-spacing:.02em;margin-bottom:8px;display:block;}
+.verdict.go .tag{color:var(--go);}
+.verdict.wait .tag{color:var(--wait);}
+.verdict.skip .tag{color:var(--skip);}
+.verdict h2{margin:0 0 8px;font-size:20px;line-height:1.25;}
+.verdict p{margin:0;font-size:14.5px;line-height:1.55;color:var(--ink);}
+
+.detail-row{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);font-size:14px;}
+.detail-row:last-child{border-bottom:none;}
+.detail-row .k{color:var(--sub);}
+.detail-row .v{text-align:right;font-weight:560;}
+
+.reasons{margin:0;padding-left:18px;}
+.reasons li{font-size:14px;line-height:1.6;margin-bottom:6px;color:var(--ink);}
+
+.channel-row{padding:12px 0;border-bottom:1px solid var(--line);}
+.channel-row:last-child{border-bottom:none;}
+.channel-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
+.channel-name{font-weight:650;font-size:14.5px;}
+.channel-badge{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:999px;white-space:nowrap;}
+.badge-released{background:var(--go-bg);color:var(--go);}
+.badge-expected{background:var(--wait-bg);color:var(--wait);}
+.badge-beta{background:var(--skip-bg);color:var(--skip);}
+.channel-date{font-size:12px;color:var(--sub);margin-top:2px;}
+.channel-notes{font-size:13px;color:var(--ink);margin-top:6px;line-height:1.5;}
+
+.sentiment-score{display:inline-block;font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--go-bg);color:var(--go);margin-bottom:8px;}
+
+.debug{margin-top:10px;}
+.debug summary{font-size:12px;color:var(--sub);cursor:pointer;}
+.debug pre{font-size:10.5px;white-space:pre-wrap;word-break:break-all;color:var(--sub);background:var(--bg);padding:10px;border-radius:8px;margin-top:6px;}
+
+.footnote{font-size:12px;color:var(--sub);margin-top:20px;line-height:1.5;}
+.footnote + .footnote{margin-top:10px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">UPDATE ADVISOR <span id="offlinePill" class="offline-pill" style="display:none;">OFFLINE DATA</span></p>
+  <h1>Should you update?</h1>
+  <p class="lede">Pick your iPhone. We'll compare the latest iOS release against your device, factor in known post-launch issues, and tell you whether to update now, wait, or skip.</p>
+
+  <div class="card">
+    <p class="field-label">YOUR IPHONE</p>
+    <select id="deviceSelect"></select>
+
+    <div class="detect-block">
+      <div class="detect-top">
+        <span class="detect-text">Detected on this device</span>
+        <span class="detect-val" id="detectedVersion">Checking…</span>
+      </div>
+      <div class="confidence" id="confidenceNote"></div>
+      <button class="correct-link" id="correctBtn" type="button">This looks wrong — let me set it</button>
+      <div id="manualBlock">
+        <select id="manualSelect"></select>
+      </div>
+      <details class="debug">
+        <summary>Show what the browser reported (debug)</summary>
+        <pre id="rawUA"></pre>
+      </details>
+    </div>
+
+    <button class="primary" id="checkBtn">Check compatibility</button>
+    <div class="install-hint" id="installHint">
+      Tap the <strong>Share</strong> icon in Safari, then <strong>Add to Home Screen</strong> — this app installs like a native app and keeps working offline after your first visit.
+    </div>
+  </div>
+
+  <div id="result">
+    <div class="verdict" id="verdictCard">
+      <span class="tag" id="verdictTag"></span>
+      <h2 id="verdictHeadline"></h2>
+      <p id="verdictBody"></p>
+    </div>
+
+    <div class="card">
+      <div class="detail-row"><span class="k">Device</span><span class="v" id="dDevice"></span></div>
+      <div class="detail-row"><span class="k">Current version</span><span class="v" id="dCurrent"></span></div>
+      <div class="detail-row"><span class="k">Latest stable</span><span class="v" id="dLatest"></span></div>
+      <div class="detail-row"><span class="k">Chip</span><span class="v" id="dChip"></span></div>
+      <div class="detail-row"><span class="k">Apple Intelligence</span><span class="v" id="dAI"></span></div>
+    </div>
+
+    <div class="card">
+      <p class="field-label">WHY</p>
+      <ul class="reasons" id="reasonList"></ul>
+    </div>
+
+    <div class="card">
+      <p class="field-label">RELEASE TIMELINE</p>
+      <div id="channelList"></div>
+    </div>
+
+    <div class="card">
+      <p class="field-label">COMMUNITY SIGNAL</p>
+      <span class="sentiment-score" id="sentimentScore"></span>
+      <p style="font-size:13.5px;line-height:1.6;margin:0;" id="sentimentSummary"></p>
+      <p class="footnote" id="sentimentSource" style="margin-top:10px;"></p>
+    </div>
+  </div>
+
+  <p class="footnote" id="dataFreshness"></p>
+  <p class="footnote">Version detection reads your browser's user-agent string — the only signal a website can access. It's reliable for the major version (what compatibility decisions depend on) but can't always confirm a small patch number like .0 vs .0.1, and will be wrong if "Request Desktop Website" is on for this page. Use "This looks wrong" to correct it manually.</p>
+</div>
+
+<script>
+const DATA_URL = "./compatibility.json";
+let FEED = null;
+
+const deviceSelect = document.getElementById('deviceSelect');
+const detectedVersionEl = document.getElementById('detectedVersion');
+const confidenceNote = document.getElementById('confidenceNote');
+const rawUAEl = document.getElementById('rawUA');
+const manualBlock = document.getElementById('manualBlock');
+const manualSelect = document.getElementById('manualSelect');
+const correctBtn = document.getElementById('correctBtn');
+const offlinePill = document.getElementById('offlinePill');
+const dataFreshness = document.getElementById('dataFreshness');
+const installHint = document.getElementById('installHint');
+
+// ---------- Version detection (fixed) ----------
+// Primary pattern: "CPU iPhone OS 27_0_1 like Mac OS X" (also matches iPad's "CPU OS 27_0 like Mac OS X").
+// This is the string Safari controls specifically for the OS version, distinct from
+// the generic "Mac OS X" substring that appears later in the same UA and previously
+// could cause mismatches if matched first.
+function detectIOS(){
+  const ua = navigator.userAgent;
+  const m = ua.match(/CPU (?:iPhone )?OS (\d+)_(\d+)(?:_(\d+))?\s+like Mac OS X/);
+  if(m){
+    const major = parseInt(m[1],10), minor = parseInt(m[2],10), patch = m[3]?parseInt(m[3],10):null;
+    return {
+      major, minor, patch,
+      label: `iOS ${major}.${minor}${patch!==null?"."+patch:""}`,
+      confidence: patch!==null ? "high" : "high — patch number not reported by browser",
+      raw: ua
+    };
+  }
+  // Fallback: Safari's own Version/xx.x tag (less reliable — used in desktop-site mode,
+  // some third-party browsers, or if Apple changes the primary string format).
+  const v = ua.match(/Version\/(\d+)\.(\d+)(?:\.(\d+))?/);
+  if(v){
+    const major = parseInt(v[1],10), minor = parseInt(v[2],10), patch = v[3]?parseInt(v[3],10):null;
+    return {
+      major, minor, patch,
+      label: `iOS ${major}.${minor}${patch!==null?"."+patch:""} (estimated)`,
+      confidence: "low — inferred from Safari version, not OS string directly",
+      raw: ua
+    };
+  }
+  return { major:null, minor:null, patch:null, label:null, confidence:"none", raw: ua };
+}
+
+const detected = detectIOS();
+rawUAEl.textContent = detected.raw;
+
+const MANUAL_VERSIONS = ["27.2","27.1","27.0.1","27.0","26","18","17 or earlier"];
+MANUAL_VERSIONS.forEach(v=>{
+  const o = document.createElement('option'); o.value=v; o.textContent = "iOS "+v;
+  manualSelect.appendChild(o);
+});
+
+let effectiveVersion = detected;
+
+if(detected.label){
+  detectedVersionEl.textContent = detected.label;
+  confidenceNote.textContent = "Confidence: " + detected.confidence;
+} else {
+  detectedVersionEl.textContent = "Couldn't detect";
+  confidenceNote.textContent = "Please set your version manually below.";
+  manualBlock.style.display = "block";
+}
+
+correctBtn.addEventListener('click', ()=>{
+  manualBlock.style.display = manualBlock.style.display === "block" ? "none" : "block";
+});
+
+manualSelect.addEventListener('change', ()=>{
+  const val = manualSelect.value;
+  const parts = val.replace(" or earlier","").split(".");
+  effectiveVersion = {
+    major: parseInt(parts[0],10),
+    minor: parts[1] ? parseInt(parts[1],10) : 0,
+    patch: parts[2] ? parseInt(parts[2],10) : null,
+    label: "iOS " + val + " (set manually)"
+  };
+  detectedVersionEl.textContent = effectiveVersion.label;
+  confidenceNote.textContent = "Confidence: manually confirmed";
+});
+
+// ---------- Install hint ----------
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+const isIOSSafari = /iphone|ipad|ipod/i.test(navigator.userAgent) && /safari/i.test(navigator.userAgent) && !/crios|fxios/i.test(navigator.userAgent);
+if(!isStandalone && isIOSSafari){
+  installHint.style.display = "block";
+}
+
+// ---------- Service worker (offline support) ----------
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  });
+}
+
+// ---------- Load data ----------
+async function loadFeed(){
+  try{
+    const res = await fetch(DATA_URL, {cache:"no-cache"});
+    if(!res.ok) throw new Error("bad response");
+    FEED = await res.json();
+    offlinePill.style.display = "none";
+  }catch(e){
+    // service worker cache, or nothing — try cache API directly as last resort
+    try{
+      const cache = await caches.open('update-advisor-v1');
+      const cached = await cache.match(DATA_URL);
+      if(cached){ FEED = await cached.json(); offlinePill.style.display = "inline-block"; }
+    }catch(_e){}
+  }
+  if(!FEED){
+    dataFreshness.textContent = "Couldn't load compatibility data and no offline copy was found yet — connect to the internet once to cache it.";
+    return;
+  }
+  populateDevices();
+  dataFreshness.textContent = "Compatibility data last updated " + FEED.generatedAt + ".";
+}
+
+function populateDevices(){
+  deviceSelect.innerHTML = "";
+  FEED.devices.forEach((d,i)=>{
+    const o = document.createElement('option'); o.value=i; o.textContent=d.name;
+    deviceSelect.appendChild(o);
+  });
+}
+
+// ---------- Compatibility engine ----------
+function evaluate(device, current){
+  const latest = FEED.latestMajorVersion;
+  const stable = FEED.channels.stable;
+
+  if(current.major !== null && current.major >= latest){
+    return {
+      cls:"go", tag:"UP TO DATE",
+      headline:"You're already on the latest version.",
+      body:"There's nothing to update right now. Watch for the next point release for bug and security fixes.",
+      reasons:[
+        `Your current version (${current.label}) already meets or exceeds ${stable.label}.`,
+        FEED.pointReleaseAdvice
+      ]
+    };
+  }
+
+  if(device.tier === 'entry'){
+    return {
+      cls:"wait", tag:"UPDATE AVAILABLE — WAIT A FEW WEEKS",
+      headline:`${stable.label} is available, but give it a moment on this hardware.`,
+      body:`Your ${device.name} will run ${stable.label} fine, but older chips tend to feel early-release slowdowns more. Combined with current community reports, waiting slightly longer is the lower-risk move.`,
+      reasons:[
+        `${device.name} uses the ${device.chip} — on the older end of Apple's supported range, but still officially compatible.`,
+        "No Apple Intelligence or new Siri features will be available on this chip regardless of when you update.",
+        FEED.communitySentiment.summary,
+        FEED.pointReleaseAdvice
+      ]
+    };
+  }
+  if(device.tier === 'mid'){
+    return {
+      cls:"go", tag:"UPDATE NOW",
+      headline:`${stable.label} is a safe, worthwhile update.`,
+      body:`Your ${device.name} has enough headroom to run ${stable.label} smoothly, and current reports show the launch-week issues are already patched.`,
+      reasons:[
+        `${device.name}'s ${device.chip} comfortably handles ${stable.label}'s requirements.`,
+        "Apple Intelligence and the newest Siri features are chip-gated to iPhone 15 Pro and later, so you won't see those — but nothing else is held back.",
+        FEED.communitySentiment.summary
+      ]
+    };
+  }
+  return {
+    cls:"go", tag:"UPDATE NOW",
+    headline:`${stable.label} is a full, recommended update.`,
+    body:`Your ${device.name} qualifies for every ${stable.label} feature, including the new Siri and Apple Intelligence tools, and known launch-week bugs are already patched.`,
+    reasons:[
+      `${device.name}'s ${device.chip} meets Apple's requirement for Apple Intelligence and the new Siri AI features.`,
+      "You'll get the full feature set Apple designed this release around.",
+      FEED.communitySentiment.summary
+    ]
+  };
+}
+
+function renderChannels(){
+  const list = document.getElementById('channelList');
+  list.innerHTML = "";
+  const order = [
+    ["stable","Current stable","badge-released"],
+    ["upcomingFeature","Next feature update","badge-expected"],
+    ["beta","In beta testing","badge-beta"]
+  ];
+  order.forEach(([key,label,badgeClass])=>{
+    const ch = FEED.channels[key];
+    if(!ch) return;
+    const row = document.createElement('div');
+    row.className = "channel-row";
+    const dateLabel = ch.releaseDate ? `Released ${ch.releaseDate}` : (ch.expectedDate ? `Expected ~${ch.expectedDate}` : "");
+    row.innerHTML = `
+      <div class="channel-top">
+        <span class="channel-name">${label} — ${ch.label}</span>
+        <span class="channel-badge ${badgeClass}">${ch.status.toUpperCase()}</span>
+      </div>
+      <div class="channel-date">${dateLabel}</div>
+      <div class="channel-notes">${ch.notes}</div>
+    `;
+    list.appendChild(row);
+  });
+}
+
+document.getElementById('checkBtn').addEventListener('click', ()=>{
+  if(!FEED){ return; }
+  const idx = parseInt(deviceSelect.value || 0, 10);
+  const device = FEED.devices[idx];
+  const r = evaluate(device, effectiveVersion);
+
+  const card = document.getElementById('verdictCard');
+  card.classList.remove('go','wait','skip');
+  card.classList.add(r.cls);
+  document.getElementById('verdictTag').textContent = r.tag;
+  document.getElementById('verdictHeadline').textContent = r.headline;
+  document.getElementById('verdictBody').textContent = r.body;
+
+  document.getElementById('dDevice').textContent = device.name;
+  document.getElementById('dCurrent').textContent = effectiveVersion.label || "Unknown";
+  document.getElementById('dLatest').textContent = FEED.channels.stable.label;
+  document.getElementById('dChip').textContent = device.chip;
+  document.getElementById('dAI').textContent = device.aiCapable ? "Fully supported" : "Not available on this chip";
+
+  const reasons = document.getElementById('reasonList');
+  reasons.innerHTML = "";
+  r.reasons.forEach(text=>{
+    const li = document.createElement('li'); li.textContent = text; reasons.appendChild(li);
+  });
+
+  renderChannels();
+
+  document.getElementById('sentimentScore').textContent = FEED.communitySentiment.label;
+  document.getElementById('sentimentSummary').textContent = FEED.communitySentiment.summary;
+  document.getElementById('sentimentSource').textContent = FEED.communitySentiment.sourceNote;
+
+  document.getElementById('result').style.display = 'block';
+  document.getElementById('result').scrollIntoView({behavior:'smooth', block:'start'});
+});
+
+loadFeed();
+</script>
+</body>
+</html>
