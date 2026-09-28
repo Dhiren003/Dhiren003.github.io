@@ -1,4 +1,4 @@
-const CACHE_NAME = "update-advisor-v4";
+const CACHE_NAME = "update-advisor-v6";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -24,9 +24,6 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-// Strategy:
-// - compatibility.json: network-first (want fresh data when online), fall back to cache when offline.
-// - everything else (app shell): cache-first, since it rarely changes.
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
 

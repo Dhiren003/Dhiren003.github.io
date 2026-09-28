@@ -6,6 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Update Advisor">
+<meta name="mobile-web-app-capable" content="yes">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
 <title>Update Advisor</title>
@@ -38,17 +39,17 @@
 html{scroll-padding-top:env(safe-area-inset-top,0px);}
 body{
   margin:0; background:var(--bg); color:var(--ink);
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",Roboto,system-ui,sans-serif;
   padding-top:env(safe-area-inset-top,0px);
   padding-bottom:env(safe-area-inset-bottom,0px);
   -webkit-text-size-adjust:100%;
 }
 .wrap{max-width:520px;margin:0 auto;padding:24px 20px 60px;}
-.eyebrow{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:12.5px;letter-spacing:.02em;color:var(--sub);margin:0 0 6px;display:flex;align-items:center;gap:8px;}
+.eyebrow{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:12.5px;letter-spacing:.02em;color:var(--sub);margin:0 0 6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .offline-pill{background:var(--wait-bg);color:var(--wait);border-radius:999px;padding:2px 8px;font-size:11px;font-weight:700;}
+.platform-pill{background:var(--accent-bg);color:var(--accent);border-radius:999px;padding:2px 8px;font-size:11px;font-weight:700;}
 h1{font-size:25px;line-height:1.15;margin:0 0 4px;font-weight:650;letter-spacing:-0.01em;}
-.lede{color:var(--sub);font-size:14.5px;margin:0 0 20px;line-height:1.5;max-width:38ch;}
-
+.lede{color:var(--sub);font-size:14.5px;margin:0 0 20px;line-height:1.5;max-width:42ch;}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px;}
 .field-label{font-size:12.5px;color:var(--sub);margin:0 0 8px;font-family:ui-monospace,"SF Mono",Menlo,monospace;}
 select{
@@ -64,11 +65,9 @@ select{
 .confidence{font-size:11px;color:var(--sub);margin-top:2px;}
 .correct-link{background:none;border:none;color:var(--accent);font-size:12.5px;font-weight:600;padding:0;margin-top:8px;cursor:pointer;text-decoration:underline;}
 #manualBlock{display:none;margin-top:10px;}
-
 button.primary{width:100%;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:14px;font-size:16px;font-weight:600;margin-top:16px;cursor:pointer;}
 button.primary:active{opacity:.85;}
 .install-hint{display:none;margin-top:12px;padding:12px 14px;background:var(--go-bg);border-radius:10px;font-size:13px;color:var(--ink);line-height:1.5;}
-
 #result{display:none;}
 .verdict{border-radius:14px;padding:20px;margin-bottom:14px;border:1px solid var(--line);}
 .verdict.go{background:var(--go-bg);border-color:transparent;}
@@ -80,15 +79,12 @@ button.primary:active{opacity:.85;}
 .verdict.skip .tag{color:var(--skip);}
 .verdict h2{margin:0 0 8px;font-size:20px;line-height:1.25;}
 .verdict p{margin:0;font-size:14.5px;line-height:1.55;color:var(--ink);}
-
 .detail-row{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);font-size:14px;}
 .detail-row:last-child{border-bottom:none;}
 .detail-row .k{color:var(--sub);}
 .detail-row .v{text-align:right;font-weight:560;}
-
 .reasons{margin:0;padding-left:18px;}
 .reasons li{font-size:14px;line-height:1.6;margin-bottom:6px;color:var(--ink);}
-
 .channel-row{padding:12px 0;border-bottom:1px solid var(--line);}
 .channel-row:last-child{border-bottom:none;}
 .channel-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
@@ -99,25 +95,30 @@ button.primary:active{opacity:.85;}
 .badge-beta{background:var(--skip-bg);color:var(--skip);}
 .channel-date{font-size:12px;color:var(--sub);margin-top:2px;}
 .channel-notes{font-size:13px;color:var(--ink);margin-top:6px;line-height:1.5;}
-
 .sentiment-score{display:inline-block;font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--go-bg);color:var(--go);margin-bottom:8px;}
-
 .debug{margin-top:10px;}
 .debug summary{font-size:12px;color:var(--sub);cursor:pointer;}
 .debug pre{font-size:10.5px;white-space:pre-wrap;word-break:break-all;color:var(--sub);background:var(--bg);padding:10px;border-radius:8px;margin-top:6px;}
-
 .footnote{font-size:12px;color:var(--sub);margin-top:20px;line-height:1.5;}
 .footnote + .footnote{margin-top:10px;}
+.unsupported{display:none;padding:16px;background:var(--wait-bg);border-radius:12px;margin-bottom:14px;font-size:14px;line-height:1.5;}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <p class="eyebrow">UPDATE ADVISOR <span id="offlinePill" class="offline-pill" style="display:none;">OFFLINE DATA</span></p>
+  <p class="eyebrow">UPDATE ADVISOR
+    <span id="platformPill" class="platform-pill" style="display:none;"></span>
+    <span id="offlinePill" class="offline-pill" style="display:none;">OFFLINE DATA</span>
+  </p>
   <h1>Should you update?</h1>
-  <p class="lede">Pick your iPhone. We'll compare the latest iOS release against your device, factor in known post-launch issues, and tell you whether to update now, wait, or skip.</p>
+  <p class="lede" id="ledeText">Detecting your device…</p>
 
-  <div class="card">
-    <p class="field-label">YOUR IPHONE</p>
+  <div class="unsupported" id="unsupportedBox">
+    This page is optimised for iPhone (iOS) and Android phones. Open it on your phone, or use the version selector below if detection failed.
+  </div>
+
+  <div class="card" id="mainCard">
+    <p class="field-label" id="deviceFieldLabel">YOUR DEVICE</p>
     <select id="deviceSelect"></select>
 
     <div class="detect-block">
@@ -137,9 +138,7 @@ button.primary:active{opacity:.85;}
     </div>
 
     <button class="primary" id="checkBtn">Check compatibility</button>
-    <div class="install-hint" id="installHint">
-      Tap the <strong>Share</strong> icon in Safari, then <strong>Add to Home Screen</strong> — this app installs like a native app and keeps working offline after your first visit.
-    </div>
+    <div class="install-hint" id="installHint"></div>
   </div>
 
   <div id="result">
@@ -153,8 +152,8 @@ button.primary:active{opacity:.85;}
       <div class="detail-row"><span class="k">Device</span><span class="v" id="dDevice"></span></div>
       <div class="detail-row"><span class="k">Current version</span><span class="v" id="dCurrent"></span></div>
       <div class="detail-row"><span class="k">Latest stable</span><span class="v" id="dLatest"></span></div>
-      <div class="detail-row"><span class="k">Chip</span><span class="v" id="dChip"></span></div>
-      <div class="detail-row"><span class="k">Apple Intelligence</span><span class="v" id="dAI"></span></div>
+      <div class="detail-row"><span class="k">Chip / SoC</span><span class="v" id="dChip"></span></div>
+      <div class="detail-row"><span class="k" id="featureFieldLabel">AI features</span><span class="v" id="dAI"></span></div>
     </div>
 
     <div class="card">
@@ -181,21 +180,22 @@ button.primary:active{opacity:.85;}
         <span id="probLabel" style="font-size:14px;color:var(--sub);"></span>
       </div>
       <div id="probBreakdown"></div>
-      <p class="footnote" style="margin-top:12px;">Score aggregates Apple official statements, MacRumors/forums, Reddit, recent YouTube reviewer consensus, and historical major-release patterns. Weights are fixed; for production you would refresh this data from live sources or a backend.</p>
+      <p class="footnote" style="margin-top:12px;">Score aggregates platform-specific public sources. Weights are fixed in the static feed; a live backend can refresh them.</p>
     </div>
   </div>
 
   <p class="footnote" id="dataFreshness"></p>
-  <p class="footnote">Version detection reads your browser's user-agent string — the only signal a website can access. It's reliable for the major version (what compatibility decisions depend on) but can't always confirm a small patch number like .0 vs .0.1, and will be wrong if "Request Desktop Website" is on for this page. Use "This looks wrong" to correct it manually.</p>
+  <p class="footnote" id="detectFootnote">Version detection reads your browser's user-agent — the only signal a website can access. Use "This looks wrong" to correct it manually.</p>
 </div>
 
 <script>
-// Prefer live backend when configured; fall back to local JSON (works offline / first visit).
-// Replace the worker URL after you deploy (see update-advisor-backend/README.md).
 const LIVE_DATA_URL = "https://update-advisor-api.YOUR_SUBDOMAIN.workers.dev/compatibility.json";
 const LOCAL_DATA_URL = "./compatibility.json";
 const DATA_URL = LIVE_DATA_URL.includes("YOUR_SUBDOMAIN") ? LOCAL_DATA_URL : LIVE_DATA_URL;
-let FEED = null;
+
+let RAW_FEED = null;  // full JSON { ios, android, generatedAt }
+let FEED = null;      // active platform branch only
+let PLATFORM = "unknown"; // "ios" | "android" | "unknown"
 
 const deviceSelect = document.getElementById('deviceSelect');
 const detectedVersionEl = document.getElementById('detectedVersion');
@@ -205,17 +205,30 @@ const manualBlock = document.getElementById('manualBlock');
 const manualSelect = document.getElementById('manualSelect');
 const correctBtn = document.getElementById('correctBtn');
 const offlinePill = document.getElementById('offlinePill');
+const platformPill = document.getElementById('platformPill');
 const dataFreshness = document.getElementById('dataFreshness');
 const installHint = document.getElementById('installHint');
+const ledeText = document.getElementById('ledeText');
+const deviceFieldLabel = document.getElementById('deviceFieldLabel');
+const featureFieldLabel = document.getElementById('featureFieldLabel');
+const unsupportedBox = document.getElementById('unsupportedBox');
 
-// ---------- Version detection (handles Apple UA freeze from iOS 26+) ----------
-// Apple freezes the "CPU iPhone OS X_Y like Mac OS X" token at 18_6 starting with iOS 26.
-// The real version is still present in the Version/x.y tag (and sometimes in other places).
-// Strategy: parse both, then prefer the higher major version when on an iPhone/iPad.
+// ---------- Platform detection (strict separation) ----------
+function detectPlatform(){
+  const ua = navigator.userAgent || "";
+  // iOS first (iPhone/iPad/iPod). Android UA never includes these.
+  if (/iPhone|iPad|iPod/i.test(ua)) return "ios";
+  // Android (exclude if somehow both — shouldn't happen)
+  if (/Android/i.test(ua)) return "android";
+  return "unknown";
+}
+
+PLATFORM = detectPlatform();
+
+// ---------- iOS version (handles Apple UA freeze from iOS 26+) ----------
 function detectIOS(){
   const ua = navigator.userAgent || "";
   const isAppleMobile = /iPhone|iPad|iPod/i.test(ua);
-
   let osMajor=null, osMinor=null, osPatch=null;
   const osMatch = ua.match(/CPU (?:iPhone )?OS (\d+)_(\d+)(?:_(\d+))?\s+like Mac OS X/);
   if(osMatch){
@@ -223,7 +236,6 @@ function detectIOS(){
     osMinor = parseInt(osMatch[2],10);
     osPatch = osMatch[3] ? parseInt(osMatch[3],10) : null;
   }
-
   let verMajor=null, verMinor=null, verPatch=null;
   const verMatch = ua.match(/Version\/(\d+)\.(\d+)(?:\.(\d+))?/);
   if(verMatch){
@@ -231,43 +243,121 @@ function detectIOS(){
     verMinor = parseInt(verMatch[2],10);
     verPatch = verMatch[3] ? parseInt(verMatch[3],10) : null;
   }
-
-  // Decide which is more trustworthy
-  let major, minor, patch, source, confidence;
-  if(isAppleMobile && verMajor !== null && (osMajor === null || verMajor > osMajor || (verMajor === 18 && osMajor === 18 && verMinor > osMinor))){
-    // Prefer Version/ when it reports a newer major (the freeze case) or a higher minor on the frozen 18.x line
+  let major, minor, patch, confidence, source;
+  if(isAppleMobile && verMajor !== null && (osMajor === null || verMajor > osMajor)){
     major = verMajor; minor = verMinor; patch = verPatch;
-    source = "Version tag (Apple froze the OS token at 18.6 from iOS 26 onward)";
+    source = "Version tag (Apple froze OS token at 18.6 from iOS 26+)";
     confidence = "high — corrected for Apple UA freeze";
   } else if(osMajor !== null){
     major = osMajor; minor = osMinor; patch = osPatch;
     source = "CPU OS token";
-    confidence = patch !== null ? "high" : (minor === 0 ? "high — major only" : "high — patch omitted by browser");
+    confidence = patch !== null ? "high" : "high — patch may be omitted";
   } else if(verMajor !== null){
     major = verMajor; minor = verMinor; patch = verPatch;
-    source = "Version tag (fallback)";
-    confidence = "medium — no OS token found";
+    source = "Version tag";
+    confidence = "medium";
   } else {
     return { major:null, minor:null, patch:null, label:null, confidence:"none", raw: ua, source: null };
   }
-
-  const label = (minor === 0 && patch === null)
-    ? `iOS ${major}`
-    : `iOS ${major}.${minor}${patch !== null ? "." + patch : ""}`;
-
+  const label = (minor === 0 && patch === null) ? `iOS ${major}` : `iOS ${major}.${minor}${patch !== null ? "." + patch : ""}`;
   return { major, minor, patch, label, confidence, raw: ua, source };
 }
 
-const detected = detectIOS();
-rawUAEl.textContent = detected.raw;
+// ---------- Android version ----------
+function detectAndroid(){
+  const ua = navigator.userAgent || "";
+  // Typical: "Android 14" or "Android 15"
+  const m = ua.match(/Android\s+(\d+)(?:\.(\d+))?/i);
+  if(m){
+    const major = parseInt(m[1],10);
+    const minor = m[2] ? parseInt(m[2],10) : 0;
+    return {
+      major, minor, patch: null,
+      label: minor ? `Android ${major}.${minor}` : `Android ${major}`,
+      confidence: "high — from UA Android token",
+      raw: ua,
+      source: "Android UA token"
+    };
+  }
+  return { major:null, minor:null, patch:null, label:null, confidence:"none", raw: ua, source: null };
+}
 
-const MANUAL_VERSIONS = ["27.2","27.1","27.0","27","26","18","17 or earlier"];
-MANUAL_VERSIONS.forEach(v=>{
-  const o = document.createElement('option'); o.value=v; o.textContent = "iOS "+v;
-  manualSelect.appendChild(o);
-});
+// ---------- iPhone model heuristics (iOS only) ----------
+function detectIPhoneModel(){
+  if(PLATFORM !== "ios") return null;
+  if(!/iPhone/i.test(navigator.userAgent || "")) return null;
+  const w = Math.min(screen.width, screen.height);
+  const h = Math.max(screen.width, screen.height);
+  const dpr = Math.round((window.devicePixelRatio || 1) * 100) / 100;
+  const exact = [
+    { w: 375, h: 667, dprMin: 1.9, dprMax: 2.2, name: "iPhone SE (3rd gen)", note: "SE 2nd & 3rd gen share 375×667 @2x" },
+    { w: 420, h: 912, dprMin: 2.8, dprMax: 3.2, name: "iPhone Air", note: "unique 6.5″ Air panel" },
+    { w: 440, h: 956, dprMin: 2.8, dprMax: 3.2, name: "iPhone 17 Pro / Pro Max", note: "6.9″ — 16 Pro Max & 17 Pro Max" },
+    { w: 402, h: 874, dprMin: 2.8, dprMax: 3.2, name: "iPhone 16 Pro / Pro Max", note: "6.3″ — 16 Pro, 17, 17 Pro (confirm year)" },
+    { w: 430, h: 932, dprMin: 2.8, dprMax: 3.2, name: "iPhone 14 Pro / Pro Max", note: "6.7″ panel also used by 15 Pro Max, 15 Plus, 16 Plus — confirm yours" },
+    { w: 428, h: 926, dprMin: 2.8, dprMax: 3.2, name: "iPhone 13 Pro / Pro Max", note: "older 6.7″ — 12/13 Pro Max or 14 Plus" },
+    { w: 393, h: 852, dprMin: 2.8, dprMax: 3.2, name: "iPhone 15 Pro / Pro Max", note: "6.1″ — 14 Pro, 15, 15 Pro, 16 (confirm year)" },
+    { w: 390, h: 844, dprMin: 2.8, dprMax: 3.2, name: "iPhone 14 / Plus", note: "6.1″ non-Pro family (12–14, 16e)" },
+    { w: 414, h: 896, dprMin: 2.8, dprMax: 3.2, name: "iPhone 11 Pro / Pro Max", note: "6.5″ @3x — 11 Pro Max / XS Max" },
+    { w: 414, h: 896, dprMin: 1.9, dprMax: 2.2, name: "iPhone 11", note: "6.1″ @2x — 11 / XR" },
+    { w: 375, h: 812, dprMin: 2.7, dprMax: 3.2, name: "iPhone 13 / mini", note: "5.4/5.8″ — mini or X/XS/11 Pro class" },
+  ];
+  for (const s of exact) {
+    if (Math.abs(w - s.w) <= 1 && Math.abs(h - s.h) <= 1 && dpr >= s.dprMin && dpr <= s.dprMax) {
+      return { name: s.name, confidence: "medium-high — exact screen match (" + s.note + ")" };
+    }
+  }
+  for (const s of exact) {
+    if (Math.abs(w - s.w) <= 3 && Math.abs(h - s.h) <= 3 && dpr >= s.dprMin && dpr <= s.dprMax) {
+      return { name: s.name, confidence: "medium — near screen match (" + s.note + ")" };
+    }
+  }
+  let best = null, bestDist = Infinity;
+  for (const s of exact) {
+    if (dpr < s.dprMin - 0.3 || dpr > s.dprMax + 0.3) continue;
+    const dist = Math.hypot(w - s.w, h - s.h);
+    if (dist < bestDist) { bestDist = dist; best = s; }
+  }
+  if (best && bestDist <= 12) {
+    return { name: best.name, confidence: "medium — closest screen match (" + best.note + ")" };
+  }
+  return { name: null, confidence: "low — no reliable screen signature (try manual select)" };
+}
 
+// ---------- Android device class heuristics (optional) ----------
+function detectAndroidDeviceClass(){
+  if(PLATFORM !== "android") return null;
+  const ua = (navigator.userAgent || "").toLowerCase();
+  if (/pixel\s*9/i.test(ua)) return { name: "Google Pixel 9 / 9 Pro / 9 Pro XL", confidence: "medium — UA model token" };
+  if (/pixel\s*8/i.test(ua)) return { name: "Google Pixel 8 / 8 Pro", confidence: "medium — UA model token" };
+  if (/pixel\s*7/i.test(ua)) return { name: "Google Pixel 7 / 7 Pro / 7a", confidence: "medium — UA model token" };
+  if (/pixel\s*6/i.test(ua)) return { name: "Google Pixel 6 / 6 Pro / 6a", confidence: "medium — UA model token" };
+  if (/pixel/i.test(ua)) return { name: "Google Pixel 6 / 6 Pro / 6a", confidence: "low — generic Pixel" };
+  if (/sm-s9|galaxy s26|sm-s938/i.test(ua)) return { name: "Samsung Galaxy S26 / S26+ / S26 Ultra", confidence: "medium — UA model token" };
+  if (/sm-s9|galaxy s25|sm-s938|sm-s931/i.test(ua)) return { name: "Samsung Galaxy S25 / S25+ / S25 Ultra / S25 FE", confidence: "low — approximate" };
+  if (/sm-s9|galaxy s24/i.test(ua)) return { name: "Samsung Galaxy S24 / S24 FE", confidence: "low — approximate" };
+  if (/sm-s9|galaxy s23/i.test(ua)) return { name: "Samsung Galaxy S23 / S23 FE", confidence: "low — approximate" };
+  if (/sm-f|fold|flip|sm-f7|sm-f9/i.test(ua)) return { name: "Samsung Galaxy Z Fold / Z Flip (5–8)", confidence: "low — foldable family" };
+  if (/oneplus|xiaomi|redmi|poco|oppo|vivo|realme/i.test(ua)) return { name: "Other recent flagship (OnePlus, Xiaomi, etc.)", confidence: "low — brand only" };
+  return { name: null, confidence: "low — select your class manually" };
+}
+
+let detected = PLATFORM === "ios" ? detectIOS() : (PLATFORM === "android" ? detectAndroid() : { major:null, minor:null, patch:null, label:null, confidence:"none", raw: navigator.userAgent, source:null });
+let detectedModel = PLATFORM === "ios" ? detectIPhoneModel() : detectAndroidDeviceClass();
 let effectiveVersion = detected;
+
+rawUAEl.textContent = detected.raw || navigator.userAgent;
+
+function setupManualVersions(){
+  manualSelect.innerHTML = "";
+  if(!FEED || !FEED.manualVersions) return;
+  FEED.manualVersions.forEach(v=>{
+    const o = document.createElement('option');
+    o.value = v;
+    o.textContent = (FEED.osName || "") + " " + v;
+    manualSelect.appendChild(o);
+  });
+}
 
 if(detected.label){
   detectedVersionEl.textContent = detected.label;
@@ -278,70 +368,6 @@ if(detected.label){
   manualBlock.style.display = "block";
 }
 
-// ---------- Approximate iPhone model detection (client-side heuristics) ----------
-// UA never contains the model. We combine screen metrics + DPR + known size table.
-// Accuracy is good for recent generations but not 100% (especially Pro vs non-Pro of same year).
-function detectIPhoneModel(){
-  if(!/iPhone/i.test(navigator.userAgent || "")) return null;
-
-  // Logical CSS points (portrait). These are what screen.width/height report.
-  const w = Math.min(screen.width, screen.height);
-  const h = Math.max(screen.width, screen.height);
-  const dpr = Math.round((window.devicePixelRatio || 1) * 100) / 100;
-
-  // Exact panel signatures → name that EXISTS in our devices[] list.
-  // When several years share a panel we pick one representative and note the ambiguity.
-  // Source: iosref.com / Apple logical resolutions (2026).
-  // CRITICAL: do NOT map 430×932 to a 17-series name (17 Pro Max is 440×956).
-  const exact = [
-    // Unique / near-unique first
-    { w: 375, h: 667, dprMin: 1.9, dprMax: 2.2, name: "iPhone SE (3rd gen)", note: "SE 2nd & 3rd gen share 375×667 @2x" },
-    { w: 420, h: 912, dprMin: 2.8, dprMax: 3.2, name: "iPhone Air", note: "unique 6.5″ Air panel" },
-    { w: 440, h: 956, dprMin: 2.8, dprMax: 3.2, name: "iPhone 17 Pro / Pro Max", note: "6.9″ — 16 Pro Max & 17 Pro Max" },
-    { w: 402, h: 874, dprMin: 2.8, dprMax: 3.2, name: "iPhone 16 Pro / Pro Max", note: "6.3″ — 16 Pro, 17, 17 Pro (confirm year)" },
-    // 14 Pro Max / 15 Pro Max / 15 Plus / 16 Plus — ALL are 430×932. Map to 14 Pro Max as safe default in our list.
-    { w: 430, h: 932, dprMin: 2.8, dprMax: 3.2, name: "iPhone 14 Pro / Pro Max", note: "6.7″ panel also used by 15 Pro Max, 15 Plus, 16 Plus — confirm yours" },
-    // Older 6.7″ (12/13 Pro Max, 14 Plus)
-    { w: 428, h: 926, dprMin: 2.8, dprMax: 3.2, name: "iPhone 13 Pro / Pro Max", note: "older 6.7″ — 12/13 Pro Max or 14 Plus" },
-    // 14 Pro / 15 / 15 Pro / 16 (non-Plus)
-    { w: 393, h: 852, dprMin: 2.8, dprMax: 3.2, name: "iPhone 15 Pro / Pro Max", note: "6.1″ — 14 Pro, 15, 15 Pro, 16 (confirm year)" },
-    // 12 / 13 / 14 non-Pro, 16e
-    { w: 390, h: 844, dprMin: 2.8, dprMax: 3.2, name: "iPhone 14 / Plus", note: "6.1″ non-Pro family (12–14, 16e)" },
-    { w: 414, h: 896, dprMin: 2.8, dprMax: 3.2, name: "iPhone 11 Pro / Pro Max", note: "6.5″ @3x — 11 Pro Max / XS Max" },
-    { w: 414, h: 896, dprMin: 1.9, dprMax: 2.2, name: "iPhone 11", note: "6.1″ @2x — 11 / XR" },
-    { w: 375, h: 812, dprMin: 2.7, dprMax: 3.2, name: "iPhone 13 / mini", note: "5.4/5.8″ — mini or X/XS/11 Pro class" },
-  ];
-
-  // 1) Strict exact match (tight tolerance so 430 does not leak into 440)
-  for (const s of exact) {
-    if (Math.abs(w - s.w) <= 1 && Math.abs(h - s.h) <= 1 && dpr >= s.dprMin && dpr <= s.dprMax) {
-      return { name: s.name, confidence: "medium-high — exact screen match (" + s.note + ")" };
-    }
-  }
-
-  // 2) Slightly looser (±3 px) still preferring exact table order
-  for (const s of exact) {
-    if (Math.abs(w - s.w) <= 3 && Math.abs(h - s.h) <= 3 && dpr >= s.dprMin && dpr <= s.dprMax) {
-      return { name: s.name, confidence: "medium — near screen match (" + s.note + ")" };
-    }
-  }
-
-  // 3) Closest only if very close (threshold 12) — prevents 430→440 jump
-  let best = null, bestDist = Infinity;
-  for (const s of exact) {
-    if (dpr < s.dprMin - 0.3 || dpr > s.dprMax + 0.3) continue;
-    const dist = Math.hypot(w - s.w, h - s.h);
-    if (dist < bestDist) { bestDist = dist; best = s; }
-  }
-  if (best && bestDist <= 12) {
-    return { name: best.name, confidence: "medium — closest screen match (" + best.note + ")" };
-  }
-
-  return { name: null, confidence: "low — no reliable screen signature (try manual select)" };
-}
-
-const detectedModel = detectIPhoneModel();
-
 correctBtn.addEventListener('click', ()=>{
   manualBlock.style.display = manualBlock.style.display === "block" ? "none" : "block";
 });
@@ -349,34 +375,37 @@ correctBtn.addEventListener('click', ()=>{
 manualSelect.addEventListener('change', ()=>{
   const val = manualSelect.value;
   const parts = val.replace(" or earlier","").split(".");
+  const prefix = FEED && FEED.osName ? FEED.osName : (PLATFORM === "android" ? "Android" : "iOS");
   effectiveVersion = {
     major: parseInt(parts[0],10),
     minor: parts[1] ? parseInt(parts[1],10) : 0,
     patch: parts[2] ? parseInt(parts[2],10) : null,
-    label: "iOS " + val + " (set manually)"
+    label: prefix + " " + val + " (set manually)"
   };
   detectedVersionEl.textContent = effectiveVersion.label;
   confidenceNote.textContent = "Confidence: manually confirmed";
 });
 
-// ---------- Install hint ----------
+// ---------- Install hint (platform-specific, no cross content) ----------
 const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-if(!isStandalone && isIOS){
-  installHint.style.display = "block";
-  if(/crios|fxios|edgios|opios/i.test(navigator.userAgent)){
-    installHint.innerHTML = "On this browser you can still use the app offline after the first visit (via the service worker). For a full home-screen icon experience, open this page in Safari and use <strong>Share → Add to Home Screen</strong>.";
+if(!isStandalone){
+  if(PLATFORM === "ios"){
+    installHint.style.display = "block";
+    installHint.innerHTML = /crios|fxios|edgios|opios/i.test(navigator.userAgent)
+      ? "On this browser you can still use the app offline after the first visit. For a home-screen icon, open in <strong>Safari</strong> → Share → Add to Home Screen."
+      : "Tap the <strong>Share</strong> icon in Safari, then <strong>Add to Home Screen</strong> — works offline after the first visit.";
+  } else if(PLATFORM === "android"){
+    installHint.style.display = "block";
+    installHint.innerHTML = "In Chrome: menu (⋮) → <strong>Install app</strong> or <strong>Add to Home screen</strong>. The app keeps working offline after the first visit.";
   }
 }
 
-// ---------- Service worker (offline support) ----------
 if('serviceWorker' in navigator){
   window.addEventListener('load', ()=>{
     navigator.serviceWorker.register('./sw.js').catch(()=>{});
   });
 }
 
-// ---------- Load data ----------
 async function loadFeed(){
   const candidates = [];
   if (!LIVE_DATA_URL.includes("YOUR_SUBDOMAIN")) candidates.push(LIVE_DATA_URL);
@@ -386,22 +415,19 @@ async function loadFeed(){
     try {
       const res = await fetch(url, { cache: "no-cache", mode: "cors" });
       if (!res.ok) throw new Error("bad response");
-      FEED = await res.json();
+      RAW_FEED = await res.json();
       offlinePill.style.display = "none";
       break;
-    } catch (e) {
-      // try next
-    }
+    } catch (e) {}
   }
 
-  if (!FEED) {
-    // service worker / Cache API last resort
+  if (!RAW_FEED) {
     try {
-      const cache = await caches.open("update-advisor-v4");
+      const cache = await caches.open("update-advisor-v6");
       for (const url of candidates) {
         const cached = await cache.match(url);
         if (cached) {
-          FEED = await cached.json();
+          RAW_FEED = await cached.json();
           offlinePill.style.display = "inline-block";
           break;
         }
@@ -409,52 +435,84 @@ async function loadFeed(){
     } catch (_e) {}
   }
 
-  if (!FEED) {
-    dataFreshness.textContent = "Couldn't load compatibility data and no offline copy was found yet — connect to the internet once to cache it.";
+  if (!RAW_FEED) {
+    dataFreshness.textContent = "Couldn't load compatibility data — connect once to cache it.";
     return;
   }
+
+  // Bind ONLY the matching platform branch — no cross-leak
+  if (PLATFORM === "ios" && RAW_FEED.ios) {
+    FEED = RAW_FEED.ios;
+  } else if (PLATFORM === "android" && RAW_FEED.android) {
+    FEED = RAW_FEED.android;
+  } else {
+    // Desktop / unknown: show both options via unsupported + default to ios structure message
+    unsupportedBox.style.display = "block";
+    FEED = RAW_FEED.ios || RAW_FEED.android || null;
+    if (!FEED) {
+      dataFreshness.textContent = "No platform data in feed.";
+      return;
+    }
+  }
+
+  applyPlatformUI();
+  setupManualVersions();
   populateDevices();
-  const src = (!LIVE_DATA_URL.includes("YOUR_SUBDOMAIN") && FEED.communitySentiment?.sourceNote?.includes("Refreshed"))
-    ? " (live multi-source)"
-    : "";
-  dataFreshness.textContent = "Compatibility data last updated " + FEED.generatedAt + src + ".";
+  dataFreshness.textContent = "Compatibility data last updated " + (RAW_FEED.generatedAt || FEED.generatedAt || "?") +
+    (PLATFORM === "ios" ? " · iOS mode" : PLATFORM === "android" ? " · Android mode" : " · detection unclear");
+}
+
+function applyPlatformUI(){
+  if(!FEED) return;
+  ledeText.textContent = FEED.lede || "";
+  deviceFieldLabel.textContent = FEED.deviceLabel || "YOUR DEVICE";
+  featureFieldLabel.textContent = FEED.featureLabel || "AI features";
+  if(PLATFORM === "ios"){
+    platformPill.style.display = "inline-block";
+    platformPill.textContent = "iOS";
+  } else if(PLATFORM === "android"){
+    platformPill.style.display = "inline-block";
+    platformPill.textContent = "ANDROID";
+  }
+  document.getElementById('detectFootnote').textContent =
+    PLATFORM === "android"
+      ? "Android version is read from the browser user-agent. OEM skins (One UI, etc.) may report the Android base version. Use manual select if needed. iPhone-only content is never shown on Android."
+      : PLATFORM === "ios"
+        ? "Version detection reads your browser's user-agent. It's reliable for the major version but can miss small patches, and fails if Request Desktop Website is on. Android content is never shown on iPhone."
+        : "Open this page on an iPhone or Android phone for the correct OS-specific advice.";
 }
 
 function populateDevices(){
   deviceSelect.innerHTML = "";
   const placeholder = document.createElement('option');
   placeholder.value = "";
-  placeholder.textContent = "Choose your iPhone…";
+  placeholder.textContent = (FEED && FEED.devicePlaceholder) || "Choose your device…";
   placeholder.disabled = true;
   placeholder.selected = true;
   deviceSelect.appendChild(placeholder);
 
-  let matchedIndex = -1;
   const detName = (detectedModel && detectedModel.name) ? detectedModel.name.toLowerCase() : "";
-
-  // Scoring: higher = better match against our device list names
   function matchScore(cand) {
     if (!detName) return 0;
     const c = cand.toLowerCase();
-    // Exact list name wins always
     if (c === detName) return 200;
-    // Partial: detected name is contained in list entry or vice-versa
     if (c.includes(detName) || detName.includes(c)) return 150;
-    const detGen = (detName.match(/iphone\s*(\d+)/) || [])[1];
-    const candGen = (c.match(/iphone\s*(\d+)/) || [])[1];
+    const detGen = (detName.match(/iphone\s*(\d+)/) || detName.match(/pixel\s*(\d+)/) || detName.match(/s(\d{2})/) || [])[1];
+    const candGen = (c.match(/iphone\s*(\d+)/) || c.match(/pixel\s*(\d+)/) || c.match(/s(\d{2})/) || [])[1];
     let score = 0;
-    // Generation match is useful but must not beat a different exact family
     if (detGen && candGen && detGen === candGen) score += 50;
     if (detName.includes("pro") && c.includes("pro")) score += 20;
-    else if (detName.includes("pro") !== c.includes("pro")) score -= 15; // pro vs non-pro penalty
-    if (detName.includes("air") && c.includes("air")) score += 40;
-    if (detName.includes("se") && c.includes("se")) score += 40;
-    if (detName.includes("mini") && c.includes("mini")) score += 20;
-    if (detName.includes("plus") && c.includes("plus")) score += 15;
+    else if (detName.includes("pro") !== c.includes("pro")) score -= 15;
+    if (detName.includes("pixel") && c.includes("pixel")) score += 40;
+    if (detName.includes("samsung") && c.includes("samsung")) score += 30;
+    if (detName.includes("galaxy") && c.includes("galaxy")) score += 30;
+    if (detName.includes("flagship") && c.includes("flagship")) score += 25;
+    if (detName.includes("mid") && c.includes("mid")) score += 25;
+    if (detName.includes("budget") && c.includes("budget")) score += 25;
     return score;
   }
 
-  let bestScore = 0;
+  let matchedIndex = -1, bestScore = 0;
   FEED.devices.forEach((d,i)=>{
     const o = document.createElement('option'); o.value=i; o.textContent=d.name;
     const sc = matchScore(d.name);
@@ -462,33 +520,39 @@ function populateDevices(){
     deviceSelect.appendChild(o);
   });
 
+  // Remove any previous helper notes
+  const prev = deviceSelect.parentNode.querySelectorAll('.detect-device-note');
+  prev.forEach(n => n.remove());
+
   if(matchedIndex >= 0 && bestScore >= 50){
     deviceSelect.value = String(matchedIndex);
     placeholder.selected = false;
     const note = document.createElement('div');
+    note.className = "detect-device-note";
     note.style.cssText = "font-size:12px;color:var(--sub);margin-top:6px;";
-    note.textContent = "Pre-selected: " + FEED.devices[matchedIndex].name + " (" + detectedModel.confidence + "). Change if incorrect.";
+    note.textContent = "Pre-selected: " + FEED.devices[matchedIndex].name + " (" + (detectedModel.confidence || "") + "). Change if incorrect.";
     deviceSelect.parentNode.insertBefore(note, deviceSelect.nextSibling);
   } else if (detectedModel && detectedModel.name) {
     const note = document.createElement('div');
+    note.className = "detect-device-note";
     note.style.cssText = "font-size:12px;color:var(--sub);margin-top:6px;";
-    note.textContent = "Detected screen looks like " + detectedModel.name + " — please confirm in the list.";
+    note.textContent = "Detected as " + detectedModel.name + " — please confirm in the list.";
     deviceSelect.parentNode.insertBefore(note, deviceSelect.nextSibling);
   }
 }
 
-// ---------- Compatibility engine ----------
 function evaluate(device, current){
   const latest = FEED.latestMajorVersion;
   const stable = FEED.channels.stable;
   const prob = FEED.updateProbability || {};
   const tierAdvice = (prob.adviceByTier && prob.adviceByTier[device.tier]) || "";
+  const os = FEED.osName || "";
 
   if(current.major !== null && current.major >= latest){
     return {
       cls:"go", tag:"UP TO DATE",
-      headline:"You're already on the latest version.",
-      body:"There's nothing to update right now. Watch for the next point release for bug and security fixes.",
+      headline:"You're already on the latest major version.",
+      body:"There's nothing major to install right now. Watch for the next point / security release.",
       reasons:[
         `Your current version (${current.label}) already meets or exceeds ${stable.label}.`,
         FEED.pointReleaseAdvice
@@ -497,32 +561,41 @@ function evaluate(device, current){
     };
   }
 
-  // Base score from multi-source data, then slight adjustment by tier
   let score = prob.overallScore || 70;
-  if(device.tier === "entry") score = Math.max(40, score - 15);
-  else if(device.tier === "mid") score = Math.max(50, score - 5);
-  // ai tier keeps the base score
+  if(PLATFORM === "ios"){
+    if(device.tier === "entry") score = Math.max(40, score - 15);
+    else if(device.tier === "mid") score = Math.max(50, score - 5);
+  } else {
+    if(device.tier === "budget") score = Math.max(40, score - 12);
+    else if(device.tier === "mid") score = Math.max(50, score - 5);
+  }
 
   let cls, tag, headline, body;
   if(score >= 75){
     cls = "go"; tag = "UPDATE NOW";
     headline = `${stable.label} is recommended for your ${device.name}.`;
-    body = tierAdvice || `Current multi-source signals look favourable.`;
+    body = tierAdvice || `Current signals look favourable for ${os}.`;
   } else if(score >= 55){
     cls = "wait"; tag = "UPDATE AVAILABLE — CONSIDER WAITING";
     headline = `${stable.label} is out, but a short wait may be lower risk on this device.`;
-    body = tierAdvice || `Community reports are still settling. Waiting a few more days (or the first point release) is reasonable.`;
+    body = tierAdvice || `Reports are still settling. Waiting a few days (or the next patch) is reasonable.`;
   } else {
-    cls = "skip"; tag = "WAIT FOR A POINT RELEASE";
+    cls = "skip"; tag = "WAIT FOR A PATCH / OEM BUILD";
     headline = `Better to hold off on ${stable.label} for now.`;
-    body = tierAdvice || `Early signals suggest higher friction on this hardware class.`;
+    body = tierAdvice || `Early signals suggest higher friction on this class of device.`;
   }
+
+  const aiLine = PLATFORM === "ios"
+    ? (device.aiCapable
+        ? "This chip fully supports Siri AI / Apple Intelligence features."
+        : "Apple Intelligence / Siri AI features are not available on this chip.")
+    : (device.aiCapable
+        ? "This class typically gets on-device AI / Gemini features when the OEM enables them."
+        : "On-device AI features may be limited or unavailable on this device class.");
 
   const reasons = [
     `${device.name} (${device.chip}) — tier: ${device.tier}.`,
-    device.aiCapable
-      ? "This chip fully supports Siri AI / Apple Intelligence features."
-      : "Apple Intelligence / Siri AI features are not available on this chip.",
+    aiLine,
     FEED.communitySentiment.summary,
     FEED.pointReleaseAdvice
   ];
@@ -535,8 +608,8 @@ function renderChannels(){
   list.innerHTML = "";
   const order = [
     ["stable","Current stable","badge-released"],
-    ["upcomingFeature","Next feature update","badge-expected"],
-    ["beta","In beta testing","badge-beta"]
+    ["upcomingFeature","Next update","badge-expected"],
+    ["beta","In testing","badge-beta"]
   ];
   order.forEach(([key,label,badgeClass])=>{
     const ch = FEED.channels[key];
@@ -547,10 +620,10 @@ function renderChannels(){
     row.innerHTML = `
       <div class="channel-top">
         <span class="channel-name">${label} — ${ch.label}</span>
-        <span class="channel-badge ${badgeClass}">${ch.status.toUpperCase()}</span>
+        <span class="channel-badge ${badgeClass}">${(ch.status||"").toUpperCase()}</span>
       </div>
       <div class="channel-date">${dateLabel}</div>
-      <div class="channel-notes">${ch.notes}</div>
+      <div class="channel-notes">${ch.notes||""}</div>
     `;
     list.appendChild(row);
   });
@@ -560,7 +633,7 @@ document.getElementById('checkBtn').addEventListener('click', ()=>{
   if(!FEED){ return; }
   if(deviceSelect.value === "" || deviceSelect.selectedIndex === 0){
     deviceSelect.focus();
-    alert("Please select your iPhone model first.");
+    alert(PLATFORM === "android" ? "Please select your Android device class first." : "Please select your iPhone model first.");
     return;
   }
   const idx = parseInt(deviceSelect.value, 10);
@@ -578,7 +651,9 @@ document.getElementById('checkBtn').addEventListener('click', ()=>{
   document.getElementById('dCurrent').textContent = effectiveVersion.label || "Unknown";
   document.getElementById('dLatest').textContent = FEED.channels.stable.label;
   document.getElementById('dChip').textContent = device.chip;
-  document.getElementById('dAI').textContent = device.aiCapable ? "Fully supported" : "Not available on this chip";
+  document.getElementById('dAI').textContent = device.aiCapable
+    ? (PLATFORM === "ios" ? "Fully supported" : "Typically available")
+    : (PLATFORM === "ios" ? "Not available on this chip" : "Limited / unavailable on this class");
 
   const reasons = document.getElementById('reasonList');
   reasons.innerHTML = "";
@@ -592,7 +667,6 @@ document.getElementById('checkBtn').addEventListener('click', ()=>{
   document.getElementById('sentimentSummary').textContent = FEED.communitySentiment.summary;
   document.getElementById('sentimentSource').textContent = FEED.communitySentiment.sourceNote;
 
-  // Probability / multi-source panel
   const probCard = document.getElementById('probabilityCard');
   if(r.probability && r.probability.score != null){
     probCard.style.display = 'block';
