@@ -284,65 +284,60 @@ if(detected.label){
 function detectIPhoneModel(){
   if(!/iPhone/i.test(navigator.userAgent || "")) return null;
 
-  // Logical CSS pixels (what the browser reports). Always use portrait orientation.
+  // Logical CSS points (portrait). These are what screen.width/height report.
   const w = Math.min(screen.width, screen.height);
   const h = Math.max(screen.width, screen.height);
-  const dpr = Math.round((window.devicePixelRatio || 1) * 100) / 100; // 2, 2.88, 3…
+  const dpr = Math.round((window.devicePixelRatio || 1) * 100) / 100;
 
-  // Exact logical signatures from iosref / Apple (portrait CSS points).
-  // Many models share a size — we map to the *group name that exists in our devices list*
-  // and prefer the most recent generation when multiple years share the same panel.
-  // Order: most specific / unique sizes first.
+  // Exact panel signatures → name that EXISTS in our devices[] list.
+  // When several years share a panel we pick one representative and note the ambiguity.
+  // Source: iosref.com / Apple logical resolutions (2026).
+  // CRITICAL: do NOT map 430×932 to a 17-series name (17 Pro Max is 440×956).
   const exact = [
-    // Unique or near-unique
-    { w: 375, h: 667, dpr: 2,   name: "iPhone SE (3rd gen)", note: "SE 2/3 share this size" },
-    { w: 420, h: 912, dpr: 3,   name: "iPhone Air", note: "unique 6.5″ Air panel" },
-    { w: 440, h: 956, dpr: 3,   name: "iPhone 17 Pro / Pro Max", note: "6.9″ Pro Max / 16 Pro Max" },
-    { w: 402, h: 874, dpr: 3,   name: "iPhone 17 Pro / Pro Max", note: "6.3″ — 17 / 17 Pro / 16 Pro" },
-    { w: 430, h: 932, dpr: 3,   name: "iPhone 16 Pro / Pro Max", note: "6.7″ — 15/16 Plus & Pro Max family" },
-    { w: 428, h: 926, dpr: 3,   name: "iPhone 14 / Plus", note: "older 6.7″ (12/13 Pro Max, 14 Plus)" },
-    { w: 393, h: 852, dpr: 3,   name: "iPhone 15 Pro / Pro Max", note: "6.1″ — 14 Pro / 15 / 15 Pro / 16" },
-    { w: 390, h: 844, dpr: 3,   name: "iPhone 14 / Plus", note: "6.1″ — 12/13/14 non-Pro, 16e" },
-    { w: 414, h: 896, dpr: 3,   name: "iPhone 11 Pro / Pro Max", note: "6.5″ @3x — 11 Pro Max / XS Max" },
-    { w: 414, h: 896, dpr: 2,   name: "iPhone 11", note: "6.1″ @2x — 11 / XR" },
-    { w: 375, h: 812, dpr: 3,   name: "iPhone 13 / mini", note: "5.8/5.4″ — X/XS/11 Pro / 12-13 mini" },
-    // Fallbacks with small tolerance (±1–2 px) for zoom / display modes
+    // Unique / near-unique first
+    { w: 375, h: 667, dprMin: 1.9, dprMax: 2.2, name: "iPhone SE (3rd gen)", note: "SE 2nd & 3rd gen share 375×667 @2x" },
+    { w: 420, h: 912, dprMin: 2.8, dprMax: 3.2, name: "iPhone Air", note: "unique 6.5″ Air panel" },
+    { w: 440, h: 956, dprMin: 2.8, dprMax: 3.2, name: "iPhone 17 Pro / Pro Max", note: "6.9″ — 16 Pro Max & 17 Pro Max" },
+    { w: 402, h: 874, dprMin: 2.8, dprMax: 3.2, name: "iPhone 16 Pro / Pro Max", note: "6.3″ — 16 Pro, 17, 17 Pro (confirm year)" },
+    // 14 Pro Max / 15 Pro Max / 15 Plus / 16 Plus — ALL are 430×932. Map to 14 Pro Max as safe default in our list.
+    { w: 430, h: 932, dprMin: 2.8, dprMax: 3.2, name: "iPhone 14 Pro / Pro Max", note: "6.7″ panel also used by 15 Pro Max, 15 Plus, 16 Plus — confirm yours" },
+    // Older 6.7″ (12/13 Pro Max, 14 Plus)
+    { w: 428, h: 926, dprMin: 2.8, dprMax: 3.2, name: "iPhone 13 Pro / Pro Max", note: "older 6.7″ — 12/13 Pro Max or 14 Plus" },
+    // 14 Pro / 15 / 15 Pro / 16 (non-Plus)
+    { w: 393, h: 852, dprMin: 2.8, dprMax: 3.2, name: "iPhone 15 Pro / Pro Max", note: "6.1″ — 14 Pro, 15, 15 Pro, 16 (confirm year)" },
+    // 12 / 13 / 14 non-Pro, 16e
+    { w: 390, h: 844, dprMin: 2.8, dprMax: 3.2, name: "iPhone 14 / Plus", note: "6.1″ non-Pro family (12–14, 16e)" },
+    { w: 414, h: 896, dprMin: 2.8, dprMax: 3.2, name: "iPhone 11 Pro / Pro Max", note: "6.5″ @3x — 11 Pro Max / XS Max" },
+    { w: 414, h: 896, dprMin: 1.9, dprMax: 2.2, name: "iPhone 11", note: "6.1″ @2x — 11 / XR" },
+    { w: 375, h: 812, dprMin: 2.7, dprMax: 3.2, name: "iPhone 13 / mini", note: "5.4/5.8″ — mini or X/XS/11 Pro class" },
   ];
 
-  // 1) Exact match (within 1 px and dpr within 0.15)
+  // 1) Strict exact match (tight tolerance so 430 does not leak into 440)
   for (const s of exact) {
-    if (Math.abs(w - s.w) <= 1 && Math.abs(h - s.h) <= 2 && Math.abs(dpr - s.dpr) <= 0.2) {
+    if (Math.abs(w - s.w) <= 1 && Math.abs(h - s.h) <= 1 && dpr >= s.dprMin && dpr <= s.dprMax) {
       return { name: s.name, confidence: "medium-high — exact screen match (" + s.note + ")" };
     }
   }
 
-  // 2) Closest match by Euclidean distance in logical space (prefer closer size)
+  // 2) Slightly looser (±3 px) still preferring exact table order
+  for (const s of exact) {
+    if (Math.abs(w - s.w) <= 3 && Math.abs(h - s.h) <= 3 && dpr >= s.dprMin && dpr <= s.dprMax) {
+      return { name: s.name, confidence: "medium — near screen match (" + s.note + ")" };
+    }
+  }
+
+  // 3) Closest only if very close (threshold 12) — prevents 430→440 jump
   let best = null, bestDist = Infinity;
   for (const s of exact) {
-    const dist = Math.hypot(w - s.w, h - s.h) + Math.abs(dpr - s.dpr) * 20;
+    if (dpr < s.dprMin - 0.3 || dpr > s.dprMax + 0.3) continue;
+    const dist = Math.hypot(w - s.w, h - s.h);
     if (dist < bestDist) { bestDist = dist; best = s; }
   }
-  if (best && bestDist < 40) {
+  if (best && bestDist <= 12) {
     return { name: best.name, confidence: "medium — closest screen match (" + best.note + ")" };
   }
 
-  // 3) GPU renderer hint (often blocked or generic "Apple GPU", but try)
-  try {
-    const c = document.createElement("canvas");
-    const gl = c.getContext("webgl") || c.getContext("experimental-webgl");
-    if (gl) {
-      const dbg = gl.getExtension("WEBGL_debug_renderer_info");
-      if (dbg) {
-        const renderer = (gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) || "").toLowerCase();
-        // Very coarse — modern iPhones report "Apple GPU"
-        if (renderer.includes("a19") || renderer.includes("a18")) return { name: "iPhone 16 Pro / Pro Max", confidence: "low — GPU string only" };
-        if (renderer.includes("a17")) return { name: "iPhone 15 Pro / Pro Max", confidence: "low — GPU string only" };
-        if (renderer.includes("a16")) return { name: "iPhone 14 Pro / Pro Max", confidence: "low — GPU string only" };
-      }
-    }
-  } catch (_) {}
-
-  return { name: null, confidence: "low — no reliable screen signature" };
+  return { name: null, confidence: "low — no reliable screen signature (try manual select)" };
 }
 
 const detectedModel = detectIPhoneModel();
@@ -441,19 +436,21 @@ function populateDevices(){
   function matchScore(cand) {
     if (!detName) return 0;
     const c = cand.toLowerCase();
-    if (c === detName) return 100;
-    // Both talk about the same generation number
+    // Exact list name wins always
+    if (c === detName) return 200;
+    // Partial: detected name is contained in list entry or vice-versa
+    if (c.includes(detName) || detName.includes(c)) return 150;
     const detGen = (detName.match(/iphone\s*(\d+)/) || [])[1];
     const candGen = (c.match(/iphone\s*(\d+)/) || [])[1];
     let score = 0;
-    if (detGen && candGen && detGen === candGen) score += 60;
-    if (detName.includes("pro") && c.includes("pro")) score += 25;
+    // Generation match is useful but must not beat a different exact family
+    if (detGen && candGen && detGen === candGen) score += 50;
+    if (detName.includes("pro") && c.includes("pro")) score += 20;
+    else if (detName.includes("pro") !== c.includes("pro")) score -= 15; // pro vs non-pro penalty
     if (detName.includes("air") && c.includes("air")) score += 40;
     if (detName.includes("se") && c.includes("se")) score += 40;
     if (detName.includes("mini") && c.includes("mini")) score += 20;
-    if (detName.includes("plus") && (c.includes("plus") || c.includes("/"))) score += 10;
-    // Prefer longer/more specific device list entries when scores tie
-    score += Math.min(c.length, 20) / 20;
+    if (detName.includes("plus") && c.includes("plus")) score += 15;
     return score;
   }
 
