@@ -190,7 +190,11 @@ button.primary:active{opacity:.85;}
 </div>
 
 <script>
-const DATA_URL = "./compatibility.json";
+// Prefer live backend when configured; fall back to local JSON (works offline / first visit).
+// Replace the worker URL after you deploy (see update-advisor-backend/README.md).
+const LIVE_DATA_URL = "https://update-advisor-api.YOUR_SUBDOMAIN.workers.dev/compatibility.json";
+const LOCAL_DATA_URL = "./compatibility.json";
+const DATA_URL = LIVE_DATA_URL.includes("YOUR_SUBDOMAIN") ? LOCAL_DATA_URL : LIVE_DATA_URL;
 let FEED = null;
 
 const deviceSelect = document.getElementById('deviceSelect');
@@ -278,50 +282,67 @@ if(detected.label){
 // UA never contains the model. We combine screen metrics + DPR + known size table.
 // Accuracy is good for recent generations but not 100% (especially Pro vs non-Pro of same year).
 function detectIPhoneModel(){
-  if(!/iPhone/i.test(navigator.userAgent)) return null;
+  if(!/iPhone/i.test(navigator.userAgent || "")) return null;
+
+  // Logical CSS pixels (what the browser reports). Always use portrait orientation.
   const w = Math.min(screen.width, screen.height);
   const h = Math.max(screen.width, screen.height);
-  const dpr = window.devicePixelRatio || 1;
-  // Physical pixel dimensions (approx)
-  const pw = Math.round(w * dpr);
-  const ph = Math.round(h * dpr);
+  const dpr = Math.round((window.devicePixelRatio || 1) * 100) / 100; // 2, 2.88, 3…
 
-  // Known logical / physical signatures (portrait). Order matters — more specific first.
-  // Values are approximate and may need occasional refresh when new models ship.
-  const signatures = [
-    // 2025/2026 models (iPhone 17 series, Air) — placeholders based on expected sizes
-    {name: "iPhone 17 Pro / Pro Max", minW: 430, maxW: 440, minH: 930, maxH: 960, minDpr: 3},
-    {name: "iPhone 17", minW: 390, maxW: 400, minH: 840, maxH: 870, minDpr: 3},
-    {name: "iPhone Air", minW: 390, maxW: 400, minH: 840, maxH: 870, minDpr: 3},
-    // iPhone 16 series
-    {name: "iPhone 16 Pro / Pro Max", minW: 430, maxW: 440, minH: 930, maxH: 960, minDpr: 3},
-    {name: "iPhone 16 / Plus", minW: 390, maxW: 430, minH: 840, maxH: 940, minDpr: 3},
-    {name: "iPhone 16e", minW: 375, maxW: 390, minH: 810, maxH: 850, minDpr: 2.5},
-    // iPhone 15 series
-    {name: "iPhone 15 Pro / Pro Max", minW: 393, maxW: 430, minH: 852, maxH: 932, minDpr: 3},
-    {name: "iPhone 15 / Plus", minW: 393, maxW: 430, minH: 852, maxH: 932, minDpr: 3},
-    // iPhone 14 series
-    {name: "iPhone 14 Pro / Pro Max", minW: 393, maxW: 430, minH: 852, maxH: 932, minDpr: 3},
-    {name: "iPhone 14 / Plus", minW: 390, maxW: 430, minH: 844, maxH: 926, minDpr: 3},
-    // iPhone 13 series
-    {name: "iPhone 13 Pro / Pro Max", minW: 390, maxW: 430, minH: 844, maxH: 926, minDpr: 3},
-    {name: "iPhone 13 / mini", minW: 375, maxW: 390, minH: 812, maxH: 844, minDpr: 3},
-    // iPhone 12 series
-    {name: "iPhone 12 Pro / Pro Max", minW: 390, maxW: 430, minH: 844, maxH: 926, minDpr: 3},
-    {name: "iPhone 12 / mini", minW: 360, maxW: 390, minH: 780, maxH: 844, minDpr: 3},
-    // iPhone 11 / SE
-    {name: "iPhone 11 Pro / Pro Max", minW: 375, maxW: 415, minH: 812, maxH: 896, minDpr: 3},
-    {name: "iPhone 11", minW: 375, maxW: 415, minH: 812, maxH: 896, minDpr: 2},
-    {name: "iPhone SE (3rd gen)", minW: 375, maxW: 380, minH: 667, maxH: 670, minDpr: 2},
-    {name: "iPhone SE (2nd gen)", minW: 375, maxW: 380, minH: 667, maxH: 670, minDpr: 2}
+  // Exact logical signatures from iosref / Apple (portrait CSS points).
+  // Many models share a size — we map to the *group name that exists in our devices list*
+  // and prefer the most recent generation when multiple years share the same panel.
+  // Order: most specific / unique sizes first.
+  const exact = [
+    // Unique or near-unique
+    { w: 375, h: 667, dpr: 2,   name: "iPhone SE (3rd gen)", note: "SE 2/3 share this size" },
+    { w: 420, h: 912, dpr: 3,   name: "iPhone Air", note: "unique 6.5″ Air panel" },
+    { w: 440, h: 956, dpr: 3,   name: "iPhone 17 Pro / Pro Max", note: "6.9″ Pro Max / 16 Pro Max" },
+    { w: 402, h: 874, dpr: 3,   name: "iPhone 17 Pro / Pro Max", note: "6.3″ — 17 / 17 Pro / 16 Pro" },
+    { w: 430, h: 932, dpr: 3,   name: "iPhone 16 Pro / Pro Max", note: "6.7″ — 15/16 Plus & Pro Max family" },
+    { w: 428, h: 926, dpr: 3,   name: "iPhone 14 / Plus", note: "older 6.7″ (12/13 Pro Max, 14 Plus)" },
+    { w: 393, h: 852, dpr: 3,   name: "iPhone 15 Pro / Pro Max", note: "6.1″ — 14 Pro / 15 / 15 Pro / 16" },
+    { w: 390, h: 844, dpr: 3,   name: "iPhone 14 / Plus", note: "6.1″ — 12/13/14 non-Pro, 16e" },
+    { w: 414, h: 896, dpr: 3,   name: "iPhone 11 Pro / Pro Max", note: "6.5″ @3x — 11 Pro Max / XS Max" },
+    { w: 414, h: 896, dpr: 2,   name: "iPhone 11", note: "6.1″ @2x — 11 / XR" },
+    { w: 375, h: 812, dpr: 3,   name: "iPhone 13 / mini", note: "5.8/5.4″ — X/XS/11 Pro / 12-13 mini" },
+    // Fallbacks with small tolerance (±1–2 px) for zoom / display modes
   ];
 
-  for(const s of signatures){
-    if(w >= s.minW && w <= s.maxW && h >= s.minH && h <= s.maxH && dpr >= (s.minDpr || 2)){
-      return { name: s.name, confidence: "medium — based on screen size & pixel ratio (not 100% unique)" };
+  // 1) Exact match (within 1 px and dpr within 0.15)
+  for (const s of exact) {
+    if (Math.abs(w - s.w) <= 1 && Math.abs(h - s.h) <= 2 && Math.abs(dpr - s.dpr) <= 0.2) {
+      return { name: s.name, confidence: "medium-high — exact screen match (" + s.note + ")" };
     }
   }
-  return { name: null, confidence: "low — could not match screen signature" };
+
+  // 2) Closest match by Euclidean distance in logical space (prefer closer size)
+  let best = null, bestDist = Infinity;
+  for (const s of exact) {
+    const dist = Math.hypot(w - s.w, h - s.h) + Math.abs(dpr - s.dpr) * 20;
+    if (dist < bestDist) { bestDist = dist; best = s; }
+  }
+  if (best && bestDist < 40) {
+    return { name: best.name, confidence: "medium — closest screen match (" + best.note + ")" };
+  }
+
+  // 3) GPU renderer hint (often blocked or generic "Apple GPU", but try)
+  try {
+    const c = document.createElement("canvas");
+    const gl = c.getContext("webgl") || c.getContext("experimental-webgl");
+    if (gl) {
+      const dbg = gl.getExtension("WEBGL_debug_renderer_info");
+      if (dbg) {
+        const renderer = (gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) || "").toLowerCase();
+        // Very coarse — modern iPhones report "Apple GPU"
+        if (renderer.includes("a19") || renderer.includes("a18")) return { name: "iPhone 16 Pro / Pro Max", confidence: "low — GPU string only" };
+        if (renderer.includes("a17")) return { name: "iPhone 15 Pro / Pro Max", confidence: "low — GPU string only" };
+        if (renderer.includes("a16")) return { name: "iPhone 14 Pro / Pro Max", confidence: "low — GPU string only" };
+      }
+    }
+  } catch (_) {}
+
+  return { name: null, confidence: "low — no reliable screen signature" };
 }
 
 const detectedModel = detectIPhoneModel();
@@ -362,25 +383,46 @@ if('serviceWorker' in navigator){
 
 // ---------- Load data ----------
 async function loadFeed(){
-  try{
-    const res = await fetch(DATA_URL, {cache:"no-cache"});
-    if(!res.ok) throw new Error("bad response");
-    FEED = await res.json();
-    offlinePill.style.display = "none";
-  }catch(e){
-    // service worker cache, or nothing — try cache API directly as last resort
-    try{
-      const cache = await caches.open('update-advisor-v3');
-      const cached = await cache.match(DATA_URL);
-      if(cached){ FEED = await cached.json(); offlinePill.style.display = "inline-block"; }
-    }catch(_e){}
+  const candidates = [];
+  if (!LIVE_DATA_URL.includes("YOUR_SUBDOMAIN")) candidates.push(LIVE_DATA_URL);
+  candidates.push(LOCAL_DATA_URL);
+
+  for (const url of candidates) {
+    try {
+      const res = await fetch(url, { cache: "no-cache", mode: "cors" });
+      if (!res.ok) throw new Error("bad response");
+      FEED = await res.json();
+      offlinePill.style.display = "none";
+      break;
+    } catch (e) {
+      // try next
+    }
   }
-  if(!FEED){
+
+  if (!FEED) {
+    // service worker / Cache API last resort
+    try {
+      const cache = await caches.open("update-advisor-v4");
+      for (const url of candidates) {
+        const cached = await cache.match(url);
+        if (cached) {
+          FEED = await cached.json();
+          offlinePill.style.display = "inline-block";
+          break;
+        }
+      }
+    } catch (_e) {}
+  }
+
+  if (!FEED) {
     dataFreshness.textContent = "Couldn't load compatibility data and no offline copy was found yet — connect to the internet once to cache it.";
     return;
   }
   populateDevices();
-  dataFreshness.textContent = "Compatibility data last updated " + FEED.generatedAt + ".";
+  const src = (!LIVE_DATA_URL.includes("YOUR_SUBDOMAIN") && FEED.communitySentiment?.sourceNote?.includes("Refreshed"))
+    ? " (live multi-source)"
+    : "";
+  dataFreshness.textContent = "Compatibility data last updated " + FEED.generatedAt + src + ".";
 }
 
 function populateDevices(){
@@ -393,27 +435,47 @@ function populateDevices(){
   deviceSelect.appendChild(placeholder);
 
   let matchedIndex = -1;
+  const detName = (detectedModel && detectedModel.name) ? detectedModel.name.toLowerCase() : "";
+
+  // Scoring: higher = better match against our device list names
+  function matchScore(cand) {
+    if (!detName) return 0;
+    const c = cand.toLowerCase();
+    if (c === detName) return 100;
+    // Both talk about the same generation number
+    const detGen = (detName.match(/iphone\s*(\d+)/) || [])[1];
+    const candGen = (c.match(/iphone\s*(\d+)/) || [])[1];
+    let score = 0;
+    if (detGen && candGen && detGen === candGen) score += 60;
+    if (detName.includes("pro") && c.includes("pro")) score += 25;
+    if (detName.includes("air") && c.includes("air")) score += 40;
+    if (detName.includes("se") && c.includes("se")) score += 40;
+    if (detName.includes("mini") && c.includes("mini")) score += 20;
+    if (detName.includes("plus") && (c.includes("plus") || c.includes("/"))) score += 10;
+    // Prefer longer/more specific device list entries when scores tie
+    score += Math.min(c.length, 20) / 20;
+    return score;
+  }
+
+  let bestScore = 0;
   FEED.devices.forEach((d,i)=>{
     const o = document.createElement('option'); o.value=i; o.textContent=d.name;
-    // Fuzzy match against detected model name
-    if(detectedModel && detectedModel.name){
-      const det = detectedModel.name.toLowerCase();
-      const cand = d.name.toLowerCase();
-      // Exact or partial (handles "iPhone 15 Pro / Pro Max" vs "iPhone 15 Pro / Pro Max")
-      if(cand === det || cand.includes(det.split(" / ")[0]) || det.includes(cand.split(" / ")[0])){
-        if(matchedIndex === -1) matchedIndex = i; // first good match
-      }
-    }
+    const sc = matchScore(d.name);
+    if (sc > bestScore) { bestScore = sc; matchedIndex = i; }
     deviceSelect.appendChild(o);
   });
 
-  if(matchedIndex >= 0){
+  if(matchedIndex >= 0 && bestScore >= 50){
     deviceSelect.value = String(matchedIndex);
     placeholder.selected = false;
-    // Visual hint
     const note = document.createElement('div');
     note.style.cssText = "font-size:12px;color:var(--sub);margin-top:6px;";
-    note.textContent = "Pre-selected from screen size heuristics (" + detectedModel.confidence + "). Change if incorrect.";
+    note.textContent = "Pre-selected: " + FEED.devices[matchedIndex].name + " (" + detectedModel.confidence + "). Change if incorrect.";
+    deviceSelect.parentNode.insertBefore(note, deviceSelect.nextSibling);
+  } else if (detectedModel && detectedModel.name) {
+    const note = document.createElement('div');
+    note.style.cssText = "font-size:12px;color:var(--sub);margin-top:6px;";
+    note.textContent = "Detected screen looks like " + detectedModel.name + " — please confirm in the list.";
     deviceSelect.parentNode.insertBefore(note, deviceSelect.nextSibling);
   }
 }
