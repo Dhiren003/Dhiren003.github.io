@@ -263,23 +263,138 @@ function detectIOS(){
   return { major, minor, patch, label, confidence, raw: ua, source };
 }
 
-// ---------- Android version ----------
-function detectAndroid(){
+// ---------- Android version + model (Client Hints fix Chrome UA freeze) ----------
+// Chrome/Edge/Samsung Internet freeze the UA to "Android 10; K". Real version + model
+// come from navigator.userAgentData.getHighEntropyValues (async).
+function detectAndroidFromUA(){
   const ua = navigator.userAgent || "";
-  // Typical: "Android 14" or "Android 15"
+  // Prefer real version when UA is NOT reduced (Firefox, older browsers)
+  const reduced = /Android\s+10[;)\s].*\bK\b/i.test(ua) || /Android\s+10; K/i.test(ua);
   const m = ua.match(/Android\s+(\d+)(?:\.(\d+))?/i);
-  if(m){
+  if(m && !reduced){
     const major = parseInt(m[1],10);
     const minor = m[2] ? parseInt(m[2],10) : 0;
     return {
       major, minor, patch: null,
       label: minor ? `Android ${major}.${minor}` : `Android ${major}`,
-      confidence: "high — from UA Android token",
+      confidence: "high — from full UA Android token",
       raw: ua,
-      source: "Android UA token"
+      source: "Android UA token",
+      reduced: false
     };
   }
-  return { major:null, minor:null, patch:null, label:null, confidence:"none", raw: ua, source: null };
+  if(m && reduced){
+    // Frozen at 10 — treat as unknown until Client Hints
+    return {
+      major: null, minor: null, patch: null,
+      label: null,
+      confidence: "pending — UA frozen at Android 10 (Chrome reduction)",
+      raw: ua,
+      source: "reduced UA (need Client Hints)",
+      reduced: true
+    };
+  }
+  return { major:null, minor:null, patch:null, label:null, confidence:"none", raw: ua, source: null, reduced: false };
+}
+
+async function resolveAndroidClientHints(){
+  const base = detectAndroidFromUA();
+  let model = null;
+  let brand = null;
+
+  // 1) High-entropy Client Hints (Chrome / Chromium)
+  if (navigator.userAgentData && typeof navigator.userAgentData.getHighEntropyValues === "function") {
+    try {
+      const hints = await navigator.userAgentData.getHighEntropyValues(["platformVersion", "model"]);
+      if (hints.platformVersion) {
+        // platformVersion is like "17.0.0" or "14"
+        const parts = String(hints.platformVersion).split(".");
+        const major = parseInt(parts[0], 10);
+        const minor = parts[1] ? parseInt(parts[1], 10) : 0;
+        if (!isNaN(major) && major > 0) {
+          base.major = major;
+          base.minor = isNaN(minor) ? 0 : minor;
+          base.patch = null;
+          base.label = base.minor ? `Android ${major}.${base.minor}` : `Android ${major}`;
+          base.confidence = "high — User-Agent Client Hints (platformVersion)";
+          base.source = "UA-CH platformVersion";
+          base.reduced = false;
+        }
+      }
+      if (hints.model && String(hints.model).trim()) {
+        model = String(hints.model).trim();
+      }
+    } catch (e) {
+      // Permission / unsupported — keep UA fallback
+    }
+  }
+
+  // 2) Fallback: parse model from full UA when present (non-reduced)
+  const ua = navigator.userAgent || "";
+  if (!model) {
+    // e.g. "Android 13; Pixel 7" or "Android 14; SM-S918B"
+    const mm = ua.match(/Android\s+[\d.]+;\s*([^)]+?)\)/i);
+    if (mm) {
+      const token = mm[1].trim();
+      if (token && token !== "K" && token.length > 1) model = token;
+    }
+  }
+
+  // 3) Map model string → brand + list name
+  const mapped = mapAndroidModelToDevice(model, ua);
+  return { version: base, device: mapped, rawModel: model };
+}
+
+// Samsung SM- codes → series (common global variants; suffix letter varies by region)
+const SAMSUNG_SM_MAP = [
+  { re: /^SM-S94[278]/i, name: "Samsung Galaxy S26 / S26+ / S26 Ultra" },
+  { re: /^SM-S93[1678]/i, name: "Samsung Galaxy S25 / S25+ / S25 Ultra / S25 FE" },
+  { re: /^SM-S92[1-8]/i, name: "Samsung Galaxy S24 / S24 FE" },
+  { re: /^SM-S91[1-8]/i, name: "Samsung Galaxy S23 / S23 FE" },
+  { re: /^SM-S90[1-8]/i, name: "Samsung Galaxy S23 / S23 FE" },
+  { re: /^SM-F9|^SM-F7|^SM-F96|^SM-F76|^SM-F97|^SM-F77/i, name: "Samsung Galaxy Z Fold / Z Flip (5–8)" },
+  { re: /^SM-A/i, name: "Samsung Galaxy A-series / mid-range" },
+  { re: /^SM-/i, name: "Samsung (other / older)" },
+];
+
+function mapAndroidModelToDevice(model, ua){
+  const u = (ua || "").toLowerCase();
+  const m = (model || "").trim();
+  const ml = m.toLowerCase();
+
+  // Pixel
+  if (/pixel\s*9/i.test(m) || /pixel\s*9/i.test(u)) return { name: "Google Pixel 9 / 9 Pro / 9 Pro XL", brand: "google", confidence: "high — model hint" };
+  if (/pixel\s*8/i.test(m) || /pixel\s*8/i.test(u)) return { name: "Google Pixel 8 / 8 Pro", brand: "google", confidence: "high — model hint" };
+  if (/pixel\s*7/i.test(m) || /pixel\s*7/i.test(u)) return { name: "Google Pixel 7 / 7 Pro / 7a", brand: "google", confidence: "high — model hint" };
+  if (/pixel\s*6/i.test(m) || /pixel\s*6/i.test(u)) return { name: "Google Pixel 6 / 6 Pro / 6a", brand: "google", confidence: "high — model hint" };
+  if (/pixel/i.test(m) || /pixel/i.test(u)) return { name: "Google Pixel (other / A-series)", brand: "google", confidence: "medium — Pixel family" };
+
+  // Samsung by SM- code or name
+  for (const row of SAMSUNG_SM_MAP) {
+    if (row.re.test(m)) return { name: row.name, brand: "samsung", confidence: "high — Samsung model code" };
+  }
+  if (/galaxy\s*s26|sm-s94/i.test(m+u)) return { name: "Samsung Galaxy S26 / S26+ / S26 Ultra", brand: "samsung", confidence: "medium" };
+  if (/galaxy\s*s25|sm-s93/i.test(m+u)) return { name: "Samsung Galaxy S25 / S25+ / S25 Ultra / S25 FE", brand: "samsung", confidence: "medium" };
+  if (/galaxy\s*s24|sm-s92/i.test(m+u)) return { name: "Samsung Galaxy S24 / S24 FE", brand: "samsung", confidence: "medium" };
+  if (/galaxy\s*s23|sm-s91/i.test(m+u)) return { name: "Samsung Galaxy S23 / S23 FE", brand: "samsung", confidence: "medium" };
+  if (/fold|flip|sm-f/i.test(m+u)) return { name: "Samsung Galaxy Z Fold / Z Flip (5–8)", brand: "samsung", confidence: "medium" };
+  if (/samsung|galaxy|sm-/i.test(m+u)) return { name: "Samsung (other / older)", brand: "samsung", confidence: "low — Samsung brand only" };
+
+  // Other brands
+  if (/oneplus|cph\d/i.test(m+u)) {
+    if (/nord/i.test(m+u)) return { name: "OnePlus / Nord (mid-range)", brand: "oneplus", confidence: "medium" };
+    return { name: "OnePlus (recent flagship)", brand: "oneplus", confidence: "medium" };
+  }
+  if (/xiaomi|redmi|poco|mi\s?\d/i.test(m+u)) {
+    if (/redmi|poco|note/i.test(m+u)) return { name: "Xiaomi / Redmi / POCO mid-range", brand: "xiaomi", confidence: "medium" };
+    return { name: "Xiaomi / Redmi / POCO flagship", brand: "xiaomi", confidence: "medium" };
+  }
+  if (/oppo|realme|vivo|iqoo/i.test(m+u)) {
+    return { name: "OPPO / realme / vivo flagship", brand: "oppo", confidence: "low — brand only" };
+  }
+
+  if (m) return { name: "Other recent flagship", brand: "other", confidence: "low — model \"" + m + "\" not mapped" };
+  return { name: null, brand: null, confidence: "low — select your device manually" };
 }
 
 // ---------- iPhone model heuristics (iOS only) ----------
@@ -324,29 +439,50 @@ function detectIPhoneModel(){
   return { name: null, confidence: "low — no reliable screen signature (try manual select)" };
 }
 
-// ---------- Android device class heuristics (optional) ----------
-function detectAndroidDeviceClass(){
-  if(PLATFORM !== "android") return null;
-  const ua = (navigator.userAgent || "").toLowerCase();
-  if (/pixel\s*9/i.test(ua)) return { name: "Google Pixel 9 / 9 Pro / 9 Pro XL", confidence: "medium — UA model token" };
-  if (/pixel\s*8/i.test(ua)) return { name: "Google Pixel 8 / 8 Pro", confidence: "medium — UA model token" };
-  if (/pixel\s*7/i.test(ua)) return { name: "Google Pixel 7 / 7 Pro / 7a", confidence: "medium — UA model token" };
-  if (/pixel\s*6/i.test(ua)) return { name: "Google Pixel 6 / 6 Pro / 6a", confidence: "medium — UA model token" };
-  if (/pixel/i.test(ua)) return { name: "Google Pixel 6 / 6 Pro / 6a", confidence: "low — generic Pixel" };
-  if (/sm-s9|galaxy s26|sm-s938/i.test(ua)) return { name: "Samsung Galaxy S26 / S26+ / S26 Ultra", confidence: "medium — UA model token" };
-  if (/sm-s9|galaxy s25|sm-s938|sm-s931/i.test(ua)) return { name: "Samsung Galaxy S25 / S25+ / S25 Ultra / S25 FE", confidence: "low — approximate" };
-  if (/sm-s9|galaxy s24/i.test(ua)) return { name: "Samsung Galaxy S24 / S24 FE", confidence: "low — approximate" };
-  if (/sm-s9|galaxy s23/i.test(ua)) return { name: "Samsung Galaxy S23 / S23 FE", confidence: "low — approximate" };
-  if (/sm-f|fold|flip|sm-f7|sm-f9/i.test(ua)) return { name: "Samsung Galaxy Z Fold / Z Flip (5–8)", confidence: "low — foldable family" };
-  if (/oneplus|xiaomi|redmi|poco|oppo|vivo|realme/i.test(ua)) return { name: "Other recent flagship (OnePlus, Xiaomi, etc.)", confidence: "low — brand only" };
-  return { name: null, confidence: "low — select your class manually" };
-}
 
-let detected = PLATFORM === "ios" ? detectIOS() : (PLATFORM === "android" ? detectAndroid() : { major:null, minor:null, patch:null, label:null, confidence:"none", raw: navigator.userAgent, source:null });
-let detectedModel = PLATFORM === "ios" ? detectIPhoneModel() : detectAndroidDeviceClass();
+
+let detectedBrand = null; // "samsung" | "google" | ... for Android dropdown filter
+
+let detected = PLATFORM === "ios"
+  ? detectIOS()
+  : (PLATFORM === "android"
+      ? detectAndroidFromUA()
+      : { major:null, minor:null, patch:null, label:null, confidence:"none", raw: navigator.userAgent, source:null });
+let detectedModel = PLATFORM === "ios" ? detectIPhoneModel() : null;
 let effectiveVersion = detected;
 
 rawUAEl.textContent = detected.raw || navigator.userAgent;
+
+// Android: finish detection via Client Hints (async), then refresh UI + dropdown
+async function finishAndroidDetection(){
+  if (PLATFORM !== "android") return;
+  detectedVersionEl.textContent = "Detecting…";
+  confidenceNote.textContent = "Reading Android version & model (Client Hints)…";
+  try {
+    const result = await resolveAndroidClientHints();
+    detected = result.version;
+    effectiveVersion = detected;
+    if (result.device) {
+      detectedModel = result.device;
+      detectedBrand = result.device.brand || null;
+    }
+    rawUAEl.textContent = (detected.raw || navigator.userAgent) +
+      (result.rawModel ? ("\nUA-CH model: " + result.rawModel) : "") +
+      (detected.source ? ("\nsource: " + detected.source) : "");
+  } catch (e) {
+    confidenceNote.textContent = "Detection limited — set version manually if needed.";
+  }
+  if (detected.label) {
+    detectedVersionEl.textContent = detected.label;
+    confidenceNote.textContent = "Confidence: " + detected.confidence + (detected.source ? " (" + detected.source + ")" : "");
+  } else {
+    detectedVersionEl.textContent = "Couldn't detect";
+    confidenceNote.textContent = "Chrome hides the real Android version in the UA. If detection failed, set it manually below.";
+    manualBlock.style.display = "block";
+  }
+  // Re-populate device list filtered by brand once FEED is ready
+  if (FEED) populateDevices();
+}
 
 function setupManualVersions(){
   manualSelect.innerHTML = "";
@@ -359,7 +495,11 @@ function setupManualVersions(){
   });
 }
 
-if(detected.label){
+if (PLATFORM === "android") {
+  detectedVersionEl.textContent = "Detecting…";
+  confidenceNote.textContent = "Resolving real Android version (UA is often frozen at 10)…";
+  finishAndroidDetection();
+} else if(detected.label){
   detectedVersionEl.textContent = detected.label;
   confidenceNote.textContent = "Confidence: " + detected.confidence + (detected.source ? " (" + detected.source + ")" : "");
 } else {
@@ -423,7 +563,7 @@ async function loadFeed(){
 
   if (!RAW_FEED) {
     try {
-      const cache = await caches.open("update-advisor-v6");
+      const cache = await caches.open("update-advisor-v7");
       for (const url of candidates) {
         const cached = await cache.match(url);
         if (cached) {
@@ -491,6 +631,35 @@ function populateDevices(){
   placeholder.selected = true;
   deviceSelect.appendChild(placeholder);
 
+  if (!FEED || !FEED.devices) return;
+
+  // Android: filter to detected brand only (Samsung → Samsung models, etc.)
+  let list = FEED.devices.slice();
+  let filterNote = "";
+  if (PLATFORM === "android" && detectedBrand) {
+    const brandList = list.filter(d => d.brand === detectedBrand);
+    if (brandList.length > 0) {
+      list = brandList;
+      const brandNames = {
+        google: "Google Pixel",
+        samsung: "Samsung Galaxy",
+        oneplus: "OnePlus",
+        xiaomi: "Xiaomi / Redmi / POCO",
+        oppo: "OPPO / realme / vivo",
+        other: "Other brands"
+      };
+      filterNote = "Showing " + (brandNames[detectedBrand] || detectedBrand) + " models only (detected brand).";
+    }
+  }
+
+  // Optional: "Show all brands" when filtered
+  if (PLATFORM === "android" && detectedBrand && list.length < FEED.devices.length) {
+    const allOpt = document.createElement('option');
+    allOpt.value = "__all__";
+    allOpt.textContent = "— Show all brands —";
+    deviceSelect.appendChild(allOpt);
+  }
+
   const detName = (detectedModel && detectedModel.name) ? detectedModel.name.toLowerCase() : "";
   function matchScore(cand) {
     if (!detName) return 0;
@@ -513,16 +682,30 @@ function populateDevices(){
   }
 
   let matchedIndex = -1, bestScore = 0;
-  FEED.devices.forEach((d,i)=>{
-    const o = document.createElement('option'); o.value=i; o.textContent=d.name;
+  // Map display index → original FEED.devices index
+  const indexMap = [];
+  list.forEach((d)=>{
+    const globalIdx = FEED.devices.indexOf(d);
+    indexMap.push(globalIdx);
+    const o = document.createElement('option');
+    o.value = String(globalIdx);
+    o.textContent = d.name;
     const sc = matchScore(d.name);
-    if (sc > bestScore) { bestScore = sc; matchedIndex = i; }
+    if (sc > bestScore) { bestScore = sc; matchedIndex = globalIdx; }
     deviceSelect.appendChild(o);
   });
 
-  // Remove any previous helper notes
+  // Remove previous helper notes
   const prev = deviceSelect.parentNode.querySelectorAll('.detect-device-note');
   prev.forEach(n => n.remove());
+
+  if (filterNote) {
+    const note = document.createElement('div');
+    note.className = "detect-device-note";
+    note.style.cssText = "font-size:12px;color:var(--sub);margin-top:6px;";
+    note.textContent = filterNote;
+    deviceSelect.parentNode.insertBefore(note, deviceSelect.nextSibling);
+  }
 
   if(matchedIndex >= 0 && bestScore >= 50){
     deviceSelect.value = String(matchedIndex);
@@ -530,7 +713,7 @@ function populateDevices(){
     const note = document.createElement('div');
     note.className = "detect-device-note";
     note.style.cssText = "font-size:12px;color:var(--sub);margin-top:6px;";
-    note.textContent = "Pre-selected: " + FEED.devices[matchedIndex].name + " (" + (detectedModel.confidence || "") + "). Change if incorrect.";
+    note.textContent = "Pre-selected: " + FEED.devices[matchedIndex].name + " (" + (detectedModel && detectedModel.confidence || "") + "). Change if incorrect.";
     deviceSelect.parentNode.insertBefore(note, deviceSelect.nextSibling);
   } else if (detectedModel && detectedModel.name) {
     const note = document.createElement('div');
@@ -540,6 +723,15 @@ function populateDevices(){
     deviceSelect.parentNode.insertBefore(note, deviceSelect.nextSibling);
   }
 }
+
+// When user picks "Show all brands", repopulate without filter
+deviceSelect.addEventListener('change', ()=>{
+  if (deviceSelect.value === "__all__") {
+    detectedBrand = null;
+    populateDevices();
+  }
+});
+
 
 function evaluate(device, current){
   const latest = FEED.latestMajorVersion;
