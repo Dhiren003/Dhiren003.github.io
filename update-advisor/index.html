@@ -226,9 +226,14 @@ function detectPlatform(){
 PLATFORM = detectPlatform();
 
 // ---------- iOS version (handles Apple UA freeze from iOS 26+) ----------
+// From iOS 26+, Safari often freezes "CPU iPhone OS …" at 18_6.
+// The real OS major usually appears in Version/x.y (Safari). Chrome/Firefox on iOS
+// may only expose the frozen OS token — then we flag low confidence and urge manual set.
 function detectIOS(){
   const ua = navigator.userAgent || "";
   const isAppleMobile = /iPhone|iPad|iPod/i.test(ua);
+  const isThirdPartyBrowser = /CriOS|FxiOS|EdgiOS|OPiOS|OPT\//i.test(ua);
+
   let osMajor=null, osMinor=null, osPatch=null;
   const osMatch = ua.match(/CPU (?:iPhone )?OS (\d+)_(\d+)(?:_(\d+))?\s+like Mac OS X/);
   if(osMatch){
@@ -236,30 +241,62 @@ function detectIOS(){
     osMinor = parseInt(osMatch[2],10);
     osPatch = osMatch[3] ? parseInt(osMatch[3],10) : null;
   }
+
   let verMajor=null, verMinor=null, verPatch=null;
+  // Safari "Version/27.0" — best signal when OS token is frozen
   const verMatch = ua.match(/Version\/(\d+)\.(\d+)(?:\.(\d+))?/);
   if(verMatch){
     verMajor = parseInt(verMatch[1],10);
     verMinor = parseInt(verMatch[2],10);
     verPatch = verMatch[3] ? parseInt(verMatch[3],10) : null;
   }
+
+  // Frozen OS token: major stuck at 18 while device may run 26/27+
+  const osLooksFrozen = isAppleMobile && osMajor === 18 && osMinor >= 6;
+
   let major, minor, patch, confidence, source;
-  if(isAppleMobile && verMajor !== null && (osMajor === null || verMajor > osMajor)){
+
+  // 1) Prefer Version/ when it looks like a real iOS major (16+) and is newer than OS token
+  if (isAppleMobile && verMajor !== null && verMajor >= 16 && (osMajor === null || verMajor > osMajor || (osLooksFrozen && verMajor >= 16))) {
     major = verMajor; minor = verMinor; patch = verPatch;
-    source = "Version tag (Apple froze OS token at 18.6 from iOS 26+)";
-    confidence = "high — corrected for Apple UA freeze";
-  } else if(osMajor !== null){
+    source = osLooksFrozen
+      ? "Version tag (OS token frozen at 18.6 — using Version/)"
+      : "Version tag";
+    confidence = "high — from Safari Version/";
+  }
+  // 2) OS token when it does NOT look frozen (pre–iOS 26 devices, or true 18.x)
+  else if (osMajor !== null && !osLooksFrozen) {
     major = osMajor; minor = osMinor; patch = osPatch;
     source = "CPU OS token";
-    confidence = patch !== null ? "high" : "high — patch may be omitted";
-  } else if(verMajor !== null){
+    confidence = patch !== null ? "high" : "high — patch may be omitted by browser";
+  }
+  // 3) Frozen OS token only (typical Chrome/Firefox on iOS 26+) — cannot know real version
+  else if (osLooksFrozen) {
+    major = osMajor; minor = osMinor; patch = osPatch;
+    source = "CPU OS token (FROZEN)";
+    confidence = isThirdPartyBrowser
+      ? "low — Chrome/Firefox on iOS hide the real version; set manually if you are on iOS 26+"
+      : "low — OS token frozen at 18.6; set manually if Version/ is missing";
+  }
+  // 4) Version/ alone
+  else if (verMajor !== null) {
     major = verMajor; minor = verMinor; patch = verPatch;
-    source = "Version tag";
+    source = "Version tag only";
     confidence = "medium";
   } else {
     return { major:null, minor:null, patch:null, label:null, confidence:"none", raw: ua, source: null };
   }
-  const label = (minor === 0 && patch === null) ? `iOS ${major}` : `iOS ${major}.${minor}${patch !== null ? "." + patch : ""}`;
+
+  let label;
+  if (minor === 0 && patch === null) label = `iOS ${major}`;
+  else if (patch !== null) label = `iOS ${major}.${minor}.${patch}`;
+  else label = `iOS ${major}.${minor}`;
+
+  // Annotate when freeze may mislead
+  if (osLooksFrozen && source.indexOf("FROZEN") !== -1) {
+    label = label + " (may be frozen UA)";
+  }
+
   return { major, minor, patch, label, confidence, raw: ua, source };
 }
 
@@ -563,7 +600,7 @@ async function loadFeed(){
 
   if (!RAW_FEED) {
     try {
-      const cache = await caches.open("update-advisor-v7");
+      const cache = await caches.open("update-advisor-v8");
       for (const url of candidates) {
         const cached = await cache.match(url);
         if (cached) {

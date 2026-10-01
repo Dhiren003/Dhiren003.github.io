@@ -1,24 +1,24 @@
 {
-  "generatedAt": "2026-09-29",
+  "generatedAt": "2026-10-01",
   "ios": {
     "latestMajorVersion": 27,
     "osName": "iOS",
     "channels": {
       "stable": {
-        "version": "27",
-        "label": "iOS 27",
-        "releaseDate": "2026-09-14",
+        "version": "27.0.1",
+        "label": "iOS 27.0.1",
+        "releaseDate": "2026-09-28",
         "status": "released",
-        "type": "feature",
-        "notes": "Major release introducing Siri AI, performance improvements, and parental controls. Compatible with iPhone 11 and later."
+        "type": "bugfix",
+        "notes": "Bug-fix update for iOS 27 (released 14 Sep 2026). Fixes iPhone 18 Pro/Pro Max Face ID-related restarts, a 2x photo color artifact on some 18 Pro units, and a touchscreen hang when opening Notification Center and Control Center together. Recommended for all users on 27.0."
       },
       "upcomingFeature": {
         "version": "27.1",
         "label": "iOS 27.1",
-        "expectedDate": "2026-10-15",
+        "expectedDate": "2026-10",
         "status": "expected",
         "type": "feature",
-        "notes": "Expected language expansions and polish. Check Settings > General > Software Update."
+        "notes": "Expected feature/point release with further Siri AI language support and polish. Check Settings > General > Software Update."
       },
       "beta": {
         "version": "27.2 beta 2",
@@ -26,57 +26,57 @@
         "releaseDate": "2026-09-21",
         "status": "beta",
         "type": "beta",
-        "notes": "Developer beta. Not for daily drivers."
+        "notes": "Developer beta already in testing. Not recommended on a primary device."
       }
     },
     "communitySentiment": {
-      "label": "Mostly positive after first week",
+      "label": "Stable after 27.0.1",
       "score": "good",
-      "summary": "Launch-week reports largely quieted. Temporary battery/indexing hit is normal. Siri AI strong on supported chips.",
-      "sourceNote": "Synthesized from Apple Newsroom, MacRumors, Reddit r/ios, and tech press (as of 28 Sep 2026)."
+      "summary": "iOS 27 launched 14 Sep with expected early bugs (Face ID restarts on iPhone 18 Pro, Control Center touch glitch). 27.0.1 (28 Sep) addressed the main launch issues. Temporary battery/indexing dip after updating is normal. Siri AI remains chip-gated to iPhone 15 Pro and later.",
+      "sourceNote": "Apple developer releases, 9to5Mac, Apple Newsroom (as of 1 Oct 2026)."
     },
     "updateProbability": {
-      "overallScore": 72,
-      "label": "Reasonably safe to update for most users",
+      "overallScore": 82,
+      "label": "Safe to update \u2014 prefer 27.0.1 over plain 27.0",
       "breakdown": [
         {
           "source": "Apple official",
-          "weight": 25,
-          "score": 90,
-          "note": "Stable major release."
+          "weight": 30,
+          "score": 92,
+          "note": "27.0.1 shipped as the recommended bug-fix build."
         },
         {
-          "source": "MacRumors / forums",
+          "source": "MacRumors / 9to5Mac",
           "weight": 20,
-          "score": 70,
-          "note": "Launch bugs acknowledged; improving."
+          "score": 80,
+          "note": "Launch bugs largely covered by 27.0.1."
         },
         {
           "source": "Reddit r/ios",
-          "weight": 20,
-          "score": 65,
-          "note": "Mixed early, quieter after day 5\u20137."
+          "weight": 15,
+          "score": 72,
+          "note": "Complaint volume dropped after the point release."
         },
         {
-          "source": "YouTube reviewers",
+          "source": "YouTube / press",
           "weight": 20,
-          "score": 75,
-          "note": "Recommend on A16+; wait on older chips."
+          "score": 80,
+          "note": "Recommend installing 27.0.1 on supported hardware."
         },
         {
           "source": "Historical pattern",
           "weight": 15,
-          "score": 60,
-          "note": "First week of major iOS is riskiest."
+          "score": 70,
+          "note": "First point release after a major .0 is the usual safe window."
         }
       ],
       "adviceByTier": {
-        "ai": "High confidence \u2014 update now if you want Siri AI.",
-        "mid": "Good confidence \u2014 safe for most; short wait only if battery is critical.",
-        "entry": "Moderate \u2014 security fixes yes; older chips feel early slowdowns more. Prefer 27.0.1 / 27.1."
+        "ai": "Update to 27.0.1 now for Siri AI and the Face ID / stability fixes.",
+        "mid": "27.0.1 is a sensible update; low risk on mid-tier chips.",
+        "entry": "Supported and brings security/stability fixes; still fine to wait a few more days if battery life is critical this week."
       }
     },
-    "pointReleaseAdvice": "Major .0 releases carry the highest early risk. Point releases are lower risk. Waiting 7\u201314 days on older hardware is reasonable.",
+    "pointReleaseAdvice": "If you are still on 27.0, install 27.0.1. Point releases after a major launch are the lower-risk way to get fixes.",
     "devices": [
       {
         "name": "iPhone 11",
@@ -175,6 +175,12 @@
         "tier": "ai"
       },
       {
+        "name": "iPhone 17e",
+        "chip": "A19",
+        "aiCapable": true,
+        "tier": "ai"
+      },
+      {
         "name": "iPhone 17 Pro / Pro Max",
         "chip": "A19 Pro",
         "aiCapable": true,
@@ -185,11 +191,24 @@
         "chip": "A19 Pro",
         "aiCapable": true,
         "tier": "ai"
+      },
+      {
+        "name": "iPhone 18 Pro / Pro Max",
+        "chip": "A20 Pro",
+        "aiCapable": true,
+        "tier": "ai"
+      },
+      {
+        "name": "iPhone Duo",
+        "chip": "A20 Pro",
+        "aiCapable": true,
+        "tier": "ai"
       }
     ],
     "manualVersions": [
       "27.2",
       "27.1",
+      "27.0.1",
       "27.0",
       "27",
       "26",
@@ -199,7 +218,7 @@
     "featureLabel": "Apple Intelligence",
     "deviceLabel": "YOUR IPHONE",
     "devicePlaceholder": "Choose your iPhone\u2026",
-    "lede": "Pick your iPhone. We'll compare the latest iOS release against your device, factor in known post-launch issues, and tell you whether to update now, wait, or skip."
+    "lede": "Pick your iPhone. We'll compare the latest iOS release (currently 27.0.1) against your device and tell you whether to update now, wait, or skip."
   },
   "android": {
     "latestMajorVersion": 17,
@@ -211,70 +230,70 @@
         "releaseDate": "2026-06-16",
         "status": "released",
         "type": "feature",
-        "notes": "Stable release with App Bubbles, stronger Live Threat Detection, Mark as Lost improvements, large-screen adaptive requirements, and productivity features. Rolling out to Pixel 6+ first, then OEM skins (One UI 9, etc.) through late 2026."
+        "notes": "Stable since June 2026 on Pixel. QPR1 (Sept Feature Drop) is rolling out. OEM skins (One UI 9, etc.) continue phased rollout through late 2026."
       },
       "upcomingFeature": {
-        "version": "17 QPR1",
-        "label": "Android 17 QPR1",
-        "expectedDate": "2026-10",
+        "version": "17 QPR2",
+        "label": "Android 17 QPR2",
+        "expectedDate": "2026-12",
         "status": "expected",
         "type": "feature",
-        "notes": "Quarterly Platform Release \u2014 bug fixes, security patches, and feature polish. Pixel typically first; OEM timing varies."
+        "notes": "Next quarterly platform release \u2014 in beta on Pixel. Stable expected around December 2026."
       },
       "beta": {
-        "version": "18 Developer Preview",
-        "label": "Android 18 (preview)",
-        "releaseDate": null,
+        "version": "17 QPR2 beta",
+        "label": "Android 17 QPR2 (beta)",
+        "releaseDate": "2026-09",
         "status": "beta",
         "type": "beta",
-        "notes": "Next major version in early developer testing when available. Not for primary devices."
+        "notes": "Preview builds for the December QPR. Not for daily drivers unless you accept beta risk."
       }
     },
     "communitySentiment": {
-      "label": "Stable on Pixel; OEM rollouts ongoing",
+      "label": "Mature on Pixel; OEM rollouts widening",
       "score": "good",
-      "summary": "Android 17 is mature on supported Pixels (since June 2026). Samsung One UI 9 and other OEM skins are rolling out in waves \u2014 early OEM builds can lag Pixel stability by weeks. Security patches matter more than the major version alone on Android.",
-      "sourceNote": "Synthesized from Android Developers Blog, Android Central, 9to5Google, Reddit r/Android, and OEM release notes (as of 28 Sep 2026)."
+      "summary": "Android 17 + QPR1 is solid on supported Pixels. Samsung One UI 9 / other OEM skins are expanding after a staggered start \u2014 early OEM builds can still need a hotfix week. Security patches remain the main reason to stay current.",
+      "sourceNote": "Android Developers Blog, 9to5Google, Samsung rollout reports (as of 1 Oct 2026)."
     },
     "updateProbability": {
-      "overallScore": 74,
-      "label": "Safe on Pixel / recent flagships; wait for your OEM if early",
+      "overallScore": 78,
+      "label": "Safe on Pixel; update when your OEM offers a stable build",
       "breakdown": [
         {
           "source": "Google / Pixel",
           "weight": 30,
-          "score": 88,
-          "note": "Stable since June; Pixel 6+ supported."
+          "score": 90,
+          "note": "17 + QPR1 stable on Pixel 6 and newer."
         },
         {
-          "source": "OEM rollouts (Samsung, etc.)",
+          "source": "OEM rollouts",
           "weight": 25,
-          "score": 65,
-          "note": "One UI 9 started mid-September; phased by model."
+          "score": 70,
+          "note": "One UI 9 and peers widening; still phased by model/carrier."
         },
         {
           "source": "Reddit r/Android",
           "weight": 15,
-          "score": 70,
-          "note": "Generally positive on Pixel; mixed on first OEM builds."
+          "score": 72,
+          "note": "Mostly positive on Pixel; mixed on day-one OEM drops."
         },
         {
-          "source": "Security bulletin cadence",
+          "source": "Security bulletin",
           "weight": 15,
-          "score": 80,
-          "note": "Staying current on security patches is the main win."
+          "score": 85,
+          "note": "Monthly patches are the highest-value updates."
         },
         {
           "source": "Historical OEM lag",
           "weight": 15,
-          "score": 55,
-          "note": "First OEM drops sometimes need a hotfix week."
+          "score": 60,
+          "note": "First OEM major skin often needs a quick follow-up fix."
         }
       ],
       "adviceByTier": {
-        "flagship": "Update when your OEM offers it \u2014 flagships get the most testing.",
-        "mid": "Good to update for security; if the build is brand-new from your OEM, waiting 3\u20137 days is fine.",
-        "budget": "Prioritize the latest security patch. Major version is secondary if your OEM is slow."
+        "flagship": "Install when your OEM posts a stable build \u2014 flagships get the most validation.",
+        "mid": "Worth updating for security; if the OEM build is brand-new, waiting 3\u20137 days is fine.",
+        "budget": "Prioritise the latest security patch even if the major version lags."
       }
     },
     "pointReleaseAdvice": "On Android, monthly security patches often matter more than jumping to the newest major version immediately. After a major OEM skin update, waiting a few days for hotfix reports is sensible.",
