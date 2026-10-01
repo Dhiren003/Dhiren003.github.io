@@ -225,77 +225,89 @@ function detectPlatform(){
 
 PLATFORM = detectPlatform();
 
-// ---------- iOS version (handles Apple UA freeze from iOS 26+) ----------
-// From iOS 26+, Safari often freezes "CPU iPhone OS …" at 18_6.
-// The real OS major usually appears in Version/x.y (Safari). Chrome/Firefox on iOS
-// may only expose the frozen OS token — then we flag low confidence and urge manual set.
+// ---------- iOS version (Safari freeze + Version/ fix) ----------
+// Reality (2026):
+//   Safari often reports: CPU iPhone OS 18_7[_x]  +  Version/27.0
+//   Sometimes reports real: CPU iPhone OS 27_0
+//   Chrome/Firefox on iOS: frozen OS token only (no Version/ for iOS)
+// Rule: if Version/ major looks like real iOS (16+), trust it over frozen 18.x OS token.
 function detectIOS(){
   const ua = navigator.userAgent || "";
   const isAppleMobile = /iPhone|iPad|iPod/i.test(ua);
   const isThirdPartyBrowser = /CriOS|FxiOS|EdgiOS|OPiOS|OPT\//i.test(ua);
 
   let osMajor=null, osMinor=null, osPatch=null;
-  const osMatch = ua.match(/CPU (?:iPhone )?OS (\d+)_(\d+)(?:_(\d+))?\s+like Mac OS X/);
-  if(osMatch){
-    osMajor = parseInt(osMatch[1],10);
-    osMinor = parseInt(osMatch[2],10);
-    osPatch = osMatch[3] ? parseInt(osMatch[3],10) : null;
+  const osMatch = ua.match(/CPU (?:iPhone )?OS (\d+)_(\d+)(?:_(\d+))?/);
+  if (osMatch) {
+    osMajor = parseInt(osMatch[1], 10);
+    osMinor = parseInt(osMatch[2], 10);
+    osPatch = osMatch[3] ? parseInt(osMatch[3], 10) : null;
   }
 
+  // Version/27 OR Version/27.0 OR Version/27.0.1  (dot optional after major)
   let verMajor=null, verMinor=null, verPatch=null;
-  // Safari "Version/27.0" — best signal when OS token is frozen
-  const verMatch = ua.match(/Version\/(\d+)\.(\d+)(?:\.(\d+))?/);
-  if(verMatch){
-    verMajor = parseInt(verMatch[1],10);
-    verMinor = parseInt(verMatch[2],10);
-    verPatch = verMatch[3] ? parseInt(verMatch[3],10) : null;
+  const verMatch = ua.match(/Version\/(\d+)(?:\.(\d+))?(?:\.(\d+))?/);
+  if (verMatch) {
+    verMajor = parseInt(verMatch[1], 10);
+    verMinor = verMatch[2] !== undefined ? parseInt(verMatch[2], 10) : 0;
+    verPatch = verMatch[3] !== undefined ? parseInt(verMatch[3], 10) : null;
   }
 
-  // Frozen OS token: major stuck at 18 while device may run 26/27+
-  const osLooksFrozen = isAppleMobile && osMajor === 18 && osMinor >= 6;
+  // Frozen token family: major stays on 18 while real iOS is 26/27+
+  const osLooksFrozen = isAppleMobile && osMajor === 18;
 
   let major, minor, patch, confidence, source;
 
-  // 1) Prefer Version/ when it looks like a real iOS major (16+) and is newer than OS token
-  if (isAppleMobile && verMajor !== null && verMajor >= 16 && (osMajor === null || verMajor > osMajor || (osLooksFrozen && verMajor >= 16))) {
+  // A) Real OS token already reports 26+ (some builds / non-Safari)
+  if (osMajor !== null && osMajor >= 26) {
+    major = osMajor; minor = osMinor; patch = osPatch;
+    source = "CPU OS token (real major)";
+    confidence = "high";
+  }
+  // B) Version/ is the real Safari/iOS major (16+) — prefer over frozen 18.x
+  else if (verMajor !== null && verMajor >= 16 && (osLooksFrozen || osMajor === null || verMajor > osMajor)) {
     major = verMajor; minor = verMinor; patch = verPatch;
     source = osLooksFrozen
-      ? "Version tag (OS token frozen at 18.6 — using Version/)"
-      : "Version tag";
-    confidence = "high — from Safari Version/";
+      ? "Version/ tag (OS token frozen at 18.x)"
+      : "Version/ tag";
+    confidence = "high";
   }
-  // 2) OS token when it does NOT look frozen (pre–iOS 26 devices, or true 18.x)
+  // C) Honest pre-freeze OS (iOS 17/18 real devices before freeze era, or true 18.x)
   else if (osMajor !== null && !osLooksFrozen) {
     major = osMajor; minor = osMinor; patch = osPatch;
     source = "CPU OS token";
-    confidence = patch !== null ? "high" : "high — patch may be omitted by browser";
+    confidence = "high";
   }
-  // 3) Frozen OS token only (typical Chrome/Firefox on iOS 26+) — cannot know real version
+  // D) Frozen 18.x only (Chrome/Firefox on iOS 26+) — cannot know real version
   else if (osLooksFrozen) {
-    major = osMajor; minor = osMinor; patch = osPatch;
-    source = "CPU OS token (FROZEN)";
+    major = null; minor = null; patch = null;
+    source = "frozen UA only";
     confidence = isThirdPartyBrowser
-      ? "low — Chrome/Firefox on iOS hide the real version; set manually if you are on iOS 26+"
-      : "low — OS token frozen at 18.6; set manually if Version/ is missing";
+      ? "none — Chrome/Firefox on iOS hide the real version; set it manually"
+      : "none — OS token frozen; Version/ missing; set it manually";
   }
-  // 4) Version/ alone
+  // E) Version only
   else if (verMajor !== null) {
     major = verMajor; minor = verMinor; patch = verPatch;
-    source = "Version tag only";
+    source = "Version/ only";
     confidence = "medium";
   } else {
     return { major:null, minor:null, patch:null, label:null, confidence:"none", raw: ua, source: null };
   }
 
-  let label;
-  if (minor === 0 && patch === null) label = `iOS ${major}`;
-  else if (patch !== null) label = `iOS ${major}.${minor}.${patch}`;
-  else label = `iOS ${major}.${minor}`;
-
-  // Annotate when freeze may mislead
-  if (osLooksFrozen && source.indexOf("FROZEN") !== -1) {
-    label = label + " (may be frozen UA)";
+  if (major === null) {
+    return {
+      major: null, minor: null, patch: null,
+      label: "Unknown (set manually)",
+      confidence: confidence,
+      raw: ua, source: source
+    };
   }
+
+  let label;
+  if (patch !== null) label = "iOS " + major + "." + minor + "." + patch;
+  else if (minor === 0) label = "iOS " + major;
+  else label = "iOS " + major + "." + minor;
 
   return { major, minor, patch, label, confidence, raw: ua, source };
 }
@@ -436,46 +448,87 @@ function mapAndroidModelToDevice(model, ua){
 
 // ---------- iPhone model heuristics (iOS only) ----------
 function detectIPhoneModel(){
-  if(PLATFORM !== "ios") return null;
-  if(!/iPhone/i.test(navigator.userAgent || "")) return null;
+  if (PLATFORM !== "ios") return null;
+  if (!/iPhone/i.test(navigator.userAgent || "")) return null;
+
+  // CSS pixels of the screen (portrait-normalized). Display Zoom changes these — noted in confidence.
   const w = Math.min(screen.width, screen.height);
   const h = Math.max(screen.width, screen.height);
-  const dpr = Math.round((window.devicePixelRatio || 1) * 100) / 100;
-  const exact = [
-    { w: 375, h: 667, dprMin: 1.9, dprMax: 2.2, name: "iPhone SE (3rd gen)", note: "SE 2nd & 3rd gen share 375×667 @2x" },
-    { w: 420, h: 912, dprMin: 2.8, dprMax: 3.2, name: "iPhone Air", note: "unique 6.5″ Air panel" },
-    { w: 440, h: 956, dprMin: 2.8, dprMax: 3.2, name: "iPhone 17 Pro / Pro Max", note: "6.9″ — 16 Pro Max & 17 Pro Max" },
-    { w: 402, h: 874, dprMin: 2.8, dprMax: 3.2, name: "iPhone 16 Pro / Pro Max", note: "6.3″ — 16 Pro, 17, 17 Pro (confirm year)" },
-    { w: 430, h: 932, dprMin: 2.8, dprMax: 3.2, name: "iPhone 14 Pro / Pro Max", note: "6.7″ panel also used by 15 Pro Max, 15 Plus, 16 Plus — confirm yours" },
-    { w: 428, h: 926, dprMin: 2.8, dprMax: 3.2, name: "iPhone 13 Pro / Pro Max", note: "older 6.7″ — 12/13 Pro Max or 14 Plus" },
-    { w: 393, h: 852, dprMin: 2.8, dprMax: 3.2, name: "iPhone 15 Pro / Pro Max", note: "6.1″ — 14 Pro, 15, 15 Pro, 16 (confirm year)" },
-    { w: 390, h: 844, dprMin: 2.8, dprMax: 3.2, name: "iPhone 14 / Plus", note: "6.1″ non-Pro family (12–14, 16e)" },
-    { w: 414, h: 896, dprMin: 2.8, dprMax: 3.2, name: "iPhone 11 Pro / Pro Max", note: "6.5″ @3x — 11 Pro Max / XS Max" },
-    { w: 414, h: 896, dprMin: 1.9, dprMax: 2.2, name: "iPhone 11", note: "6.1″ @2x — 11 / XR" },
-    { w: 375, h: 812, dprMin: 2.7, dprMax: 3.2, name: "iPhone 13 / mini", note: "5.4/5.8″ — mini or X/XS/11 Pro class" },
-  ];
-  for (const s of exact) {
-    if (Math.abs(w - s.w) <= 1 && Math.abs(h - s.h) <= 1 && dpr >= s.dprMin && dpr <= s.dprMax) {
-      return { name: s.name, confidence: "medium-high — exact screen match (" + s.note + ")" };
-    }
-  }
-  for (const s of exact) {
-    if (Math.abs(w - s.w) <= 3 && Math.abs(h - s.h) <= 3 && dpr >= s.dprMin && dpr <= s.dprMax) {
-      return { name: s.name, confidence: "medium — near screen match (" + s.note + ")" };
-    }
-  }
-  let best = null, bestDist = Infinity;
-  for (const s of exact) {
-    if (dpr < s.dprMin - 0.3 || dpr > s.dprMax + 0.3) continue;
-    const dist = Math.hypot(w - s.w, h - s.h);
-    if (dist < bestDist) { bestDist = dist; best = s; }
-  }
-  if (best && bestDist <= 12) {
-    return { name: best.name, confidence: "medium — closest screen match (" + best.note + ")" };
-  }
-  return { name: null, confidence: "low — no reliable screen signature (try manual select)" };
-}
+  const dpr = window.devicePixelRatio || 1;
+  const dprR = Math.round(dpr * 100) / 100;
 
+  // Exact panel signatures → preferred list name in compatibility.json
+  // Several models SHARE the same panel — we pick the best list label and mark ambiguous.
+  // Sources: iosref / screensize.io / Apple CSS viewports (2026).
+  const signatures = [
+    // Unique / distinctive first
+    { w: 420, h: 912, dpr: 3, names: ["iPhone Air"], unique: true },
+    { w: 440, h: 956, dpr: 3, names: ["iPhone 17 Pro / Pro Max", "iPhone 18 Pro / Pro Max", "iPhone 16 Pro / Pro Max"], unique: false },
+    { w: 402, h: 874, dpr: 3, names: ["iPhone 16 Pro / Pro Max", "iPhone 17", "iPhone 17 Pro / Pro Max", "iPhone 18 Pro / Pro Max"], unique: false },
+    { w: 402, h: 873, dpr: 3, names: ["iPhone 18 Pro / Pro Max", "iPhone 17 Pro / Pro Max"], unique: false },
+    { w: 430, h: 932, dpr: 3, names: ["iPhone 14 Pro / Pro Max", "iPhone 15 / Plus", "iPhone 15 Pro / Pro Max"], unique: false },
+    { w: 428, h: 926, dpr: 3, names: ["iPhone 13 Pro / Pro Max", "iPhone 14 / Plus"], unique: false },
+    { w: 393, h: 852, dpr: 3, names: ["iPhone 15 Pro / Pro Max", "iPhone 14 Pro / Pro Max", "iPhone 15 / Plus", "iPhone 16 / Plus"], unique: false },
+    { w: 390, h: 844, dpr: 3, names: ["iPhone 14 / Plus", "iPhone 13 / mini", "iPhone 16e", "iPhone 17e"], unique: false },
+    { w: 414, h: 896, dpr: 3, names: ["iPhone 11 Pro / Pro Max"], unique: false },
+    { w: 414, h: 896, dpr: 2, names: ["iPhone 11"], unique: false },
+    { w: 375, h: 812, dpr: 3, names: ["iPhone 13 / mini", "iPhone 12 / mini"], unique: false },
+    { w: 375, h: 667, dpr: 2, names: ["iPhone SE (3rd gen)", "iPhone SE (2nd gen)"], unique: false },
+  ];
+
+  function dprOk(sig) {
+    // Allow 2.7–3.2 for @3x, 1.9–2.2 for @2x (mini reports ~2.88 sometimes)
+    if (sig.dpr >= 2.5) return dprR >= 2.7 && dprR <= 3.3;
+    return dprR >= 1.8 && dprR <= 2.3;
+  }
+
+  // Exact ±2px
+  let hit = null;
+  for (const s of signatures) {
+    if (Math.abs(w - s.w) <= 2 && Math.abs(h - s.h) <= 2 && dprOk(s)) {
+      hit = s;
+      break;
+    }
+  }
+
+  // Closest within 10px if no exact
+  if (!hit) {
+    let best = null, bestDist = Infinity;
+    for (const s of signatures) {
+      if (!dprOk(s)) continue;
+      const dist = Math.hypot(w - s.w, h - s.h);
+      if (dist < bestDist) { bestDist = dist; best = s; }
+    }
+    if (best && bestDist <= 10) hit = best;
+  }
+
+  if (!hit) {
+    return {
+      name: null,
+      candidates: [],
+      confidence: "low — screen " + w + "×" + h + "@" + dprR + " not matched; pick your model",
+      screen: { w, h, dpr: dprR }
+    };
+  }
+
+  // Prefer the first name that exists in FEED when available; else first signature name
+  let preferred = hit.names[0];
+  if (typeof FEED !== "undefined" && FEED && FEED.devices) {
+    for (const n of hit.names) {
+      if (FEED.devices.some(d => d.name === n)) { preferred = n; break; }
+    }
+  }
+
+  const ambiguous = hit.names.length > 1 && !hit.unique;
+  return {
+    name: preferred,
+    candidates: hit.names,
+    confidence: ambiguous
+      ? "medium — panel shared by: " + hit.names.join(", ") + " (confirm in list)"
+      : "high — unique screen match",
+    screen: { w, h, dpr: dprR }
+  };
+}
 
 
 let detectedBrand = null; // "samsung" | "google" | ... for Android dropdown filter
@@ -536,12 +589,12 @@ if (PLATFORM === "android") {
   detectedVersionEl.textContent = "Detecting…";
   confidenceNote.textContent = "Resolving real Android version (UA is often frozen at 10)…";
   finishAndroidDetection();
-} else if(detected.label){
+} else if (detected.label && detected.major !== null) {
   detectedVersionEl.textContent = detected.label;
-  confidenceNote.textContent = "Confidence: " + detected.confidence + (detected.source ? " (" + detected.source + ")" : "");
+  confidenceNote.textContent = "Confidence: " + detected.confidence + (detected.source ? " · " + detected.source : "");
 } else {
-  detectedVersionEl.textContent = "Couldn't detect";
-  confidenceNote.textContent = "Please set your version manually below.";
+  detectedVersionEl.textContent = detected.label || "Couldn't detect";
+  confidenceNote.textContent = detected.confidence || "Please set your iOS version manually below.";
   manualBlock.style.display = "block";
 }
 
@@ -600,7 +653,7 @@ async function loadFeed(){
 
   if (!RAW_FEED) {
     try {
-      const cache = await caches.open("update-advisor-v8");
+      const cache = await caches.open("update-advisor-v9");
       for (const url of candidates) {
         const cached = await cache.match(url);
         if (cached) {
@@ -634,6 +687,10 @@ async function loadFeed(){
 
   applyPlatformUI();
   setupManualVersions();
+  // Re-run iPhone model detection now that FEED.devices exists (preferred name mapping)
+  if (PLATFORM === "ios") {
+    detectedModel = detectIPhoneModel();
+  }
   populateDevices();
   dataFreshness.textContent = "Compatibility data last updated " + (RAW_FEED.generatedAt || FEED.generatedAt || "?") +
     (PLATFORM === "ios" ? " · iOS mode" : PLATFORM === "android" ? " · Android mode" : " · detection unclear");
@@ -698,32 +755,30 @@ function populateDevices(){
   }
 
   const detName = (detectedModel && detectedModel.name) ? detectedModel.name.toLowerCase() : "";
+  const detCandidates = (detectedModel && detectedModel.candidates) ? detectedModel.candidates.map(n => n.toLowerCase()) : [];
   function matchScore(cand) {
-    if (!detName) return 0;
+    if (!detName && detCandidates.length === 0) return 0;
     const c = cand.toLowerCase();
-    if (c === detName) return 200;
-    if (c.includes(detName) || detName.includes(c)) return 150;
+    // Exact preferred name
+    if (detName && c === detName) return 300;
+    // Any candidate from shared panel
+    if (detCandidates.indexOf(c) !== -1) return 250;
+    if (detName && (c.includes(detName) || detName.includes(c))) return 150;
     const detGen = (detName.match(/iphone\s*(\d+)/) || detName.match(/pixel\s*(\d+)/) || detName.match(/s(\d{2})/) || [])[1];
     const candGen = (c.match(/iphone\s*(\d+)/) || c.match(/pixel\s*(\d+)/) || c.match(/s(\d{2})/) || [])[1];
     let score = 0;
     if (detGen && candGen && detGen === candGen) score += 50;
     if (detName.includes("pro") && c.includes("pro")) score += 20;
-    else if (detName.includes("pro") !== c.includes("pro")) score -= 15;
+    else if (detName.includes("pro") !== c.includes("pro") && detName) score -= 15;
     if (detName.includes("pixel") && c.includes("pixel")) score += 40;
     if (detName.includes("samsung") && c.includes("samsung")) score += 30;
     if (detName.includes("galaxy") && c.includes("galaxy")) score += 30;
-    if (detName.includes("flagship") && c.includes("flagship")) score += 25;
-    if (detName.includes("mid") && c.includes("mid")) score += 25;
-    if (detName.includes("budget") && c.includes("budget")) score += 25;
     return score;
   }
 
   let matchedIndex = -1, bestScore = 0;
-  // Map display index → original FEED.devices index
-  const indexMap = [];
   list.forEach((d)=>{
     const globalIdx = FEED.devices.indexOf(d);
-    indexMap.push(globalIdx);
     const o = document.createElement('option');
     o.value = String(globalIdx);
     o.textContent = d.name;
@@ -750,13 +805,25 @@ function populateDevices(){
     const note = document.createElement('div');
     note.className = "detect-device-note";
     note.style.cssText = "font-size:12px;color:var(--sub);margin-top:6px;";
-    note.textContent = "Pre-selected: " + FEED.devices[matchedIndex].name + " (" + (detectedModel && detectedModel.confidence || "") + "). Change if incorrect.";
+    let msg = "Pre-selected: " + FEED.devices[matchedIndex].name + ".";
+    if (detectedModel && detectedModel.confidence) msg += " " + detectedModel.confidence + ".";
+    if (detectedModel && detectedModel.screen) {
+      msg += " Screen " + detectedModel.screen.w + "×" + detectedModel.screen.h + "@" + detectedModel.screen.dpr + ".";
+    }
+    msg += " Change if this is not your model.";
+    note.textContent = msg;
     deviceSelect.parentNode.insertBefore(note, deviceSelect.nextSibling);
   } else if (detectedModel && detectedModel.name) {
     const note = document.createElement('div');
     note.className = "detect-device-note";
     note.style.cssText = "font-size:12px;color:var(--sub);margin-top:6px;";
-    note.textContent = "Detected as " + detectedModel.name + " — please confirm in the list.";
+    note.textContent = "Possible match: " + detectedModel.name + " — please confirm in the list.";
+    deviceSelect.parentNode.insertBefore(note, deviceSelect.nextSibling);
+  } else if (PLATFORM === "ios") {
+    const note = document.createElement('div');
+    note.className = "detect-device-note";
+    note.style.cssText = "font-size:12px;color:var(--sub);margin-top:6px;";
+    note.textContent = "Could not auto-detect model from screen size (Display Zoom changes sizes). Please select your iPhone.";
     deviceSelect.parentNode.insertBefore(note, deviceSelect.nextSibling);
   }
 }
