@@ -1,0 +1,463 @@
+{
+  "generatedAt": "2026-10-01",
+  "ios": {
+    "latestMajorVersion": 27,
+    "osName": "iOS",
+    "channels": {
+      "stable": {
+        "version": "27.0.1",
+        "label": "iOS 27.0.1",
+        "releaseDate": "2026-09-28",
+        "status": "released",
+        "type": "bugfix",
+        "notes": "Bug-fix update for iOS 27 (released 14 Sep 2026). Fixes iPhone 18 Pro/Pro Max Face ID-related restarts, a 2x photo color artifact on some 18 Pro units, and a touchscreen hang when opening Notification Center and Control Center together. Recommended for all users on 27.0."
+      },
+      "upcomingFeature": {
+        "version": "27.1",
+        "label": "iOS 27.1",
+        "expectedDate": "2026-10",
+        "status": "expected",
+        "type": "feature",
+        "notes": "Expected feature/point release with further Siri AI language support and polish. Check Settings > General > Software Update."
+      },
+      "beta": {
+        "version": "27.2 beta 2",
+        "label": "iOS 27.2 (beta)",
+        "releaseDate": "2026-09-21",
+        "status": "beta",
+        "type": "beta",
+        "notes": "Developer beta already in testing. Not recommended on a primary device."
+      }
+    },
+    "communitySentiment": {
+      "label": "Stable after 27.0.1",
+      "score": "good",
+      "summary": "iOS 27 launched 14 Sep with expected early bugs (Face ID restarts on iPhone 18 Pro, Control Center touch glitch). 27.0.1 (28 Sep) addressed the main launch issues. Temporary battery/indexing dip after updating is normal. Siri AI remains chip-gated to iPhone 15 Pro and later.",
+      "sourceNote": "Apple developer releases, 9to5Mac, Apple Newsroom (as of 1 Oct 2026)."
+    },
+    "updateProbability": {
+      "overallScore": 82,
+      "label": "Safe to update \u2014 prefer 27.0.1 over plain 27.0",
+      "breakdown": [
+        {
+          "source": "Apple official",
+          "weight": 30,
+          "score": 92,
+          "note": "27.0.1 shipped as the recommended bug-fix build."
+        },
+        {
+          "source": "MacRumors / 9to5Mac",
+          "weight": 20,
+          "score": 80,
+          "note": "Launch bugs largely covered by 27.0.1."
+        },
+        {
+          "source": "Reddit r/ios",
+          "weight": 15,
+          "score": 72,
+          "note": "Complaint volume dropped after the point release."
+        },
+        {
+          "source": "YouTube / press",
+          "weight": 20,
+          "score": 80,
+          "note": "Recommend installing 27.0.1 on supported hardware."
+        },
+        {
+          "source": "Historical pattern",
+          "weight": 15,
+          "score": 70,
+          "note": "First point release after a major .0 is the usual safe window."
+        }
+      ],
+      "adviceByTier": {
+        "ai": "Update to 27.0.1 now for Siri AI and the Face ID / stability fixes.",
+        "mid": "27.0.1 is a sensible update; low risk on mid-tier chips.",
+        "entry": "Supported and brings security/stability fixes; still fine to wait a few more days if battery life is critical this week."
+      }
+    },
+    "pointReleaseAdvice": "If you are still on 27.0, install 27.0.1. Point releases after a major launch are the lower-risk way to get fixes.",
+    "devices": [
+      {
+        "name": "iPhone 11",
+        "chip": "A13 Bionic",
+        "aiCapable": false,
+        "tier": "entry"
+      },
+      {
+        "name": "iPhone 11 Pro / Pro Max",
+        "chip": "A13 Bionic",
+        "aiCapable": false,
+        "tier": "entry"
+      },
+      {
+        "name": "iPhone SE (2nd gen)",
+        "chip": "A13 Bionic",
+        "aiCapable": false,
+        "tier": "entry"
+      },
+      {
+        "name": "iPhone 12 / mini",
+        "chip": "A14 Bionic",
+        "aiCapable": false,
+        "tier": "entry"
+      },
+      {
+        "name": "iPhone 12 Pro / Pro Max",
+        "chip": "A14 Bionic",
+        "aiCapable": false,
+        "tier": "entry"
+      },
+      {
+        "name": "iPhone 13 / mini",
+        "chip": "A15 Bionic",
+        "aiCapable": false,
+        "tier": "entry"
+      },
+      {
+        "name": "iPhone 13 Pro / Pro Max",
+        "chip": "A15 Bionic",
+        "aiCapable": false,
+        "tier": "entry"
+      },
+      {
+        "name": "iPhone SE (3rd gen)",
+        "chip": "A15 Bionic",
+        "aiCapable": false,
+        "tier": "entry"
+      },
+      {
+        "name": "iPhone 14 / Plus",
+        "chip": "A15 Bionic",
+        "aiCapable": false,
+        "tier": "entry"
+      },
+      {
+        "name": "iPhone 14 Pro / Pro Max",
+        "chip": "A16 Bionic",
+        "aiCapable": false,
+        "tier": "mid"
+      },
+      {
+        "name": "iPhone 15 / Plus",
+        "chip": "A16 Bionic",
+        "aiCapable": false,
+        "tier": "mid"
+      },
+      {
+        "name": "iPhone 15 Pro / Pro Max",
+        "chip": "A17 Pro",
+        "aiCapable": true,
+        "tier": "ai"
+      },
+      {
+        "name": "iPhone 16e",
+        "chip": "A18",
+        "aiCapable": true,
+        "tier": "ai"
+      },
+      {
+        "name": "iPhone 16 / Plus",
+        "chip": "A18",
+        "aiCapable": true,
+        "tier": "ai"
+      },
+      {
+        "name": "iPhone 16 Pro / Pro Max",
+        "chip": "A18 Pro",
+        "aiCapable": true,
+        "tier": "ai"
+      },
+      {
+        "name": "iPhone 17",
+        "chip": "A19",
+        "aiCapable": true,
+        "tier": "ai"
+      },
+      {
+        "name": "iPhone 17e",
+        "chip": "A19",
+        "aiCapable": true,
+        "tier": "ai"
+      },
+      {
+        "name": "iPhone 17 Pro / Pro Max",
+        "chip": "A19 Pro",
+        "aiCapable": true,
+        "tier": "ai"
+      },
+      {
+        "name": "iPhone Air",
+        "chip": "A19 Pro",
+        "aiCapable": true,
+        "tier": "ai"
+      },
+      {
+        "name": "iPhone 18 Pro / Pro Max",
+        "chip": "A20 Pro",
+        "aiCapable": true,
+        "tier": "ai"
+      },
+      {
+        "name": "iPhone Duo",
+        "chip": "A20 Pro",
+        "aiCapable": true,
+        "tier": "ai"
+      }
+    ],
+    "manualVersions": [
+      "27.2",
+      "27.1",
+      "27.0.1",
+      "27.0",
+      "27",
+      "26",
+      "18",
+      "17 or earlier"
+    ],
+    "featureLabel": "Apple Intelligence",
+    "deviceLabel": "YOUR IPHONE",
+    "devicePlaceholder": "Choose your iPhone\u2026",
+    "lede": "Pick your iPhone. We'll compare the latest iOS release (currently 27.0.1) against your device and tell you whether to update now, wait, or skip."
+  },
+  "android": {
+    "latestMajorVersion": 17,
+    "osName": "Android",
+    "channels": {
+      "stable": {
+        "version": "17",
+        "label": "Android 17",
+        "releaseDate": "2026-06-16",
+        "status": "released",
+        "type": "feature",
+        "notes": "Stable since June 2026 on Pixel. QPR1 (Sept Feature Drop) is rolling out. OEM skins (One UI 9, etc.) continue phased rollout through late 2026."
+      },
+      "upcomingFeature": {
+        "version": "17 QPR2",
+        "label": "Android 17 QPR2",
+        "expectedDate": "2026-12",
+        "status": "expected",
+        "type": "feature",
+        "notes": "Next quarterly platform release \u2014 in beta on Pixel. Stable expected around December 2026."
+      },
+      "beta": {
+        "version": "17 QPR2 beta",
+        "label": "Android 17 QPR2 (beta)",
+        "releaseDate": "2026-09",
+        "status": "beta",
+        "type": "beta",
+        "notes": "Preview builds for the December QPR. Not for daily drivers unless you accept beta risk."
+      }
+    },
+    "communitySentiment": {
+      "label": "Mature on Pixel; OEM rollouts widening",
+      "score": "good",
+      "summary": "Android 17 + QPR1 is solid on supported Pixels. Samsung One UI 9 / other OEM skins are expanding after a staggered start \u2014 early OEM builds can still need a hotfix week. Security patches remain the main reason to stay current.",
+      "sourceNote": "Android Developers Blog, 9to5Google, Samsung rollout reports (as of 1 Oct 2026)."
+    },
+    "updateProbability": {
+      "overallScore": 78,
+      "label": "Safe on Pixel; update when your OEM offers a stable build",
+      "breakdown": [
+        {
+          "source": "Google / Pixel",
+          "weight": 30,
+          "score": 90,
+          "note": "17 + QPR1 stable on Pixel 6 and newer."
+        },
+        {
+          "source": "OEM rollouts",
+          "weight": 25,
+          "score": 70,
+          "note": "One UI 9 and peers widening; still phased by model/carrier."
+        },
+        {
+          "source": "Reddit r/Android",
+          "weight": 15,
+          "score": 72,
+          "note": "Mostly positive on Pixel; mixed on day-one OEM drops."
+        },
+        {
+          "source": "Security bulletin",
+          "weight": 15,
+          "score": 85,
+          "note": "Monthly patches are the highest-value updates."
+        },
+        {
+          "source": "Historical OEM lag",
+          "weight": 15,
+          "score": 60,
+          "note": "First OEM major skin often needs a quick follow-up fix."
+        }
+      ],
+      "adviceByTier": {
+        "flagship": "Install when your OEM posts a stable build \u2014 flagships get the most validation.",
+        "mid": "Worth updating for security; if the OEM build is brand-new, waiting 3\u20137 days is fine.",
+        "budget": "Prioritise the latest security patch even if the major version lags."
+      }
+    },
+    "pointReleaseAdvice": "On Android, monthly security patches often matter more than jumping to the newest major version immediately. After a major OEM skin update, waiting a few days for hotfix reports is sensible.",
+    "devices": [
+      {
+        "name": "Google Pixel 9 / 9 Pro / 9 Pro XL",
+        "brand": "google",
+        "chip": "Tensor G4",
+        "aiCapable": true,
+        "tier": "flagship"
+      },
+      {
+        "name": "Google Pixel 8 / 8 Pro",
+        "brand": "google",
+        "chip": "Tensor G3",
+        "aiCapable": true,
+        "tier": "flagship"
+      },
+      {
+        "name": "Google Pixel 7 / 7 Pro / 7a",
+        "brand": "google",
+        "chip": "Tensor G2",
+        "aiCapable": true,
+        "tier": "flagship"
+      },
+      {
+        "name": "Google Pixel 6 / 6 Pro / 6a",
+        "brand": "google",
+        "chip": "Tensor",
+        "aiCapable": true,
+        "tier": "flagship"
+      },
+      {
+        "name": "Google Pixel (other / A-series)",
+        "brand": "google",
+        "chip": "Tensor / mid",
+        "aiCapable": true,
+        "tier": "mid"
+      },
+      {
+        "name": "Samsung Galaxy S26 / S26+ / S26 Ultra",
+        "brand": "samsung",
+        "chip": "Snapdragon / Exynos (2026)",
+        "aiCapable": true,
+        "tier": "flagship"
+      },
+      {
+        "name": "Samsung Galaxy S25 / S25+ / S25 Ultra / S25 FE",
+        "brand": "samsung",
+        "chip": "Snapdragon / Exynos",
+        "aiCapable": true,
+        "tier": "flagship"
+      },
+      {
+        "name": "Samsung Galaxy S24 / S24 FE",
+        "brand": "samsung",
+        "chip": "Snapdragon / Exynos",
+        "aiCapable": true,
+        "tier": "flagship"
+      },
+      {
+        "name": "Samsung Galaxy S23 / S23 FE",
+        "brand": "samsung",
+        "chip": "Snapdragon",
+        "aiCapable": false,
+        "tier": "flagship"
+      },
+      {
+        "name": "Samsung Galaxy Z Fold / Z Flip (5\u20138)",
+        "brand": "samsung",
+        "chip": "Snapdragon",
+        "aiCapable": true,
+        "tier": "flagship"
+      },
+      {
+        "name": "Samsung Galaxy A-series / mid-range",
+        "brand": "samsung",
+        "chip": "Exynos / Snapdragon mid",
+        "aiCapable": false,
+        "tier": "mid"
+      },
+      {
+        "name": "Samsung (other / older)",
+        "brand": "samsung",
+        "chip": "Various",
+        "aiCapable": false,
+        "tier": "budget"
+      },
+      {
+        "name": "OnePlus (recent flagship)",
+        "brand": "oneplus",
+        "chip": "Snapdragon flagship",
+        "aiCapable": true,
+        "tier": "flagship"
+      },
+      {
+        "name": "OnePlus / Nord (mid-range)",
+        "brand": "oneplus",
+        "chip": "Mid-range SoC",
+        "aiCapable": false,
+        "tier": "mid"
+      },
+      {
+        "name": "Xiaomi / Redmi / POCO flagship",
+        "brand": "xiaomi",
+        "chip": "Snapdragon / Dimensity flagship",
+        "aiCapable": true,
+        "tier": "flagship"
+      },
+      {
+        "name": "Xiaomi / Redmi / POCO mid-range",
+        "brand": "xiaomi",
+        "chip": "Mid-range SoC",
+        "aiCapable": false,
+        "tier": "mid"
+      },
+      {
+        "name": "OPPO / realme / vivo flagship",
+        "brand": "oppo",
+        "chip": "Flagship SoC",
+        "aiCapable": true,
+        "tier": "flagship"
+      },
+      {
+        "name": "OPPO / realme / vivo mid-range",
+        "brand": "oppo",
+        "chip": "Mid-range SoC",
+        "aiCapable": false,
+        "tier": "mid"
+      },
+      {
+        "name": "Other recent flagship",
+        "brand": "other",
+        "chip": "Flagship SoC (2023+)",
+        "aiCapable": true,
+        "tier": "flagship"
+      },
+      {
+        "name": "Mid-range (other brands)",
+        "brand": "other",
+        "chip": "Mid-range SoC",
+        "aiCapable": false,
+        "tier": "mid"
+      },
+      {
+        "name": "Budget / older device",
+        "brand": "other",
+        "chip": "Entry SoC",
+        "aiCapable": false,
+        "tier": "budget"
+      }
+    ],
+    "manualVersions": [
+      "17",
+      "16",
+      "15",
+      "14",
+      "13",
+      "12",
+      "11 or earlier"
+    ],
+    "featureLabel": "On-device AI / Gemini",
+    "deviceLabel": "YOUR ANDROID DEVICE",
+    "devicePlaceholder": "Choose your device class\u2026",
+    "lede": "Pick your Android device class. We'll compare the latest Android release and security posture for your tier, and tell you whether to update now, wait for your OEM build, or prioritise patches only."
+  }
+}

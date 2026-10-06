@@ -189,9 +189,11 @@ button.primary:active{opacity:.85;}
 </div>
 
 <script>
+// GitHub Actions updates ./compatibility.json in this repo (no Cloudflare needed).
+// Leave YOUR_SUBDOMAIN as-is so the app always loads local JSON from GitHub Pages.
 const LIVE_DATA_URL = "https://update-advisor-api.YOUR_SUBDOMAIN.workers.dev/compatibility.json";
 const LOCAL_DATA_URL = "./compatibility.json";
-const DATA_URL = LIVE_DATA_URL.includes("YOUR_SUBDOMAIN") ? LOCAL_DATA_URL : LIVE_DATA_URL;
+const DATA_URL = LOCAL_DATA_URL;
 
 let RAW_FEED = null;  // full JSON { ios, android, generatedAt }
 let FEED = null;      // active platform branch only
@@ -653,7 +655,7 @@ async function loadFeed(){
 
   if (!RAW_FEED) {
     try {
-      const cache = await caches.open("update-advisor-v9");
+      const cache = await caches.open("update-advisor-v11");
       for (const url of candidates) {
         const cached = await cache.match(url);
         if (cached) {
