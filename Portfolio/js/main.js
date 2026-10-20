@@ -1,48 +1,65 @@
 (function () {
   'use strict';
 
-  var root = document.documentElement;
-  root.classList.add('js');
+  // Year
+  var yearEl = document.getElementById('year');
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  var header = document.querySelector('.site-header');
-  var toggle = document.querySelector('.nav-toggle');
-  var nav = document.getElementById('site-nav');
-
-  var year = document.getElementById('year');
-  if (year) year.textContent = new Date().getFullYear();
-
-  // Play the "Hey!" intro once per browser session
-  try { sessionStorage.setItem('dj-intro', '1'); } catch (e) {}
-  var intro = document.querySelector('.intro');
-  if (intro) {
-    window.setTimeout(function () { root.classList.remove('is-intro'); }, 2400);
+  // Local time (Surat / IST)
+  function updateTime() {
+    var el = document.getElementById('local-time');
+    if (!el) return;
+    try {
+      var opts = { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Kolkata' };
+      var time = new Date().toLocaleTimeString('en-IN', opts);
+      el.textContent = time + ' · IST';
+    } catch (e) {
+      el.textContent = '';
+    }
   }
+  updateTime();
+  setInterval(updateTime, 30000);
 
-  // Mobile menu
+  // Header scroll state
+  var header = document.getElementById('header');
+  function onScroll() {
+    if (header) header.classList.toggle('is-scrolled', window.scrollY > 40);
+  }
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // Full-screen menu
+  var toggle = document.getElementById('menu-toggle');
+  var nav = document.getElementById('full-nav');
+  var navLinks = document.querySelectorAll('[data-nav]');
+
   function setMenu(open) {
     if (!toggle || !nav) return;
     toggle.setAttribute('aria-expanded', String(open));
     nav.classList.toggle('is-open', open);
+    nav.setAttribute('aria-hidden', String(!open));
+    document.body.style.overflow = open ? 'hidden' : '';
+    toggle.innerHTML = open
+      ? 'close. <span aria-hidden="true">×</span>'
+      : 'menu. <span class="menu-icon" aria-hidden="true"></span>';
   }
+
   if (toggle && nav) {
     toggle.addEventListener('click', function () {
       setMenu(toggle.getAttribute('aria-expanded') !== 'true');
     });
+
+    navLinks.forEach(function (link) {
+      link.addEventListener('click', function () {
+        setMenu(false);
+      });
+    });
+
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
         setMenu(false);
         toggle.focus();
       }
     });
-    window.matchMedia('(min-width: 901px)').addEventListener('change', function (e) {
-      if (e.matches) setMenu(false);
-    });
   }
-
-  // Header border once the page scrolls
-  function onScroll() {
-    if (header) header.classList.toggle('is-scrolled', window.scrollY > 8);
-  }
-  onScroll();
-  window.addEventListener('scroll', onScroll, { passive: true });
 })();
