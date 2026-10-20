@@ -3,376 +3,101 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dhiren Jummani | Software Engineer for Shopify, WordPress and AI</title>
-  <meta name="description" content="Dhiren Jummani is a Senior Software Engineer in Surat, India. He builds fast, responsive Shopify and WordPress sites and is now building AI-powered apps with Python, RAG and LLMs.">
-  <meta name="theme-color" content="#131a3a">
+  <title>Dhiren Jummani | Software Engineer, Shopify, WordPress and AI</title>
+  <meta name="description" content="Dhiren Jummani is a software engineer in Surat, India, building Shopify and WordPress websites and exploring generative AI. Say hey!">
+  <meta name="theme-color" content="#0f1226">
+  <meta name="color-scheme" content="dark">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Dhiren Jummani | Software Engineer">
-  <meta property="og:description" content="Shopify and WordPress developer, now building AI-powered apps with Python, RAG and LLMs.">
+  <meta property="og:title" content="Dhiren Jummani | Software Engineer, Shopify, WordPress and AI">
+  <meta property="og:description" content="Dhiren Jummani is a software engineer in Surat, India, building Shopify and WordPress websites and exploring generative AI. Say hey!">
   <meta property="og:url" content="https://dhiren003.github.io/Portfolio/">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <script>try{if(!sessionStorage.getItem("dj-intro")&&!matchMedia("(prefers-reduced-motion: reduce)").matches){document.documentElement.classList.add("is-intro")}}catch(e){}</script>
 </head>
-<body>
+<body class="page-home">
   <a class="skip-link" href="#main">Skip to content</a>
 
-  <header class="site-header" id="top">
+  <div class="intro" aria-hidden="true"><span class="intro-hey">Hey!</span></div>
+
+  <header class="site-header">
     <div class="wrap header-row">
-      <a class="brand" href="#top" aria-label="Dhiren Jummani, back to top">
-        <span class="brand-mark" aria-hidden="true">DJ</span>
-        <span class="brand-name">Dhiren Jummani</span>
-      </a>
-
+      <a class="brand" href="index.html" aria-label="dhiren jummani, home">dhiren jummani</a>
       <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
-        <span class="nav-toggle-label">Menu</span>
-        <span class="nav-toggle-bars" aria-hidden="true"></span>
+        <span class="nav-toggle-label">Menu</span><span class="nav-toggle-bars" aria-hidden="true"></span>
       </button>
-
       <nav class="site-nav" id="site-nav" aria-label="Primary">
         <ul>
-          <li><a href="#about">About</a></li>
-          <li><a href="#experience">Experience</a></li>
-          <li><a href="#work">Work</a></li>
-          <li><a href="#ai">AI</a></li>
-          <li><a href="#skills">Skills</a></li>
-          <li><a href="#background">Background</a></li>
-          <li><a href="#contact" class="nav-cta">Contact</a></li>
+          <li><a href="index.html" aria-current="page">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li class="has-sub">
+            <a href="work.html">Work</a>
+            <ul class="sub"><li><a href="work.html#tcmreview">TCMReview</a></li><li><a href="work.html#ayuxi">Ayuxi</a></li><li><a href="work.html#modifox">Modifox</a></li><li><a href="work.html#momipop">Momipop</a></li><li><a href="work.html#enviro-wealth">Enviro Wealth</a></li><li><a href="work.html#world-wide-solutions">World Wide Solutions</a></li><li><a href="work.html#al-dental-studio">AL Dental Studio</a></li><li><a href="work.html#mayur-gems">Mayur Gems &amp; Jewells</a></li><li><a href="work.html#disha-laser-clinic">Disha Laser Clinic</a></li><li><a href="work.html#jogi-ayurved">Jogi Ayurved</a></li></ul>
+          </li>
+          <li><a href="contact.html" class="nav-cta">Contact</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
   <main id="main">
-
-    <!-- HERO -->
     <section class="hero" aria-labelledby="hero-title">
-      <div class="wrap hero-grid">
-        <div class="hero-copy">
-          <h1 id="hero-title" class="hero-title">
-            <span class="hero-line"><span>Dhiren</span></span>
-            <span class="hero-line"><span>Jummani</span></span>
-          </h1>
-          <p class="hero-role">Senior Software Engineer</p>
-          <p class="hero-lede">I build fast, responsive Shopify and WordPress sites for businesses, and I'm now learning to build AI-powered apps with Python, RAG and LLMs.</p>
-
-          <div class="hero-actions">
-            <a class="btn btn-primary" href="DJ_RESUME.pdf" download="Dhiren-Jummani-Resume.pdf">Download resume</a>
-            <a class="btn btn-ghost" href="mailto:dhiren.jummani.jhd@gmail.com">Email me</a>
-          </div>
-
-          <dl class="hero-facts">
-            <div><dt>In web development</dt><dd>5+ years</dd></div>
-            <div><dt>Recent client work</dt><dd>10 live sites</dd></div>
-            <div><dt>Based in</dt><dd>Surat, Gujarat</dd></div>
-          </dl>
-        </div>
-
-        <figure class="hero-portrait">
-          <div class="weave" aria-hidden="true"></div>
-          <div class="portrait-frame">
-            <img
-              src="images/dhiren-900.jpg"
-              srcset="images/dhiren-480.jpg 480w, images/dhiren-900.jpg 900w"
-              sizes="(max-width: 720px) 70vw, (max-width: 1024px) 360px, 440px"
-              width="900" height="1125"
-              alt="Portrait of Dhiren Jummani"
-              fetchpriority="high">
-          </div>
-          <span class="thread" aria-hidden="true"></span>
-        </figure>
-      </div>
-    </section>
-
-    <!-- ABOUT -->
-    <section class="section" id="about" aria-labelledby="about-title">
-      <div class="wrap split">
-        <div class="split-head">
-          <h2 id="about-title">About</h2>
-        </div>
-        <div class="split-body">
-          <p class="lead">I'm a Shopify and WordPress developer who cares about sites that load quickly, work on every screen and are easy for the client to run.</p>
-          <p>I have worked with clients on eCommerce builds, theme and plugin customization, REST API integrations and performance tuning. I'm comfortable in Git workflows, debugging and explaining technical choices to people who don't write code.</p>
-          <p>Right now I'm expanding into AI. I'm learning Python, prompt engineering, embeddings, Retrieval-Augmented Generation (RAG) and tool calling, with the goal of building AI-powered features into the sites and products I work on.</p>
-
-          <ul class="focus-list">
-            <li>
-              <h3>Shopify stores</h3>
-              <p>Theme customization with Liquid, custom sections and third-party app integration.</p>
-            </li>
-            <li>
-              <h3>WordPress sites</h3>
-              <p>Custom themes and plugins, caching, security and REST API integrations.</p>
-            </li>
-            <li>
-              <h3>AI-powered apps <span class="badge">Learning</span></h3>
-              <p>Python, embeddings, RAG with vector databases, and tool or function calling.</p>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- EXPERIENCE -->
-    <section class="section section-tint" id="experience" aria-labelledby="exp-title">
-      <div class="wrap split">
-        <div class="split-head">
-          <h2 id="exp-title">Experience</h2>
-        </div>
-        <div class="split-body">
-          <ol class="timeline">
-            <li class="job is-current">
-              <div class="job-when">
-                <span class="job-dates">Aug 2026 to present</span>
-                <span class="job-company">Crest Infosystems</span>
-              </div>
-              <div class="job-what">
-                <h3>Senior Software Engineer</h3>
-                <ul>
-                  <li>Build and extend features on the TCMReview website, following coding standards and best practices so the code stays clean, maintainable and easy for users.</li>
-                  <li>Building a foundation in AI and LLM technologies: Python, AI and LLM fundamentals, and prompt engineering.</li>
-                  <li>Exploring embeddings, Retrieval-Augmented Generation (RAG) and tool or function calling to develop AI-powered applications.</li>
-                </ul>
-              </div>
-            </li>
-
-            <li class="job">
-              <div class="job-when">
-                <span class="job-dates">Jul 2024 to Feb 2026</span>
-                <span class="job-company">Netizens Technologies</span>
-              </div>
-              <div class="job-what">
-                <h3>Senior Software Engineer</h3>
-                <ul>
-                  <li>Developed responsive, user-friendly Shopify stores tailored to client requirements.</li>
-                  <li>Customized Shopify themes using Liquid, HTML, CSS, JavaScript and Shopify sections.</li>
-                  <li>Integrated third-party Shopify apps and extended store functionality to meet business needs.</li>
-                  <li>Optimized performance, SEO and mobile responsiveness while working with clients to deliver effective eCommerce solutions.</li>
-                </ul>
-              </div>
-            </li>
-
-            <li class="job">
-              <div class="job-when">
-                <span class="job-dates">Jan 2021 to Feb 2024</span>
-                <span class="job-company">Solwin Infotech LLP</span>
-              </div>
-              <div class="job-what">
-                <h3>WordPress Developer</h3>
-                <ul>
-                  <li>Improved user experience with responsive design and performance work across devices.</li>
-                  <li>Diagnosed and resolved technical issues quickly to keep sites stable and users satisfied.</li>
-                  <li>Developed and customized WordPress themes and plugins to extend functionality and meet project requirements.</li>
-                  <li>Optimized performance through plugin evaluation and caching strategies, using Git and GitHub for version control and working with cross-functional teams.</li>
-                </ul>
-              </div>
-            </li>
-          </ol>
-        </div>
-      </div>
-    </section>
-
-    <!-- WORK -->
-    <section class="section" id="work" aria-labelledby="work-title">
-      <div class="wrap split">
-        <div class="split-head">
-          <h2 id="work-title">Latest projects</h2>
-          <p class="head-note">Live sites I have worked on. Each link opens in a new tab.</p>
-        </div>
-        <div class="split-body">
-          <ul class="project-index">
-            <li><a href="https://tcmreview.com" target="_blank" rel="noopener"><span class="p-name">TCMReview</span><span class="p-url">tcmreview.com</span></a></li>
-            <li><a href="https://ayuxii.myshopify.com" target="_blank" rel="noopener"><span class="p-name">Ayuxi</span><span class="p-url">ayuxii.myshopify.com</span></a></li>
-            <li><a href="https://modifox.com" target="_blank" rel="noopener"><span class="p-name">Modifox</span><span class="p-url">modifox.com</span></a></li>
-            <li><a href="https://momipop.co" target="_blank" rel="noopener"><span class="p-name">Momipop</span><span class="p-url">momipop.co</span></a></li>
-            <li><a href="https://ew.netizens.dev" target="_blank" rel="noopener"><span class="p-name">Enviro Wealth</span><span class="p-url">ew.netizens.dev</span></a></li>
-            <li><a href="https://wwidesolutions.com" target="_blank" rel="noopener"><span class="p-name">World Wide Solutions</span><span class="p-url">wwidesolutions.com</span></a></li>
-            <li><a href="https://aldentalstudio.com" target="_blank" rel="noopener"><span class="p-name">AL Dental Studio</span><span class="p-url">aldentalstudio.com</span></a></li>
-            <li><a href="https://mayurgemsjewells.com" target="_blank" rel="noopener"><span class="p-name">Mayur Gems &amp; Jewells</span><span class="p-url">mayurgemsjewells.com</span></a></li>
-            <li><a href="https://dishalaser.com" target="_blank" rel="noopener"><span class="p-name">Disha Laser Clinic</span><span class="p-url">dishalaser.com</span></a></li>
-            <li><a href="https://jogiayurved.com" target="_blank" rel="noopener"><span class="p-name">Jogi Ayurved</span><span class="p-url">jogiayurved.com</span></a></li>
-          </ul>
-
-          <details class="earlier">
-            <summary>Earlier projects from college</summary>
-            <ul>
-              <li><a href="https://github.com/Dhiren003/">FEMSY</a>: fest management platform for events like tech fests, workshops and hackathons. My final-year project.</li>
-              <li><a href="https://github.com/Dhiren003/Visvesmruti2019-Backend">VS Backend System</a>: back end and admin panel for the Visvesmruti 2019 technical festival.</li>
-              <li><a href="https://play.google.com/store/apps/details?id=tech.visvesmruti.vsmanage">VSManage</a>: Android app for Visvesmruti 2019 (<a href="https://github.com/Dhiren003/Visvesmruti2019-App">code</a>).</li>
-              <li><a href="https://play.google.com/store/apps/details?id=fetr.ac.in.visvesmruti2018">Visvesmruti-18</a>: Android app for Visvesmruti 2018 (<a href="https://github.com/Dhiren003/Visvesmruti2018-App">code</a>).</li>
-              <li><a href="https://gem.dlink.co.in/">D-Link GeM Microsite</a>: microsite for D-Link's authorised resellers.</li>
-              <li><a href="https://github.com/Dhiren003/WasteConnect">Waste Connect</a>: portal for segregating waste online and earning rewards, built at a hackathon.</li>
-              <li><a href="https://github.com/Dhiren003/KnowYourCampus">Know Your Campus</a>: Android app for college information, timetables and assignments, built at a hackathon.</li>
-              <li><a href="https://github.com/Dhiren003/NRICELL">NRICELL</a>: query and support portal for NRI students.</li>
-              <li><a href="https://github.com/Dhiren003/GRIEVANCE-REDRESSAL-SYSTEM">Grievance Redressal System</a>: portal for parents, students and faculty to raise college queries.</li>
-            </ul>
-          </details>
-        </div>
-      </div>
-    </section>
-
-    <!-- AI -->
-    <section class="section section-dark" id="ai" aria-labelledby="ai-title">
-      <div class="wrap split">
-        <div class="split-head">
-          <h2 id="ai-title">Now learning AI and LLMs</h2>
-        </div>
-        <div class="split-body">
-          <p class="lead">I'm adding AI engineering to my web background, starting with Python and prompt engineering. The goal is to build apps that answer questions from a business's own content and can call tools to get things done.</p>
-
-          <ol class="rag" aria-label="How a retrieval-augmented generation app fits together">
-            <li>
-              <h3>Content</h3>
-              <p>Pages, documents and product data</p>
-            </li>
-            <li>
-              <h3>Embeddings</h3>
-              <p>Text turned into numbers that capture meaning</p>
-            </li>
-            <li>
-              <h3>Vector database</h3>
-              <p>Finds the passages closest to a question</p>
-            </li>
-            <li>
-              <h3>LLM</h3>
-              <p>Writes the answer, or calls a tool, using that context</p>
-            </li>
-          </ol>
-        </div>
-      </div>
-    </section>
-
-    <!-- SKILLS -->
-    <section class="section" id="skills" aria-labelledby="skills-title">
-      <div class="wrap split">
-        <div class="split-head">
-          <h2 id="skills-title">Skills</h2>
-        </div>
-        <div class="split-body">
-          <dl class="skill-list">
-            <div>
-              <dt>Shopify</dt>
-              <dd>Theme customization, Liquid development, custom sections, app integration</dd>
-            </div>
-            <div>
-              <dt>WordPress</dt>
-              <dd>Custom themes and plugins, caching, REST API integrations</dd>
-            </div>
-            <div>
-              <dt>Front end</dt>
-              <dd>HTML and CSS, JavaScript and jQuery, responsive web development</dd>
-            </div>
-            <div>
-              <dt>Back end and data</dt>
-              <dd>PHP, SQL</dd>
-            </div>
-            <div>
-              <dt>AI and LLMs</dt>
-              <dd>Python, prompt engineering, embeddings, RAG, vector databases, tool and function calling</dd>
-            </div>
-            <div>
-              <dt>Quality</dt>
-              <dd>Website optimization and security, Git and GitHub</dd>
-            </div>
-            <div>
-              <dt>Working style</dt>
-              <dd>Project management, communication, critical thinking</dd>
-            </div>
-          </dl>
-        </div>
-      </div>
-    </section>
-
-    <!-- BACKGROUND -->
-    <section class="section section-tint" id="background" aria-labelledby="bg-title">
-      <div class="wrap split">
-        <div class="split-head">
-          <h2 id="bg-title">Background</h2>
-        </div>
-        <div class="split-body bg-grid">
-          <div class="bg-block">
-            <h3>Education</h3>
-            <ul class="bg-list">
-              <li>
-                <strong>Bachelor of Engineering</strong>
-                <span>Computer Science &amp; Engineering</span>
-                <span>R. N. G. Patel Institute of Technology, 2017 to 2020</span>
-              </li>
-              <li>
-                <strong>Diploma Engineering</strong>
-                <span>Computer Engineering</span>
-                <span>J. H. Desai Polytechnic, 2014 to 2017</span>
-              </li>
-            </ul>
-          </div>
-
-          <div class="bg-block">
-            <h3>Certificates</h3>
-            <ul class="bg-list">
-              <li>
-                <strong>Fundamentals of Docker &amp; Kubernetes</strong>
-                <span>Scaler</span>
-              </li>
-              <li>
-                <strong><a href="https://www.eduonix.com/certificate/ba973cfd72" target="_blank" rel="noopener">Developer's Guide to Python3 Programming Course</a></strong>
-                <span>Eduonix</span>
-              </li>
-              <li>
-                <strong><a href="https://www.coursera.org/account/accomplishments/verify/W3Q4WREMJXWB" target="_blank" rel="noopener">SQL in Data Science</a></strong>
-                <span>Coursera</span>
-              </li>
-            </ul>
-          </div>
-
-          <div class="bg-block">
-            <h3>Languages</h3>
-            <ul class="bg-list">
-              <li><strong>English</strong><span>Professional</span></li>
-              <li><strong>Hindi</strong><span>Fluent</span></li>
-              <li><strong>Sindhi</strong><span>Native</span></li>
-            </ul>
-          </div>
-
-          <div class="bg-block">
-            <h3>Interests</h3>
-            <ul class="bg-list">
-              <li><strong>Data analysis</strong></li>
-              <li><strong>Artificial intelligence</strong></li>
-              <li><strong>Cloud services</strong></li>
-              <li><strong>DevOps</strong></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- CONTACT -->
-    <section class="section contact" id="contact" aria-labelledby="contact-title">
-      <div class="wrap">
-        <h2 id="contact-title" class="contact-title">Have a store, site or AI idea to build?</h2>
-        <a class="contact-mail" href="mailto:dhiren.jummani.jhd@gmail.com">dhiren.jummani.jhd@gmail.com</a>
-
-        <ul class="contact-links">
-          <li><a href="tel:+919574708867">+91 95747 08867</a></li>
-          <li><a href="https://wa.me/919574708867" target="_blank" rel="noopener">WhatsApp</a></li>
-          <li><a href="https://www.linkedin.com/in/dhiren-jummani-ab6336114" target="_blank" rel="noopener">LinkedIn</a></li>
-          <li><a href="https://github.com/Dhiren003" target="_blank" rel="noopener">GitHub</a></li>
-          <li><a href="DJ_RESUME.pdf" download="Dhiren-Jummani-Resume.pdf">Resume (PDF)</a></li>
+      <div class="wrap hero-inner">
+        <ul class="taglines" aria-label="What I do">
+          <li>Shopify Development</li>
+          <li>WordPress Development</li>
+          <li>Generative AI</li>
+          <li>REST API Integration</li>
         </ul>
+
+        <div class="hero-say">
+          <h1 id="hero-title" class="visually-hidden">Dhiren Jummani, software engineer</h1>
+          <p class="hero-small">Got a site in mind? Don't be shy.</p>
+          <p class="hero-big" aria-hidden="true">Say <span class="quote">&ldquo;Hey!&rdquo;</span></p>
+          <a class="btn btn-primary" href="mailto:dhiren.jummani.jhd@gmail.com">Say hey by email</a>
+        </div>
+
+        <a class="scroll-cue" href="#hello">Scroll<span aria-hidden="true" class="cue-line"></span></a>
+      </div>
+    </section>
+
+    <section class="hello" id="hello" aria-labelledby="hello-title">
+      <div class="wrap hello-grid">
+        <figure class="avatar">
+          <div class="avatar-ring" aria-hidden="true"></div>
+          <img src="images/dhiren-900.jpg" srcset="images/dhiren-480.jpg 480w, images/dhiren-900.jpg 900w"
+               sizes="(max-width: 720px) 60vw, 340px" width="900" height="1125" alt="Portrait of Dhiren Jummani">
+        </figure>
+        <div class="hello-copy">
+          <h2 id="hello-title" class="hello-title">Hey! <span aria-hidden="true">🤝</span></h2>
+          <p class="hello-line">I'm Dhiren, a software engineer <span class="nowrap-md">based in Surat, India.</span></p>
+          <p>I build websites and online stores for businesses, mostly with Shopify and WordPress. Lately I've been adding generative AI to my toolkit, so the sites I make can do more than just look good.</p>
+          <p>This site collects the work I've done so far. Have a look around, or just say hello.</p>
+          <div class="hello-actions">
+            <a class="btn btn-primary" href="about.html">Get to know me</a>
+            <a class="btn btn-ghost" href="work.html">See my work</a>
+          </div>
+        </div>
       </div>
     </section>
   </main>
 
   <footer class="site-footer">
-    <div class="wrap footer-row">
-      <p>&copy; <span id="year">2026</span> Dhiren Jummani</p>
-      <a href="#top">Back to top</a>
+    <div class="wrap">
+      <a class="footer-hey" href="mailto:dhiren.jummani.jhd@gmail.com" aria-label="Email Dhiren">Hey!</a>
+      <div class="footer-row">
+        <p>&copy; <span id="year">2026</span> Dhiren Jummani</p>
+        <ul class="footer-links">
+          <li><a href="https://github.com/Dhiren003" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/dhiren-jummani-ab6336114" target="_blank" rel="noopener">LinkedIn</a></li>
+          <li><a href="https://wa.me/919574708867" target="_blank" rel="noopener">WhatsApp</a></li>
+        </ul>
+      </div>
     </div>
   </footer>
-
   <script src="js/main.js"></script>
 </body>
 </html>
