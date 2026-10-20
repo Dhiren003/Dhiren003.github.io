@@ -18,6 +18,9 @@
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
+  <!-- Progress bar -->
+  <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
+
   <!-- Header -->
   <header class="site-header" id="header">
     <div class="header-inner">
@@ -35,11 +38,11 @@
   <nav class="full-nav" id="full-nav" aria-hidden="true">
     <div class="full-nav-inner">
       <ul class="nav-list">
-        <li><a href="#top" data-nav>00 — Home</a></li>
-        <li><a href="#about" data-nav>01 — About</a></li>
-        <li><a href="#work" data-nav>02 — Work</a></li>
-        <li><a href="#services" data-nav>03 — Services</a></li>
-        <li><a href="#contact" data-nav>04 — Contact</a></li>
+        <li><a href="#top" data-nav><span class="nav-num">00</span> Home</a></li>
+        <li><a href="#about" data-nav><span class="nav-num">01</span> About</a></li>
+        <li><a href="#work" data-nav><span class="nav-num">02</span> Work</a></li>
+        <li><a href="#services" data-nav><span class="nav-num">03</span> Services</a></li>
+        <li><a href="#contact" data-nav><span class="nav-num">04</span> Contact</a></li>
       </ul>
       <div class="nav-meta">
         <p>Say hello</p>
@@ -50,33 +53,43 @@
   </nav>
 
   <main id="main">
-    <!-- Hero -->
+    <!-- Hero — Awake-style split layout -->
     <section class="hero" id="top">
       <div class="hero-bg"></div>
-      <div class="hero-content">
-        <h1 class="hero-title">
-          <span class="line">I BUILD</span>
-          <span class="line">WEBSITES</span>
-          <span class="line accent">PEOPLE</span>
-          <span class="line accent">REMEMBER.</span>
-        </h1>
-        <div class="hero-side">
-          <p class="hero-desc">
-            Software engineer in Surat. I design and build Shopify stores, WordPress sites and AI-powered experiences that look sharp and work hard.
-          </p>
-          <div class="hero-meta">
+      <div class="hero-frame">
+        <div class="hero-top">
+          <div class="hero-left">
+            <h1 class="hero-title">
+              <span class="line" data-reveal>I</span>
+              <span class="line" data-reveal>BUILD</span>
+              <span class="line" data-reveal>WEBSITES</span>
+              <span class="line" data-reveal>PEOPLE</span>
+              <span class="line" data-reveal>REMEMBER.</span>
+            </h1>
+          </div>
+          <div class="hero-right">
+            <p class="hero-desc" data-reveal>
+              Software engineer in Surat. I design and build Shopify stores, WordPress sites and AI-powered experiences that look sharp and work hard.
+            </p>
+          </div>
+        </div>
+        <div class="hero-bottom">
+          <div class="hero-meta-left">
             <span>BASED IN: SURAT</span>
             <span id="local-time"></span>
           </div>
+          <div class="hero-meta-right">
+            <a href="mailto:dhiren.jummani.jhd@gmail.com">SAY HELLO: DHIREN.JUMMANI.JHD@GMAIL.COM</a>
+          </div>
         </div>
       </div>
-      <a class="scroll-hint" href="#about">Scroll</a>
+      <a class="scroll-hint" href="#about" data-reveal>Scroll</a>
     </section>
 
     <!-- Intro strip -->
     <section class="intro-strip">
       <div class="wrap">
-        <p class="intro-text">
+        <p class="intro-text" data-reveal>
           I take projects from first sketch to live launch — custom themes, API integrations, performance and the AI features that make a site feel alive.
         </p>
       </div>
@@ -85,15 +98,15 @@
     <!-- About -->
     <section class="section about" id="about">
       <div class="wrap">
-        <div class="section-label">01 — About</div>
+        <div class="section-label" data-reveal>01 — About</div>
         <div class="about-grid">
-          <div class="about-visual">
+          <div class="about-visual" data-reveal>
             <div class="avatar-wrap">
               <img src="images/dhiren-900.jpg" srcset="images/dhiren-480.jpg 480w, images/dhiren-900.jpg 900w"
                    sizes="(max-width: 700px) 80vw, 380px" width="900" height="1125" alt="Dhiren Jummani">
             </div>
           </div>
-          <div class="about-copy">
+          <div class="about-copy" data-reveal>
             <h2>Hey. I’m Dhiren.</h2>
             <p>For more than five years I’ve been building websites and online stores for businesses — mostly on Shopify and WordPress. I own the whole path from first layout to launch: custom themes and plugins, API connections, performance and SEO.</p>
             <p>Day to day I hunt down stubborn bugs, keep code tidy for the next developer, and talk with clients in plain language about what they actually need. Outside client work I’m deep into generative AI — prompts, embeddings, RAG and tool calling — so the sites I ship can do more than just look good.</p>
@@ -104,7 +117,7 @@
           </div>
         </div>
 
-        <div class="exp-block">
+        <div class="exp-block" data-reveal>
           <h3>Experience</h3>
           <div class="exp-list">
             <article class="exp-item">
@@ -136,111 +149,166 @@
       </div>
     </section>
 
-    <!-- Work -->
+    <!-- Work / Projects — visual cards like Awake -->
     <section class="section work" id="work">
       <div class="wrap">
-        <div class="section-label">02 — Selected work</div>
-        <h2 class="section-title">Projects that shipped.</h2>
+        <div class="section-head">
+          <div class="section-label" data-reveal>02 — Our projects</div>
+          <h2 class="section-title" data-reveal>Selected work</h2>
+        </div>
 
-        <div class="project-grid">
-          <a class="project-card" href="https://tcmreview.com" target="_blank" rel="noopener">
-            <div class="project-num">01</div>
-            <div class="project-info">
+        <div class="projects-visual">
+          <!-- Row 1 -->
+          <a class="pv-card pv-large" href="https://tcmreview.com" target="_blank" rel="noopener" data-reveal style="--delay:0">
+            <div class="pv-frame" style="--grad: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)">
+              <div class="pv-mock">
+                <span class="pv-mock-bar"></span>
+                <span class="pv-mock-title">TCMReview</span>
+                <span class="pv-mock-sub">Education platform</span>
+              </div>
+            </div>
+            <div class="pv-info">
+              <span class="pv-tag">Shopify · Ongoing</span>
               <h3>TCMReview</h3>
               <p>Feature development & platform work for a major TCM education site.</p>
-              <span class="project-tag">Shopify · Ongoing</span>
             </div>
-            <span class="project-arrow" aria-hidden="true">→</span>
           </a>
 
-          <a class="project-card" href="https://ayuxii.myshopify.com" target="_blank" rel="noopener">
-            <div class="project-num">02</div>
-            <div class="project-info">
+          <a class="pv-card" href="https://ayuxii.myshopify.com" target="_blank" rel="noopener" data-reveal style="--delay:1">
+            <div class="pv-frame" style="--grad: linear-gradient(135deg, #2d1b4e 0%, #4a1942 100%)">
+              <div class="pv-mock">
+                <span class="pv-mock-bar"></span>
+                <span class="pv-mock-title">Ayuxi</span>
+                <span class="pv-mock-sub">Shopify store</span>
+              </div>
+            </div>
+            <div class="pv-info">
+              <span class="pv-tag">Shopify · Custom theme</span>
               <h3>Ayuxi</h3>
-              <p>Shopify store built from scratch with a fully hand-coded Liquid theme.</p>
-              <span class="project-tag">Shopify · Custom theme</span>
+              <p>Hand-coded Liquid theme, fully responsive.</p>
             </div>
-            <span class="project-arrow" aria-hidden="true">→</span>
           </a>
 
-          <a class="project-card" href="https://modifox.com" target="_blank" rel="noopener">
-            <div class="project-num">03</div>
-            <div class="project-info">
+          <a class="pv-card" href="https://modifox.com" target="_blank" rel="noopener" data-reveal style="--delay:2">
+            <div class="pv-frame" style="--grad: linear-gradient(135deg, #0d3b2e 0%, #1a5c45 100%)">
+              <div class="pv-mock">
+                <span class="pv-mock-bar"></span>
+                <span class="pv-mock-title">Modifox</span>
+                <span class="pv-mock-sub">Brand website</span>
+              </div>
+            </div>
+            <div class="pv-info">
+              <span class="pv-tag">WordPress</span>
               <h3>Modifox</h3>
-              <p>Brand website built from scratch — clean structure, fast load times.</p>
-              <span class="project-tag">WordPress</span>
+              <p>Clean structure, fast load times.</p>
             </div>
-            <span class="project-arrow" aria-hidden="true">→</span>
           </a>
 
-          <a class="project-card" href="https://momipop.co" target="_blank" rel="noopener">
-            <div class="project-num">04</div>
-            <div class="project-info">
+          <!-- Row 2 -->
+          <a class="pv-card" href="https://momipop.co" target="_blank" rel="noopener" data-reveal style="--delay:0">
+            <div class="pv-frame" style="--grad: linear-gradient(135deg, #3d1c02 0%, #7a3b10 100%)">
+              <div class="pv-mock">
+                <span class="pv-mock-bar"></span>
+                <span class="pv-mock-title">Momipop</span>
+                <span class="pv-mock-sub">Brand site</span>
+              </div>
+            </div>
+            <div class="pv-info">
+              <span class="pv-tag">WordPress</span>
               <h3>Momipop</h3>
-              <p>Brand site designed to look right and load quickly on every screen.</p>
-              <span class="project-tag">WordPress</span>
+              <p>Looks right and loads fast on every screen.</p>
             </div>
-            <span class="project-arrow" aria-hidden="true">→</span>
           </a>
 
-          <a class="project-card" href="https://ew.netizens.dev" target="_blank" rel="noopener">
-            <div class="project-num">05</div>
-            <div class="project-info">
-              <h3>Enviro Wealth</h3>
-              <p>Clean, responsive company site built from the ground up.</p>
-              <span class="project-tag">WordPress</span>
+          <a class="pv-card pv-wide" href="https://wwidesolutions.com" target="_blank" rel="noopener" data-reveal style="--delay:1">
+            <div class="pv-frame" style="--grad: linear-gradient(135deg, #0a1628 0%, #1e3a5f 50%, #2a5298 100%)">
+              <div class="pv-mock">
+                <span class="pv-mock-bar"></span>
+                <span class="pv-mock-title">World Wide Solutions</span>
+                <span class="pv-mock-sub">Company website</span>
+              </div>
             </div>
-            <span class="project-arrow" aria-hidden="true">→</span>
-          </a>
-
-          <a class="project-card" href="https://wwidesolutions.com" target="_blank" rel="noopener">
-            <div class="project-num">06</div>
-            <div class="project-info">
+            <div class="pv-info">
+              <span class="pv-tag">WordPress</span>
               <h3>World Wide Solutions</h3>
-              <p>Company website presenting services clearly on any device.</p>
-              <span class="project-tag">WordPress</span>
+              <p>Company site presenting services clearly on any device.</p>
             </div>
-            <span class="project-arrow" aria-hidden="true">→</span>
           </a>
 
-          <a class="project-card" href="https://aldentalstudio.com" target="_blank" rel="noopener">
-            <div class="project-num">07</div>
-            <div class="project-info">
+          <!-- Row 3 -->
+          <a class="pv-card" href="https://ew.netizens.dev" target="_blank" rel="noopener" data-reveal style="--delay:0">
+            <div class="pv-frame" style="--grad: linear-gradient(135deg, #1a3a1a 0%, #2d5a2d 100%)">
+              <div class="pv-mock">
+                <span class="pv-mock-bar"></span>
+                <span class="pv-mock-title">Enviro Wealth</span>
+                <span class="pv-mock-sub">Company site</span>
+              </div>
+            </div>
+            <div class="pv-info">
+              <span class="pv-tag">WordPress</span>
+              <h3>Enviro Wealth</h3>
+              <p>Clean, responsive build from scratch.</p>
+            </div>
+          </a>
+
+          <a class="pv-card" href="https://aldentalstudio.com" target="_blank" rel="noopener" data-reveal style="--delay:1">
+            <div class="pv-frame" style="--grad: linear-gradient(135deg, #1a2a3a 0%, #2c4a6a 100%)">
+              <div class="pv-mock">
+                <span class="pv-mock-bar"></span>
+                <span class="pv-mock-title">AL Dental Studio</span>
+                <span class="pv-mock-sub">Clinic website</span>
+              </div>
+            </div>
+            <div class="pv-info">
+              <span class="pv-tag">WordPress</span>
               <h3>AL Dental Studio</h3>
-              <p>Clinic site that introduces treatments and makes contact effortless.</p>
-              <span class="project-tag">WordPress</span>
+              <p>Treatments intro + easy contact.</p>
             </div>
-            <span class="project-arrow" aria-hidden="true">→</span>
           </a>
 
-          <a class="project-card" href="https://mayurgemsjewells.com" target="_blank" rel="noopener">
-            <div class="project-num">08</div>
-            <div class="project-info">
+          <a class="pv-card" href="https://mayurgemsjewells.com" target="_blank" rel="noopener" data-reveal style="--delay:2">
+            <div class="pv-frame" style="--grad: linear-gradient(135deg, #3a2a0a 0%, #6b4e1a 100%)">
+              <div class="pv-mock">
+                <span class="pv-mock-bar"></span>
+                <span class="pv-mock-title">Mayur Gems</span>
+                <span class="pv-mock-sub">Jewellery brand</span>
+              </div>
+            </div>
+            <div class="pv-info">
+              <span class="pv-tag">WordPress</span>
               <h3>Mayur Gems & Jewells</h3>
-              <p>Jewellery brand site laid out to showcase the collection beautifully.</p>
-              <span class="project-tag">WordPress</span>
+              <p>Collection showcase for phones & large screens.</p>
             </div>
-            <span class="project-arrow" aria-hidden="true">→</span>
           </a>
 
-          <a class="project-card" href="https://dishalaser.com" target="_blank" rel="noopener">
-            <div class="project-num">09</div>
-            <div class="project-info">
+          <a class="pv-card" href="https://dishalaser.com" target="_blank" rel="noopener" data-reveal style="--delay:0">
+            <div class="pv-frame" style="--grad: linear-gradient(135deg, #2a1a3a 0%, #4a2a6a 100%)">
+              <div class="pv-mock">
+                <span class="pv-mock-bar"></span>
+                <span class="pv-mock-title">Disha Laser</span>
+                <span class="pv-mock-sub">Clinic website</span>
+              </div>
+            </div>
+            <div class="pv-info">
+              <span class="pv-tag">WordPress</span>
               <h3>Disha Laser Clinic</h3>
-              <p>Treatment explanations in plain language, enquiries one tap away.</p>
-              <span class="project-tag">WordPress</span>
+              <p>Plain-language treatments, one-tap enquiries.</p>
             </div>
-            <span class="project-arrow" aria-hidden="true">→</span>
           </a>
 
-          <a class="project-card" href="https://jogiayurved.com" target="_blank" rel="noopener">
-            <div class="project-num">10</div>
-            <div class="project-info">
-              <h3>Jogi Ayurved</h3>
-              <p>Calm, easy-to-navigate responsive site for an Ayurvedic brand.</p>
-              <span class="project-tag">WordPress</span>
+          <a class="pv-card" href="https://jogiayurved.com" target="_blank" rel="noopener" data-reveal style="--delay:1">
+            <div class="pv-frame" style="--grad: linear-gradient(135deg, #1a3a2a 0%, #2a5a3a 100%)">
+              <div class="pv-mock">
+                <span class="pv-mock-bar"></span>
+                <span class="pv-mock-title">Jogi Ayurved</span>
+                <span class="pv-mock-sub">Ayurvedic brand</span>
+              </div>
             </div>
-            <span class="project-arrow" aria-hidden="true">→</span>
+            <div class="pv-info">
+              <span class="pv-tag">WordPress</span>
+              <h3>Jogi Ayurved</h3>
+              <p>Calm, easy-to-navigate responsive layout.</p>
+            </div>
           </a>
         </div>
       </div>
@@ -249,32 +317,32 @@
     <!-- Services -->
     <section class="section services" id="services">
       <div class="wrap">
-        <div class="section-label">03 — What I do</div>
-        <h2 class="section-title">Services</h2>
+        <div class="section-label" data-reveal>03 — What I do</div>
+        <h2 class="section-title" data-reveal>Services</h2>
 
         <div class="services-list">
-          <article class="service-item">
+          <article class="service-item" data-reveal>
             <span class="service-num">01</span>
             <div class="service-body">
               <h3>Shopify Development</h3>
               <p>Custom themes in Liquid, app integrations, performance tuning and stores that convert. From discovery to launch.</p>
             </div>
           </article>
-          <article class="service-item">
+          <article class="service-item" data-reveal>
             <span class="service-num">02</span>
             <div class="service-body">
               <h3>WordPress Development</h3>
               <p>Fast, maintainable WordPress sites — custom themes, plugins, responsive design and clean code clients can own.</p>
             </div>
           </article>
-          <article class="service-item">
+          <article class="service-item" data-reveal>
             <span class="service-num">03</span>
             <div class="service-body">
               <h3>Generative AI</h3>
               <p>Embeddings, RAG, prompt engineering and tool calling — practical AI features that make websites smarter.</p>
             </div>
           </article>
-          <article class="service-item">
+          <article class="service-item" data-reveal>
             <span class="service-num">04</span>
             <div class="service-body">
               <h3>API Integration</h3>
@@ -288,33 +356,33 @@
     <!-- Contact -->
     <section class="section contact" id="contact">
       <div class="wrap">
-        <div class="section-label">04 — Contact</div>
-        <h2 class="section-title contact-title">Say “Hey!”</h2>
-        <p class="contact-lede">Have a store, a website or an AI idea to build? Drop me a line.</p>
-        <a class="contact-email" href="mailto:dhiren.jummani.jhd@gmail.com">dhiren.jummani.jhd@gmail.com</a>
+        <div class="section-label" data-reveal>04 — Contact</div>
+        <h2 class="section-title contact-title" data-reveal>Say “Hey!”</h2>
+        <p class="contact-lede" data-reveal>Have a store, a website or an AI idea to build? Drop me a line.</p>
+        <a class="contact-email" href="mailto:dhiren.jummani.jhd@gmail.com" data-reveal>dhiren.jummani.jhd@gmail.com</a>
 
         <div class="contact-grid">
-          <div class="contact-item">
+          <div class="contact-item" data-reveal>
             <span class="c-label">Phone</span>
             <a href="tel:+919574708867">+91 95747 08867</a>
           </div>
-          <div class="contact-item">
+          <div class="contact-item" data-reveal>
             <span class="c-label">WhatsApp</span>
             <a href="https://wa.me/919574708867" target="_blank" rel="noopener">Chat on WhatsApp</a>
           </div>
-          <div class="contact-item">
+          <div class="contact-item" data-reveal>
             <span class="c-label">LinkedIn</span>
             <a href="https://www.linkedin.com/in/dhiren-jummani-ab6336114" target="_blank" rel="noopener">dhiren-jummani</a>
           </div>
-          <div class="contact-item">
+          <div class="contact-item" data-reveal>
             <span class="c-label">GitHub</span>
             <a href="https://github.com/Dhiren003" target="_blank" rel="noopener">Dhiren003</a>
           </div>
-          <div class="contact-item">
+          <div class="contact-item" data-reveal>
             <span class="c-label">Resume</span>
             <a href="DJ_RESUME.pdf" download>Download PDF</a>
           </div>
-          <div class="contact-item">
+          <div class="contact-item" data-reveal>
             <span class="c-label">Based in</span>
             <span>Surat, Gujarat, India</span>
           </div>
