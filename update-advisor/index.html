@@ -414,6 +414,9 @@ function mapAndroidModelToDevice(model, ua){
   const ml = m.toLowerCase();
 
   // Pixel
+  if (/pixel\s*11/i.test(m) || /pixel\s*11/i.test(u)) return { name: "Google Pixel 11 / 11 Pro / 11 Pro XL / 11 Pro Fold", brand: "google", confidence: "high — model hint" };
+  if (/pixel\s*10a/i.test(m) || /pixel\s*10a/i.test(u)) return { name: "Google Pixel (other / A-series)", brand: "google", confidence: "medium — A-series" };
+  if (/pixel\s*10/i.test(m) || /pixel\s*10/i.test(u)) return { name: "Google Pixel 10 / 10 Pro / 10 Pro XL / 10 Pro Fold", brand: "google", confidence: "high — model hint" };
   if (/pixel\s*9/i.test(m) || /pixel\s*9/i.test(u)) return { name: "Google Pixel 9 / 9 Pro / 9 Pro XL", brand: "google", confidence: "high — model hint" };
   if (/pixel\s*8/i.test(m) || /pixel\s*8/i.test(u)) return { name: "Google Pixel 8 / 8 Pro", brand: "google", confidence: "high — model hint" };
   if (/pixel\s*7/i.test(m) || /pixel\s*7/i.test(u)) return { name: "Google Pixel 7 / 7 Pro / 7a", brand: "google", confidence: "high — model hint" };
@@ -655,7 +658,7 @@ async function loadFeed(){
 
   if (!RAW_FEED) {
     try {
-      const cache = await caches.open("update-advisor-v11");
+      const cache = await caches.open("update-advisor-v12");
       for (const url of candidates) {
         const cached = await cache.match(url);
         if (cached) {
@@ -839,14 +842,27 @@ deviceSelect.addEventListener('change', ()=>{
 });
 
 
+// True when the user is on the current major but an older point release (e.g. 27.0.1 vs 27.2).
+// Only trusts a patch number when both sides have one, so "27.2" vs "27.2.1" is never flagged.
+function isBehindPoint(current, stable){
+  if (PLATFORM !== "ios" || !stable || !stable.version) return false;
+  const p = String(stable.version).split(".").map(n => parseInt(n, 10));
+  if (p.length < 2 || p.some(Number.isNaN)) return false;
+  if (current.major !== p[0] || current.minor === null || current.minor === undefined) return false;
+  if (current.minor < p[1]) return true;
+  if (current.minor === p[1] && current.patch != null && p[2] != null && current.patch < p[2]) return true;
+  return false;
+}
+
 function evaluate(device, current){
   const latest = FEED.latestMajorVersion;
   const stable = FEED.channels.stable;
+  const behindPoint = isBehindPoint(current, stable);
   const prob = FEED.updateProbability || {};
   const tierAdvice = (prob.adviceByTier && prob.adviceByTier[device.tier]) || "";
   const os = FEED.osName || "";
 
-  if(current.major !== null && current.major >= latest){
+  if(current.major !== null && current.major >= latest && !behindPoint){
     return {
       cls:"go", tag:"UP TO DATE",
       headline:"You're already on the latest major version.",
@@ -892,6 +908,7 @@ function evaluate(device, current){
         : "On-device AI features may be limited or unavailable on this device class.");
 
   const reasons = [
+    ...(behindPoint ? [`You're on ${current.label}; the current build is ${stable.label}. Check Settings > General > Software Update to confirm what your device shows.`] : []),
     `${device.name} (${device.chip}) — tier: ${device.tier}.`,
     aiLine,
     FEED.communitySentiment.summary,
