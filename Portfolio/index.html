@@ -1,218 +1,456 @@
-<!DOCTYPE html>
+<!doctype html>
+
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dhiren Jummani | Software Engineer, Shopify and WordPress Developer</title>
-  <meta name="description" content="Dhiren Jummani is a software engineer building fast Shopify and WordPress websites, API integrations and generative AI features.">
-  <meta name="theme-color" content="#0b0d1c">
-  <meta name="color-scheme" content="dark">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Dhiren Jummani | Software Engineer, Shopify and WordPress Developer">
-  <meta property="og:description" content="Dhiren Jummani is a software engineer building fast Shopify and WordPress websites, API integrations and generative AI features.">
-  <meta property="og:url" content="https://dhiren003.github.io/Portfolio/">
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
-  <script>try{var d=document.documentElement,r=matchMedia("(prefers-reduced-motion: reduce)").matches;if(!r){if(!sessionStorage.getItem("dj-pre")){d.classList.add("is-intro")}else if(sessionStorage.getItem("dj-nav")){d.classList.add("is-arriving");d.setAttribute("data-label",sessionStorage.getItem("dj-nav"))}}}catch(e){}</script>
-  <noscript><style>.preloader{display:none!important}.menu{position:static;visibility:visible;opacity:1;transform:none;padding-top:2rem}.menu-btn{display:none}</style></noscript>
-</head>
-<body class="page-home">
-  <a class="skip-link" href="#main">Skip to content</a>
-  <div class="preloader" aria-hidden="true"><span class="pl-num"><span class="pl-count">0</span>%</span></div>
-  <div class="curtain" aria-hidden="true"><span class="curtain-label"></span></div>
 
-  <header class="site-header">
-    <div class="progress" aria-hidden="true"></div>
-    <div class="wrap header-row">
-      <a class="brand" href="index.html" aria-label="Dhiren Jummani, home"><span class="slash" aria-hidden="true">/</span><span class="brand-name">Dhiren Jummani</span></a>
-      <div class="header-actions">
-        <a class="touch-btn" href="contact.html">get in touch.</a>
-        <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu"><span class="menu-open">menu.</span><span class="menu-close">close.</span></button>
-      </div>
-    </div>
-  </header>
+    <head>
+        <meta charset="utf-8" />
+        <meta content="width=device-width,initial-scale=1" name="viewport" />
+        <meta content="#11130e" name="theme-color" />
+        <meta content="Portfolio of Dhiren Jummani: Shopify and WordPress development, integrations, selected work, experience and contact details." name="description" />
+        <title>Dhiren Jummani | Software Engineer &amp; Web Developer</title>
+        <link href="favicon.svg" rel="icon" type="image/svg+xml" />
+        <link href="css/style.css" rel="stylesheet" />
+    </head>
 
-  <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Site menu">
-    <div class="wrap menu-inner">
-      <ul class="menu-links">
-        <li style="--i:0"><a href="index.html" aria-current="page"><span class="mn">00</span><span class="mt">Home</span></a></li><li style="--i:1"><a href="about.html"><span class="mn">01</span><span class="mt">About</span></a></li><li style="--i:2"><a href="projects.html"><span class="mn">02</span><span class="mt">Projects</span></a></li><li style="--i:3"><a href="contact.html"><span class="mn">03</span><span class="mt">Contacts</span></a></li>
-      </ul>
-      <div class="menu-foot">
-        <p class="menu-say">Contact us: <a href="mailto:dhiren.jummani.jhd@gmail.com">dhiren.jummani.jhd@gmail.com</a></p>
-        <ul class="menu-social">
-          <li><a href="https://www.linkedin.com/in/dhiren-jummani-ab6336114" target="_blank" rel="noopener">LinkedIn</a></li>
-          <li><a href="https://github.com/Dhiren003" target="_blank" rel="noopener">GitHub</a></li>
-          <li><a href="https://wa.me/919574708867" target="_blank" rel="noopener">WhatsApp</a></li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <main id="main">
-    <span id="top"></span>
-    <section class="hero" aria-labelledby="hero-title">
-      <canvas class="hero-canvas" aria-hidden="true"></canvas>
-      <div class="wrap hero-inner">
-        <h1 id="hero-title" class="hero-title" data-split="load">
-          <span class="ln">I build</span>
-          <span class="ln">websites</span>
-          <span class="ln"><span class="accent">that perform.</span></span>
-        </h1>
-        <div class="hero-foot">
-          <p class="hero-sub">I'm Dhiren, a software engineer who builds fast, responsive Shopify and WordPress websites, connects them to the services they need, and adds generative AI where it helps.</p>
-          <dl class="hero-meta">
-            <div><dt>Contact us:</dt><dd><a href="mailto:dhiren.jummani.jhd@gmail.com">dhiren.jummani.jhd@gmail.com</a></dd></div>
-            <div><dt>Resume:</dt><dd><a href="DJ_RESUME.pdf" download="Dhiren-Jummani-Resume.pdf">Download PDF</a></dd></div>
-          </dl>
+    <body>
+        <div class="progress"></div>
+        <header class="header">
+            <div class="wrap head-inner">
+                <a class="brand-image-link" href="#home"><img alt="Dhiren Jummani" class="brand-image" src="images/dj-wordmark.svg" /></a>
+                <nav aria-label="Main navigation" class="topnav">
+                    <a aria-current="page" href="#home">Home</a>
+                    <a href="#about">About</a>
+                    <a href="#projects">Projects</a>
+                    <a href="#experience">Experience</a>
+                    <a href="#contact">Contact</a>
+                </nav>
+                <div class="head-right">
+                    <a class="pill" href="#contact">Let’s talk ↗</a>
+                    <button aria-expanded="false" aria-label="Open menu" class="menu-toggle">
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+            </div>
+        </header>
+        <div class="nav-overlay">
+            <nav class="overlay-links">
+                <a href="#home">Home</a>
+                <a href="#about">About</a>
+                <a href="#projects">Projects</a>
+                <a href="#experience">Experience</a>
+                <a href="#contact">Contact</a>
+            </nav>
+            <p class="overlay-social">WordPress · Shopify · APIs</p>
         </div>
-        <a class="scroll-badge" href="#hello" aria-label="Scroll down">
-          <svg viewBox="0 0 120 120" aria-hidden="true"><defs><path id="circ" d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0"/></defs><text><textPath href="#circ" startOffset="0" textLength="268" lengthAdjust="spacing">scroll down &#8226; scroll down &#8226; scroll down &#8226; </textPath></text></svg>
-          <span class="sb-arrow" aria-hidden="true">&darr;</span>
-        </a>
-      </div>
-    </section>
+        <main id="main">
+            <section class="hero" id="home">
+                <div class="wrap hero-grid">
+                    <div class="hero-copy">
+                        <p class="hero-greeting">Hi, I am <span>Dhiren.</span></p>
+                        <h1>Software<br /><em>Engineer</em></h1>
+                        <p class="hero-lede">Specializing in WordPress, Shopify, and web integrations, with experience in custom themes, membership and payment flows, and responsive websites.</p>
+                        <div class="hero-actions">
+                            <a class="pill" download="Dhiren-Jummani-CV.pdf" href="Dhiren-Jummani-Resume.pdf">Download CV <span aria-hidden="true">↓</span></a>
+                        </div>
+                    </div>
+                    <figure aria-hidden="true" class="hero-visual">
+                        <div class="visual-orbit visual-orbit-a"></div>
+                        <div class="visual-orbit visual-orbit-b"></div>
+                        <span class="visual-node node-a"></span>
+                        <span class="visual-node node-b"></span>
+                        <span class="visual-node node-c"></span>
+                        <div class="visual-core">
+                            <div class="visual-window">
+                                <div class="window-dots"><i></i><i></i><i></i></div>
+                                <span class="code-symbol">&lt;/&gt;</span><span class="window-caption">web development</span>
+                            </div>
+                        </div>
+                        <span class="tech-chip chip-shopify">SHOPIFY <b>✳</b></span>
+                        <span class="tech-chip chip-wordpress">WORDPRESS <b>◉</b></span>
+                        <span class="tech-chip chip-api">APIs <b>↗</b></span>
+                    </figure>
+                </div>
+                <div class="wrap hero-bottom">
+                    <span>WordPress · Shopify · Integrations</span>
+                    <a class="scroll-cue" href="#about"><i></i> Scroll to explore</a>
+                    <span>India · Open to opportunities</span>
+                </div>
+            </section>
+            <div class="marquee">
+                <div class="marquee-track">
+                    <span>WordPress</span><span>PHP</span><span>HTML/CSS</span><span>JavaScript</span><span>APIs</span><span>Shopify</span><span>Liquid</span><span>Python</span><span>AI</span><span>RAG</span><span>Embeddings</span>
+                    <span>WordPress</span><span>PHP</span><span>HTML/CSS</span><span>JavaScript</span><span>APIs</span><span>Shopify</span><span>Liquid</span><span>Python</span><span>AI</span><span>RAG</span><span>Embeddings</span>
+                    <span>WordPress</span><span>PHP</span><span>HTML/CSS</span><span>JavaScript</span><span>APIs</span><span>Shopify</span><span>Liquid</span><span>Python</span><span>AI</span><span>RAG</span><span>Embeddings</span>
+                    <span>WordPress</span><span>PHP</span><span>HTML/CSS</span><span>JavaScript</span><span>APIs</span><span>Shopify</span><span>Liquid</span><span>Python</span><span>AI</span><span>RAG</span><span>Embeddings</span>
+                </div>
+            </div>
+            <section class="section about-preview" id="about">
+                <div class="wrap about-layout">
+                    <figure class="about-art reveal">
+                        <img alt="About-Us" src="images/about-us.png" />
+                    </figure>
+                    <div class="about-copy reveal">
+                        <p class="kicker">About</p>
+                        <h2>WordPress &amp; Shopify Engineer</h2>
+                        <p>I develop WordPress themes and plugins, build Shopify storefronts with Liquid, and connect third-party apps and APIs.</p>
+                        <p>Passionate researcher with expertise in modern technologies. Building innovative solutions and exploring brand new things.</p>
+                    </div>
+                </div>
+            </section>
+            <section class="section tight" id="skills">
+                <div class="wrap">
+                    <div class="section-head reveal">
+                        <div>
+                            <p class="kicker">Areas of expertise</p>
+                            <h2>Technologies & <span class="lime">capabilities.</span></h2>
+                        </div>
+                    </div>
+                    <div class="skill-grid">
+                        <article class="skill-card reveal">
+                            <div class="skill-top">
+                                <span>01 / Content systems</span>
+                                <span class="skill-icon">◉</span>
+                            </div>
+                            <h3>WordPress</h3>
+                            <p>Flexible websites, theme and plugin development, built for easy upkeep.</p>
+                            <div class="skill-tags">
+                                <span>PHP</span>
+                                <span>WordPress</span>
+                                <span>Optimization</span>
+                            </div>
+                        </article>
+                        <article class="skill-card reveal">
+                            <div class="skill-top">
+                                <span>02 / Commerce</span>
+                                <span class="skill-icon">✳</span>
+                            </div>
+                            <h3>Shopify</h3>
+                            <p>Custom themes and storefront features designed around each business.</p>
+                            <div class="skill-tags">
+                                <span>Liquid</span>
+                                <span>Custom sections</span>
+                                <span>App
+                                    integration</span>
+                            </div>
+                        </article>
+                        <article class="skill-card reveal">
+                            <div class="skill-top">
+                                <span>03 / Emerging tech</span>
+                                <span class="skill-icon">⌘</span>
+                            </div>
+                            <h3>AI &amp; APIs</h3>
+                            <p>REST API integrations, with current learning in Python, embeddings, and retrieval-augmented
+                                generation.</p>
+                            <div class="skill-tags">
+                                <span>REST APIs</span>
+                                <span>Python</span>
+                                <span>RAG · Embeddings</span>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </section>
+            <section class="section" id="projects">
+                <div class="wrap">
+                    <div class="section-head reveal">
+                        <div>
+                            <p class="kicker">Latest work</p>
+                            <h2>Selected <span class="lime">projects.</span></h2>
+                        </div>
+                        <a class="text-link" href="#contact">Discuss a project ↗</a>
+                    </div>
+                    <div class="project-grid">
+                        <article class="project-card reveal">
+                            <a aria-label="Visit TCMReview" href="https://tcmreview.com" rel="noopener" target="_blank">
+                                <div class="project-visual" data-tilt="">
+                                    <img alt="TCMReview logo" class="project-logo" loading="lazy" src="images/logos/0.png" />
+                                    <span class="project-domain">tcmreview.com</span>
+                                    <span class="project-arrow">↗</span>
+                                </div>
+                            </a>
+                            <div class="project-meta">
+                                <h3>TCMReview</h3><span>WordPress</span>
+                            </div>
+                            <p>Enhanced website functionality and code quality by implementing the Ask Bina AI tutoring feature with PayPal subscription integration, course-based student menu access, and optimizing code structure for improved performance and reliability.</p>
+                        </article>
+                        <article class="project-card reveal">
+                            <a aria-label="Visit Ayuxi" href="https://store.jogiayurved.com" rel="noopener" target="_blank">
+                                <div class="project-visual" data-tilt="">
+                                    <img alt="Ayuxi logo" class="project-logo" loading="lazy" src="images/logos/1.avif" />
+                                    <span class="project-domain">store.jogiayurved.com</span>
+                                    <span class="project-arrow">↗</span>
+                                </div>
+                            </a>
+                            <div class="project-meta">
+                                <h3>Jogi Ayurved E-commerce Store</h3><span>Shopify</span>
+                            </div>
+                            <p>Developed the JOGI Ayurved e-commerce store from scratch, organizing herbal supplements into health-specific categories and collections while implementing customized store functionality to meet client requirements and support online sales.</p>
+                        </article>
+                        <article class="project-card reveal">
+                            <a aria-label="Visit Modifox" href="https://modifox.com" rel="noopener" target="_blank">
+                                <div class="project-visual" data-tilt="">
+                                    <img alt="Modifox logo" class="project-logo" loading="lazy" src="images/logos/2.png" />
+                                    <span class="project-domain">modifox.com</span>
+                                    <span class="project-arrow">↗</span>
+                                </div>
+                            </a>
+                            <div class="project-meta">
+                                <h3>Modifox</h3><span>Web development</span>
+                            </div>
+                            <p>MODIFOX is a specialized sports footwear store where I customized the design and built features for hybrid shoes, shoe categories, and individual product pages.</p>
+                        </article>
+                        <article class="project-card reveal">
+                            <a aria-label="Visit Momipop" href="https://momipop.co" rel="noopener" target="_blank">
+                                <div class="project-visual" data-tilt="">
+                                    <img alt="Momipop logo" class="project-logo" loading="lazy" src="images/logos/3.svg" />
+                                    <span class="project-domain">momipop.co</span>
+                                    <span class="project-arrow">↗</span>
+                                </div>
+                            </a>
+                            <div class="project-meta">
+                                <h3>Momipop</h3><span>Web development</span>
+                            </div>
+                            <p>Built Momipop’s baby essentials store from scratch, configuring its product catalogue, checkout, payment, and shipping for online sales.</p>
+                        </article>
+                        <article class="project-card reveal">
+                            <a aria-label="Visit Enviro Wealth" href="https://ew.netizens.dev" rel="noopener" target="_blank">
+                                <div class="project-visual" data-tilt="">
+                                    <img alt="Enviro Wealth logo" class="project-logo" loading="lazy" src="images/logos/4.png" />
+                                    <span class="project-domain">ew.netizens.dev</span>
+                                    <span class="project-arrow">↗</span>
+                                </div>
+                            </a>
+                            <div class="project-meta">
+                                <h3>Enviro Wealth</h3><span>Web development</span>
+                            </div>
+                            <p>Built the website from requirements through launch, including three interactive carbon-footprint calculators for individuals, events, and businesses that calculate emissions and recommend relevant solutions.</p>
+                        </article>
+                        <article class="project-card reveal">
+                            <a aria-label="Visit World Wide Solutions" href="https://wwidesolutions.com" rel="noopener" target="_blank">
+                                <div class="project-visual" data-tilt="">
+                                    <img alt="World Wide Solutions logo" class="project-logo" loading="lazy" src="images/logos/5.png" />
+                                    <span class="project-domain">wwidesolutions.com</span>
+                                    <span class="project-arrow">↗</span>
+                                </div>
+                            </a>
+                            <div class="project-meta">
+                                <h3>World Wide Solutions</h3><span>Web development</span>
+                            </div>
+                            <p>A company site built to explain World Wide Solutions’ business and services in a clear structure across devices.</p>
+                        </article>
+                        <article class="project-card reveal">
+                            <a aria-label="Visit AL Dental Studio" href="https://aldentalstudio.com" rel="noopener" target="_blank">
+                                <div class="project-visual" data-tilt="">
+                                    <img alt="AL Dental Studio logo" class="project-logo" loading="lazy" src="images/logos/6.png" />
+                                    <span class="project-domain">aldentalstudio.com</span>
+                                    <span class="project-arrow">↗</span>
+                                </div>
+                            </a>
+                            <div class="project-meta">
+                                <h3>AL Dental Studio</h3><span>Web development</span>
+                            </div>
+                            <p>A dental clinic site presenting AL Dental Studio’s treatments and making it easy for prospective patients to enquire.</p>
+                        </article>
+                        <article class="project-card reveal">
+                            <a aria-label="Visit Mayur Gems &amp; Jewells" href="https://mayurgemsjewells.com" rel="noopener" target="_blank">
+                                <div class="project-visual" data-tilt="">
+                                    <img alt="Mayur Gems &amp; Jewells logo" class="project-logo" loading="lazy" src="images/logos/7.png" />
+                                    <span class="project-domain">mayurgemsjewells.com</span>
+                                    <span class="project-arrow">↗</span>
+                                </div>
+                            </a>
+                            <div class="project-meta">
+                                <h3>Mayur Gems &amp; Jewells</h3><span>Web development</span>
+                            </div>
+                            <p>A custom jewellery e-commerce site with Mayur Gems & Jewells collection-specific products, advanced filters, and pricing based on metal, weight, quality, making charges, and taxes.</p>
+                        </article>
+                        <article class="project-card reveal">
+                            <a aria-label="Visit Disha Laser Clinic" href="https://dishalaser.com" rel="noopener" target="_blank">
+                                <div class="project-visual" data-tilt="">
+                                    <img alt="Disha Laser Clinic logo" class="project-logo" loading="lazy" src="images/logos/8.svg" />
+                                    <span class="project-domain">dishalaser.com</span>
+                                    <span class="project-arrow">↗</span>
+                                </div>
+                            </a>
+                            <div class="project-meta">
+                                <h3>Disha Laser Clinic</h3><span>Web development</span>
+                            </div>
+                            <p>A clinic website detailing Disha Laser Clinic’s treatments, doctors, and professional services, with dedicated sections for fellowship updates and training programs.</p>
+                        </article>
+                        <article class="project-card reveal">
+                            <a aria-label="Visit Jogi Ayurved" href="https://jogiayurved.com" rel="noopener" target="_blank">
+                                <div class="project-visual" data-tilt="">
+                                    <img alt="Jogi Ayurved logo" class="project-logo" loading="lazy" src="images/logos/9.png" />
+                                    <span class="project-domain">jogiayurved.com</span>
+                                    <span class="project-arrow">↗</span>
+                                </div>
+                            </a>
+                            <div class="project-meta">
+                                <h3>Jogi Ayurved</h3><span>Web development</span>
+                            </div>
+                            <p>Built an Ayurvedic wellness site with treatment and benefits pages, plus an interactive quiz that maps assessment results to relevant solutions in English, Gujarati, and Hindi.</p>
+                        </article>
+                    </div>
+                </div>
+            </section>
+            <section class="section tight" id="experience">
+                <div class="wrap">
+                    <p class="kicker">Career highlights</p>
+                    <h2 class="timeline-heading">Work <span class="lime">Experience</span></h2>
+                    <div class="timeline">
+                        <article class="timeline-row reveal"><span class="timeline-date">Aug 2026 — Present</span>
+                            <div>
+                                <h3>Senior Software Engineer</h3>
+                                <p>Crest Infosystems</p>
+                            </div>
+                            <p>Developed and enhanced TCMReview functionality while following coding standards to keep the implementation clean and user-friendly. Alongside product work, building foundational knowledge in Python, AI and LLM concepts, prompt engineering, embeddings, RAG and tool calling.</p>
+                        </article>
+                        <article class="timeline-row reveal"><span class="timeline-date">Jul 2024 — Feb 2026</span>
+                            <div>
+                                <h3>Senior Software Engineer</h3>
+                                <p>Netizens Technologies</p>
+                            </div>
+                            <p>Built responsive Shopify stores to client requirements; customized Liquid themes and sections; connected third-party apps; and improved performance, SEO and mobile responsiveness while working directly with clients.</p>
+                        </article>
+                        <article class="timeline-row reveal"><span class="timeline-date">Jan 2021 — Feb 2024</span>
+                            <div>
+                                <h3>WordPress Developer</h3>
+                                <p>Solwin Infotech LLP</p>
+                            </div>
+                            <p>Developed and customized WordPress themes and plugins, fixed issues affecting site stability, improved responsive behavior and performance, and evaluated plugins and caching. Used Git and GitHub while collaborating with cross-functional teams.</p>
+                        </article>
+                    </div>
+                </div>
+            </section>
+            <section class="page-hero" id="contact">
+                <div class="wrap">
+                    <p class="eyebrow">Contact</p>
+                    <h1>Let’s discuss<br /><span class="lime">your project.</span></h1>
+                    <p class="lede">Share a few details about your project. I’ll reply by email to discuss the next steps.
+                    </p>
+                </div>
+            </section>
+            <section class="contact-details" id="contact-details">
+                <section class="section tight">
+                    <div class="wrap contact-grid">
+                        <div class="contact-info">
+                            <p class="kicker">Get in touch</p>
+                            <div class="contact-links">
+                                <div class="contact-item">
+                                    <span>Email</span>
+                                    <a class="contact-icon-link" href="mailto:dhiren.jummani.jhd@gmail.com">
+                                        <svg aria-hidden="true" viewbox="0 0 24 24">
+                                            <rect height="14" rx="2" width="18" x="3" y="5"></rect>
+                                            <path d="m4 7 8 6 8-6"></path>
+                                        </svg>
+                                        <span>dhiren.jummani.jhd@gmail.com</span>
+                                    </a>
+                                </div>
+                                <div class="contact-item">
+                                    <span>Phone</span>
+                                    <a class="contact-icon-link" href="tel:+919574708867">
+                                        <svg aria-hidden="true" viewbox="0 0 24 24">
+                                            <path d="M7 3H4a1 1 0 0 0-1 1 17 17 0 0 0 17 17 1 1 0 0 0 1-1v-3l-5-2-2 3a14 14 0 0 1-7-7l3-2-2-5Z"></path>
+                                        </svg>
+                                        <span>+91 95747 08867</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <form class="contact-form" id="contactForm">
+                            <div class="field">
+                                <label for="name">Your name</label><input autocomplete="name" id="name" name="name" required="" />
+                            </div>
+                            <div class="field">
+                                <label for="email">Email address</label><input autocomplete="email"
+                                    id="email" name="email" required="" type="email" />
+                            </div>
+                            <div class="field full">
+                                <label for="service">Project type</label>
+                                <select id="service" name="service">
+                                    <option>WordPress development</option>
+                                    <option>Shopify development</option>
+                                    <option>API integration</option>
+                                    <option>AI and RAG development</option>
+                                    <option>Something different</option>
+                                </select>
+                            </div>
+                            <div class="field full">
+                                <label for="message">A little about the project</label>
+                                <textarea id="message" name="message" placeholder="What are you looking to build?" required=""></textarea>
+                            </div>
+                            <div class="field full">
+                                <button class="pill" type="submit">Prepare email ↗</button>
+                                <small class="form-note">This opens your email app with your message ready to send.</small>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+            </section>
+        </main>
+        <footer class="footer footer-min">
+            <div class="wrap footer-row">
+                <a class="brand-image-link" href="#home">
+                    <img alt="Dhiren Jummani" class="brand-image" src="images/dj-wordmark.svg" />
+                </a>
+                <div class="social-icons">
+                    <a aria-label="LinkedIn" href="https://www.linkedin.com/in/dhiren-jummani-ab6336114" rel="noopener" target="_blank">
+                        <svg aria-hidden="true" viewbox="0 0 24 24">
+                            <path d="M5 8v11M5 5v.1M10 19v-6a4 4 0 0 1 8 0v6M10 10v9"></path>
+                        </svg>
+                    </a>
+                    <a aria-label="GitHub" href="https://github.com/Dhiren003" rel="noopener" target="_blank">
+                        <svg aria-hidden="true" viewbox="0 0 24 24">
+                            <path d="M9 19c-4 1-4-2-6-2m12 4v-3.1a2.7 2.7 0 0 0-.8-2.1c2.7-.3 5.5-1.3 5.5-6A4.7 4.7 0 0 0 18.5 7a4.3 4.3 0 0 0-.1-3S17.4 3.7 15 5a11 11 0 0 0-6 0C6.6 3.7 5.6 4 5.6 4A4.3 4.3 0 0 0 5.5 7a4.7 4.7 0 0 0-1.2 3.3c0 4.7 2.8 5.7 5.5 6A2.7 2.7 0 0 0 9 18.4V21"></path>
+                        </svg>
+                    </a>
+                    <a aria-label="WhatsApp" href="https://wa.me/919574708867" rel="noopener" target="_blank">
+                        <svg aria-hidden="true" viewbox="0 0 24 24">
+                            <path d="M20 11.7a8 8 0 0 1-11.8 7l-4.2 1 1.1-4A8 8 0 1 1 20 11.7Z"></path>
+                            <path d="M9 8.5c.2-.5.4-.5.7-.5h.4c.2 0 .3.1.4.4l.6 1.5c.1.2.1.4 0 .5l-.5.7c-.1.2-.2.3-.1.5.3.6 1 1.4 1.7 1.8.7.4.9.4 1.1.2l.7-.9c.2-.2.3-.2.6-.1l1.5.7c.2.1.3.2.3.4 0 .2-.1 1-.7 1.4-.5.4-1.2.5-1.8.3-.5-.1-1.1-.3-2-.8-1.5-.8-2.5-2.2-2.8-2.5-.3-.4-.8-1.1-.8-2.1 0-.9.5-1.4.7-1.5Z"></path>
+                        </svg>
+                    </a>
+                    <a aria-label="Instagram" href="https://www.instagram.com/dhiren_jummani" rel="noopener" target="_blank">
+                        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="5"/>
+                            <circle cx="12" cy="12" r="4"/>
+                            <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none"/>
+                        </svg>
+                    </a>
+                    <a aria-label="Facebook" href="https://fb.me/Dhiren037" rel="noopener" target="_blank">
+                        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 21v-8h2.7l.4-3H14V8c0-.9.3-1.5 1.5-1.5h1.7V3.7c-.3 0-1.3-.2-2.4-.2-2.5 0-4.2 1.5-4.2 4.3V10H7.8v3h2.8v8H14Z"/>
+                        </svg>
+                    </a>
+                    <a aria-label="Hackerrank" href="https://www.hackerrank.com/DJ_HERO" rel="noopener" target="_blank">
+                        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2.2 20.5 7v10L12 21.8 3.5 17V7L12 2.2Z"/>
+                            <path d="M8.3 15.6V8.8m0 0-1.2 1.2m1.2-1.2 1.2 1.2M8.3 12h7.4m0-3.2v6.4m0 0-1.2-1.2m1.2 1.2 1.2-1.2"/>
+                        </svg>
+                    </a>
+                    <a aria-label="wordpress.org" href="https://profiles.wordpress.org/dhirenjummani" rel="noopener" target="_blank">
+                        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="m5.2 7.3 2.9 9.5 3.9-8 3.8 8 3-9.5"/>
+                        </svg>
+                    </a>
+                    <a aria-label="WPFolks" href="https://wpfolks.org/folk/dhirenjummani/" rel="noopener" target="_blank">
+                        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="7" r="2.5"/>
+                            <circle cx="5.5" cy="9.5" r="2"/>
+                            <circle cx="18.5" cy="9.5" r="2"/>
+                            <path d="M7.5 20v-1.2a4.5 4.5 0 0 1 9 0V20"/>
+                            <path d="M2.5 19v-1a3 3 0 0 1 4.3-2.7M21.5 19v-1a3 3 0 0 0-4.3-2.7"/>
+                        </svg>
+                    </a>
+                </div>
+                <small>© <span data-year="">2026</span> Dhiren Jummani</small>
+                        
+            </div>
+        </footer>
+        <div class="cursor-dot"></div>
+        <script src="js/main.js"></script>
+    </body>
 
-    <section class="statement" id="hello" aria-label="About me">
-      <div class="wrap statement-grid">
-        <figure class="portrait" data-clip><img data-parallax="0.08" src="images/dhiren-900.jpg" srcset="images/dhiren-480.jpg 480w, images/dhiren-900.jpg 900w" sizes="(max-width: 800px) 70vw, 320px" width="900" height="1125" alt="Portrait of Dhiren Jummani" loading="lazy"></figure>
-        <div>
-          <p class="statement-text" data-words>I turn client briefs into fast, responsive websites and online stores. Whether it's a new Shopify store, a WordPress membership platform or an API-driven feature, I take it from first layout to a live site that's easy to maintain.</p>
-          <a class="arrow-link" href="about.html">Get to know me</a>
-        </div>
-      </div>
-    </section>
-
-    <section class="projects-home" aria-labelledby="proj-title">
-      <div class="wrap">
-        <div class="sec-head">
-          <h2 id="proj-title" class="sec-title" data-split>Projects</h2>
-          <div class="sec-tools">
-            <button class="round-btn" type="button" data-scroll="-1" aria-label="Previous projects">&larr;</button>
-            <button class="round-btn" type="button" data-scroll="1" aria-label="Next projects">&rarr;</button>
-          </div>
-        </div>
-      </div>
-      <ul class="rail" data-cursor="Drag" tabindex="-1"><li><article class="card" id="tcmreview">
-            <a class="card-cover c-saffron" data-cursor="View" data-tilt href="https://tcmreview.com" target="_blank" rel="noopener" aria-label="TCMReview, visit tcmreview.com (opens in a new tab)">
-              <span class="card-initial" aria-hidden="true">T</span>
-              <span class="card-domain" aria-hidden="true">tcmreview.com</span>
-            </a>
-            <div class="card-meta"><h3 class="card-name">TCMReview</h3><span class="card-tag">WordPress</span></div>
-            
-          </article></li><li><article class="card" id="ayuxi">
-            <a class="card-cover c-peri" data-cursor="View" data-tilt href="https://ayuxii.myshopify.com" target="_blank" rel="noopener" aria-label="Ayuxi, visit ayuxii.myshopify.com (opens in a new tab)">
-              <span class="card-initial" aria-hidden="true">A</span>
-              <span class="card-domain" aria-hidden="true">ayuxii.myshopify.com</span>
-            </a>
-            <div class="card-meta"><h3 class="card-name">Ayuxi</h3><span class="card-tag">Shopify</span></div>
-            
-          </article></li><li><article class="card" id="modifox">
-            <a class="card-cover c-mint" data-cursor="View" data-tilt href="https://modifox.com" target="_blank" rel="noopener" aria-label="Modifox, visit modifox.com (opens in a new tab)">
-              <span class="card-initial" aria-hidden="true">M</span>
-              <span class="card-domain" aria-hidden="true">modifox.com</span>
-            </a>
-            <div class="card-meta"><h3 class="card-name">Modifox</h3><span class="card-tag">Development</span></div>
-            
-          </article></li><li><article class="card" id="momipop">
-            <a class="card-cover c-coral" data-cursor="View" data-tilt href="https://momipop.co" target="_blank" rel="noopener" aria-label="Momipop, visit momipop.co (opens in a new tab)">
-              <span class="card-initial" aria-hidden="true">M</span>
-              <span class="card-domain" aria-hidden="true">momipop.co</span>
-            </a>
-            <div class="card-meta"><h3 class="card-name">Momipop</h3><span class="card-tag">Development</span></div>
-            
-          </article></li><li><article class="card" id="enviro-wealth">
-            <a class="card-cover c-lilac" data-cursor="View" data-tilt href="https://ew.netizens.dev" target="_blank" rel="noopener" aria-label="Enviro Wealth, visit ew.netizens.dev (opens in a new tab)">
-              <span class="card-initial" aria-hidden="true">E</span>
-              <span class="card-domain" aria-hidden="true">ew.netizens.dev</span>
-            </a>
-            <div class="card-meta"><h3 class="card-name">Enviro Wealth</h3><span class="card-tag">Development</span></div>
-            
-          </article></li><li><article class="card" id="world-wide-solutions">
-            <a class="card-cover c-saffron" data-cursor="View" data-tilt href="https://wwidesolutions.com" target="_blank" rel="noopener" aria-label="World Wide Solutions, visit wwidesolutions.com (opens in a new tab)">
-              <span class="card-initial" aria-hidden="true">W</span>
-              <span class="card-domain" aria-hidden="true">wwidesolutions.com</span>
-            </a>
-            <div class="card-meta"><h3 class="card-name">World Wide Solutions</h3><span class="card-tag">Development</span></div>
-            
-          </article></li></ul>
-      <div class="wrap"><a class="arrow-link" href="projects.html">View all projects</a></div>
-    </section>
-
-    <section class="services" aria-labelledby="serv-title">
-      <div class="wrap">
-        <h2 id="serv-title" class="sec-title" data-split>What I do</h2>
-        <ol class="serv-list">
-          <li>
-            <span class="serv-num">01</span>
-            <h3>Shopify development</h3>
-            <div><p>Shopify Liquid, theme customization and custom sections, plus app integration, so a store fits the way the business actually sells.</p><a class="more" href="about.html#skills">More information<span class="visually-hidden"> about Shopify development</span></a></div>
-          </li>
-          <li>
-            <span class="serv-num">02</span>
-            <h3>WordPress development</h3>
-            <div><p>Custom WordPress development, from themes and plugins to membership features, built to current coding standards and kept easy to maintain.</p><a class="more" href="about.html#skills">More information<span class="visually-hidden"> about WordPress development</span></a></div>
-          </li>
-          <li>
-            <span class="serv-num">03</span>
-            <h3>Frontend &amp; APIs</h3>
-            <div><p>Responsive layouts with HTML5, CSS3, JavaScript and jQuery, and REST API integration that connects a site to payments and other services.</p><a class="more" href="about.html#skills">More information<span class="visually-hidden"> about frontend and APIs</span></a></div>
-          </li>
-          <li>
-            <span class="serv-num">04</span>
-            <h3>Generative AI</h3>
-            <div><p>Python-based RAG, embeddings and semantic search with vector databases like ChromaDB, plus prompt engineering and tool or function calling.</p><a class="more" href="about.html#skills">More information<span class="visually-hidden"> about generative AI</span></a></div>
-          </li>
-        </ol>
-      </div>
-    </section>
-
-    <section class="need" aria-labelledby="need-title" data-need data-mail="dhiren.jummani.jhd@gmail.com">
-      <div class="marquee" aria-hidden="true"><div class="marquee-track" data-marquee><span>shopify</span><span>wordpress</span><span>api integration</span><span>generative ai</span><span>shopify</span><span>wordpress</span><span>api integration</span><span>generative ai</span></div></div>
-      <div class="wrap need-inner">
-        <div class="need-step" data-step="1">
-          <h2 id="need-title" class="need-line">I need <span class="need-word" aria-live="polite" data-need-word>a Shopify store</span></h2>
-          <div class="need-actions">
-            <button class="ghost-btn" type="button" data-need-next>next</button>
-            <a class="solid-btn" href="mailto:dhiren.jummani.jhd@gmail.com?subject=I%20need%20a%20Shopify%20store" data-need-go>Continue</a>
-          </div>
-        </div>
-        <div class="need-step" data-step="2" hidden>
-          <p class="need-line need-line-sm">I need <span data-need-chosen>a Shopify store</span></p>
-          <label class="need-label" for="brief">Tell me a little about it</label>
-          <textarea id="brief" class="need-text" rows="3" placeholder="What are you building, and by when?"></textarea>
-          <div class="need-actions">
-            <button class="ghost-btn" type="button" data-need-back>back</button>
-            <a class="solid-btn" href="mailto:dhiren.jummani.jhd@gmail.com" data-need-send>Send by email</a>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="wrap">
-      <div class="foot-grid">
-        <nav aria-label="Footer"><h2 class="foot-label">Menu</h2>
-          <ul><li><a href="index.html">Home</a></li><li><a href="about.html">About</a></li><li><a href="projects.html">Projects</a></li><li><a href="contact.html">Contacts</a></li></ul></nav>
-        <div><h2 class="foot-label">Social</h2>
-          <ul>
-            <li><a href="https://www.linkedin.com/in/dhiren-jummani-ab6336114" target="_blank" rel="noopener">LinkedIn</a></li>
-            <li><a href="https://github.com/Dhiren003" target="_blank" rel="noopener">GitHub</a></li>
-            <li><a href="https://wa.me/919574708867" target="_blank" rel="noopener">WhatsApp</a></li>
-            <li><a href="DJ_RESUME.pdf" download="Dhiren-Jummani-Resume.pdf">Resume (PDF)</a></li>
-          </ul></div>
-        <div><h2 class="foot-label">Contact us</h2>
-          <ul><li><a href="mailto:dhiren.jummani.jhd@gmail.com">dhiren.jummani.jhd@gmail.com</a></li><li><a href="tel:+919574708867">+91 95747 08867</a></li></ul></div>
-      </div>
-      <div class="foot-base">
-        <p>&copy; <span id="year">2026</span> Dhiren Jummani. All rights reserved.</p>
-        <a class="to-top" href="#top">Back to top</a>
-      </div>
-    </div>
-  </footer>
-  <script src="js/main.js"></script>
-</body>
 </html>
